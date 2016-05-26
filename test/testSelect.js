@@ -1,9 +1,8 @@
 import { expect } from 'chai';
 import plugin from '../src';
-var request = require('request-promise');
 let Adapter = new plugin.Service();
 
-describe('feathers-solr', () => {
+describe('solr-client', () => {
   it('is CommonJS compatible', () => {
     expect(typeof require('../lib')).to.equal('function');
   });
@@ -28,24 +27,6 @@ describe('feathers-solr', () => {
     done();
   });
 
-  // it('method test', done => {
-  //   expect(Adapter.test('dude')).to.be.equal('dude');
-  //   done();
-  // });
-
-
-  it('Adapter req test', done => {
-   request({uri:'http://localhost:8983/solr/gettingstarted/admin/ping?wt=json',json: true})
-    .then(function(res){
-      expect(res.status).to.be.equal('OK');
-      done();
-    })
-    .catch(function (err) {
-        // console.log('err ????',typeof err,err);
-        expect(err).to.be.equal('OK');
-        done();
-    });
-  });
 
   it('Adapter Ping', done => {
     Adapter.client().ping()

@@ -45,6 +45,7 @@
     "debug": "^2.2.0",
     "feathers-errors": "^2.1.0",
     "request": "^2.72.0",
+    "request-promise": "^3.0.0",
     "solr-hyperquest-client": "^1.0.8"
   },
   "devDependencies": {
