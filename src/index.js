@@ -1,32 +1,67 @@
 if (!global._babelPolyfill) { require('babel-polyfill'); }
 
-// import request from 'request';
-var request = require('request');
-import errors from 'feathers-errors';
 import makeDebug from 'debug';
+import errors from 'feathers-errors';
+import Solr from './client/Solr';
 
 const debug = makeDebug('feathers-solr');
 
 class Service {
+
   constructor(options = {}) {
     this.options = options;
-         request('http://localhost:8983/solr/gettingstarted/select?indent=on&q=*:*&wt=json', function (error, response, body) {
-          if (!error && response.statusCode === 200) {
-
-              console.log('REQUEST',body); // Show the HTML for the Modulus homepage.
-              // console.log(body); // Show the HTML for the Modulus homepage.
-          }
-      });
+    this.Solr = new Solr({
+      scheme:'http',
+      host:'localhost',
+      port:8983,
+      path:'/solr',
+      core:'/gettingstarted',
+    });
   }
 
   find(params) {
     return new Promise((resolve, reject) => {
       // Put some async code here.
+      console.log(params);
       if (!params.query) {
         return reject(new errors.BadRequest());
       }
       resolve([1,1]);
     });
+  }
+
+  // get(id) {
+
+  // }
+
+  create(data) {
+     return this.Solr.update(data);
+  }
+
+  // update(id, data) {
+
+  // }
+
+  // patch(id, data, params) {
+
+  // }
+
+  // remove(id, data, params) {
+
+  // }
+
+  test(param) {
+    // this.Solr.search.testMe('wow',param);
+    this.Solr.req('test solr client'+param);
+    return param;
+  }
+
+  init(param) {
+    console.log('wow',param);
+  }
+
+  client() {
+    return this.Solr;
   }
 }
 
