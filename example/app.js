@@ -13,7 +13,14 @@ const app = feathers()
   .use(bodyParser.json())
   .use(bodyParser.urlencoded({ extended: true }))
   // Initialize your feathers plugin
-  .use('/products', feathersSolr())
+  .use('/products',
+    feathersSolr({
+      paginate: {
+        default: 2,
+        max: 4
+      }
+    })
+  )
   .use(errorHandler());
 
 app.listen(3030);
