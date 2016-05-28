@@ -3,10 +3,6 @@
 /**
   The entry point.
   @module Solr
-  Solr.select();
-  Solr.ConfigApi();
-  Solr.ConfigApi.set();
-  Solr.ConfigApi.get();
 **/
 import * as BlobStoreApi from './requestHandler/BlobStoreApi.js';
 import * as ConfigApi from './requestHandler/ConfigApi.js';
@@ -16,85 +12,77 @@ import Ping from './requestHandler/Ping.js';
 import * as RealTime from './requestHandler/RealTime.js';
 import * as ReplicationHandlers from './requestHandler/ReplicationHandlers.js';
 import * as RequestParametersAPI from './requestHandler/RequestParametersAPI.js';
-import * as SearchHandlers from './requestHandler/SearchHandlers.js';
+import SearchHandlers from './requestHandler/SearchHandlers.js';
 import * as ShardHandlers from './requestHandler/ShardHandlers.js';
-import * as UpdateRequestHandlers from './requestHandler/UpdateRequestHandlers.js';
-// var request = require('request');
+import UpdateRequestHandlers from './requestHandler/UpdateRequestHandlers.js';
 var request = require('request-promise');
 
 export default class Solr {
 
     constructor(opts) {
+
         this.opts = this.extend({
             scheme:'http',
             host:'localhost',
             port:8983,
-            path:'/solr/',
-            core:'gettingstarted/'
+            path:'/solr',
+            core:'/gettingstarted',
+            createUUID: true,
+            commitType: {commitWihtin:50}, // mixed: true||'softCommit'||{commitWihtin:50}
+            managedScheme: true,
         }, opts);
-        // http://localhost:8983/solr
-        this.opts.url = this.opts.scheme +
-                    '://' +
-                    this.opts.host +
-                    ':' +
-                    this.opts.port +
-                    this.opts.path;
-        this.opts.coreUrl = this.opts.url + this.opts.core;
-        // this.request = request;
-        // console.log('Solr',this.opts);
+
+        this.opts.url = [this.opts.scheme, '://', this.opts.host, ':', this.opts.port, this.opts.path].join('');
+        this.opts.coreUrl = [this.opts.url, this.opts.core].join('');
+        this.req = request;
+
     }
 
     extend(... args) {
         return Object.assign(... args);
     }
 
-    req(opts) {
-        return request(opts);
-    }
-
     blob(params){
-        return new BlobStoreApi(request, this.opts, params);
+        return new BlobStoreApi(this.req, this.opts, params);
     }
 
     config(params){
-        return new ConfigApi(request, this.opts, params);
+        return new ConfigApi(this.req, this.opts, params);
     }
 
     json(params){
-        return new JsonRequestApi(request, this.opts, params);
+        return new JsonRequestApi(this.req, this.opts, params);
     }
 
     resources(params){
-        return new ManagedResources(request, this.opts, params);
+        return new ManagedResources(this.req, this.opts, params);
     }
 
-    ping(params){
-        return new Ping(this.req, this.opts, params);
+    ping(){
+        return new Ping(this.req, this.opts);
     }
 
     real(params){
-        return new RealTime(request, this.opts, params);
+        return new RealTime(this.req, this.opts, params);
     }
 
     replication(params){
-        return new ReplicationHandlers(request, this.opts, params);
+        return new ReplicationHandlers(this.req, this.opts, params);
     }
 
-    RequestParametersAPI(params){
-        return new RequestParametersAPI(request, this.opts, params);
+    requestParametersAPI(params){
+        return new RequestParametersAPI(this.req, this.opts, params);
     }
 
     search(params){
-        return new SearchHandlers(request, this.opts, params);
+        return new SearchHandlers(this.req, this.opts, params);
     }
 
     shard(params){
-        return new ShardHandlers(request, this.opts, params);
+        return new ShardHandlers(this.req, this.opts, params);
     }
 
-    update(params){
-        return new UpdateRequestHandlers(request, this.opts, params);
+    update(data){
+        return new UpdateRequestHandlers(this.req, this.opts, data);
     }
-
-
 }

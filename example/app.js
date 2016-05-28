@@ -3,7 +3,7 @@ const rest = require('feathers-rest');
 const hooks = require('feathers-hooks');
 const bodyParser = require('body-parser');
 const errorHandler = require('feathers-errors/handler');
-const plugin = require('../lib/index');
+const feathersSolr = require('../lib/index');
 
 // Initialize the application
 const app = feathers()
@@ -13,7 +13,7 @@ const app = feathers()
   .use(bodyParser.json())
   .use(bodyParser.urlencoded({ extended: true }))
   // Initialize your feathers plugin
-  .use('/plugin', plugin())
+  .use('/products', feathersSolr())
   .use(errorHandler());
 
 app.listen(3030);

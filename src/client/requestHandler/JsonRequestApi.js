@@ -1,8 +1,17 @@
 /**
+ * Solr Config API
  * https://cwiki.apache.org/confluence/display/solr/JSON+Request+API
  */
-export function someMethod() {
-    console.log('someMethod');
-}
+export default (request, opts) => {
 
-export var another = {};
+    let options = {
+        method: 'GET',
+        uri: opts.coreUrl + 'admin/ping',
+        qs: {
+            wt: 'json'
+        },
+        json: true
+    };
+
+    return request.get(options);
+};

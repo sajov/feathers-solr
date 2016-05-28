@@ -14,20 +14,41 @@ class Service {
       scheme:'http',
       host:'localhost',
       port:8983,
-      path:'/solr/',
-      core:'gettingstarted/'
+      path:'/solr',
+      core:'/gettingstarted',
     });
   }
 
   find(params) {
     return new Promise((resolve, reject) => {
       // Put some async code here.
+      console.log(params);
       if (!params.query) {
         return reject(new errors.BadRequest());
       }
       resolve([1,1]);
     });
   }
+
+  // get(id) {
+
+  // }
+
+  create(data) {
+     return this.Solr.update(data);
+  }
+
+  // update(id, data) {
+
+  // }
+
+  // patch(id, data, params) {
+
+  // }
+
+  // remove(id, data, params) {
+
+  // }
 
   test(param) {
     // this.Solr.search.testMe('wow',param);
