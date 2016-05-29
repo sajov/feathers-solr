@@ -1,22 +1,22 @@
 import plugin from '../src';
 let Adapter = new plugin.Service();
-var req = require('hyperquest');
+// var req = require('hyperquest');
 // var hyperquest = require('./promisified-hyperquest.js');
 
 
 describe('request module comparison', () => {
 
-    it('Adapter hyperquest test', done => {
-    console.time('    hyperquest ping');
+  //   it('Adapter hyperquest test', done => {
+  //   console.time('    hyperquest ping');
 
-    req.get('http://localhost:8983/solr/gettingstarted/admin/ping?wt=json',
-                {},
-                function(){
-                    console.timeEnd('    hyperquest ping');
-                    done();
-                }
-              );
-  });
+  //   req.get('http://localhost:8983/solr/gettingstarted/admin/ping?wt=json',
+  //               {},
+  //               function(){
+  //                   console.timeEnd('    hyperquest ping');
+  //                   done();
+  //               }
+  //             );
+  // });
 
   // it('Adapter hyperquest promese', done => {
   //   console.time('    hyperquest promises ping');

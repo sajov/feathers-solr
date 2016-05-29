@@ -4,6 +4,11 @@
  */
 export default (request, opts, query) => {
 
+    query = Object.assign({
+                wt: 'json',
+                q: '*:*'
+            }, query ,{});
+
     let options = {
         method: 'GET',
         uri: opts.coreUrl + '/select', // '/update/json' || /update/json/docs
@@ -11,8 +16,11 @@ export default (request, opts, query) => {
             wt: 'json',
             q: '*:*'
         }, query),
+        qsStringifyOptions: {
+            arrayFormat:'repeat'
+        },
         json: true
     };
-
+    console.log('SearchHandlers OPTIONS',options);
     return request(options);
 };

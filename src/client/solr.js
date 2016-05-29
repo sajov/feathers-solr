@@ -6,7 +6,7 @@
 **/
 import * as BlobStoreApi from './requestHandler/BlobStoreApi.js';
 import * as ConfigApi from './requestHandler/ConfigApi.js';
-import * as JsonRequestApi from './requestHandler/JsonRequestApi.js';
+import JsonRequestApi from './requestHandler/JsonRequestApi.js';
 import * as ManagedResources from './requestHandler/ManagedResources.js';
 import Ping from './requestHandler/Ping.js';
 import * as RealTime from './requestHandler/RealTime.js';
@@ -42,47 +42,48 @@ export default class Solr {
         return Object.assign(... args);
     }
 
-    blob(params){
+    blob(params) {
         return new BlobStoreApi(this.req, this.opts, params);
     }
 
-    config(params){
+    config(params) {
         return new ConfigApi(this.req, this.opts, params);
     }
 
-    json(params){
+    json(params) {
         return new JsonRequestApi(this.req, this.opts, params);
     }
 
-    resources(params){
+    resources(params) {
         return new ManagedResources(this.req, this.opts, params);
     }
 
-    ping(){
+    ping() {
         return new Ping(this.req, this.opts);
     }
 
-    real(params){
+    real(params) {
         return new RealTime(this.req, this.opts, params);
     }
 
-    replication(params){
+    replication(params) {
         return new ReplicationHandlers(this.req, this.opts, params);
     }
 
-    requestParametersAPI(params){
+    requestParametersAPI(params) {
         return new RequestParametersAPI(this.req, this.opts, params);
     }
 
-    search(params){
-        return new SearchHandlers(this.req, this.opts, params);
+    search(params) {
+        // return new SearchHandlers(this.req, this.opts, params);
+        return new JsonRequestApi(this.req, this.opts, params);
     }
 
-    shard(params){
+    shard(params) {
         return new ShardHandlers(this.req, this.opts, params);
     }
 
-    update(data){
+    update(data) {
         return new UpdateRequestHandlers(this.req, this.opts, data);
     }
 }
