@@ -25,6 +25,27 @@ describe('Update', () => {
       });
   });
 
+  it('Adapter.create should return status "OK"', done => {
+    Adapter.create([
+                  {
+                    'id': '1199',
+                    'title': 'Doc 1199'
+                  },
+                  {
+                    'id': '11222',
+                    'title': 'Doc 11222'
+                  }
+                ])
+      .then(function(res){
+        expect(res.responseHeader.status).to.be.equal(0);
+        done();
+      })
+      .catch(function (err) {
+        console.log('err',err);
+        done();
+      });
+  });
+
   describe('test update', () => {
 
     it('select return status "OK"', done => {
