@@ -3,7 +3,7 @@
  * https://cwiki.apache.org/confluence/display/solr/ConfigSets+API
  */
 
-exports class ConfigSets {
+export class ConfigSets {
 
     constructor(request, opts) {
 

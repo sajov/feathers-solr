@@ -3,7 +3,7 @@
  * https://cwiki.apache.org/confluence/display/solr/Collections+API
  */
 
-exports class CollectionsApi {
+export class CollectionsApi {
 
     constructor(request, opts) {
 

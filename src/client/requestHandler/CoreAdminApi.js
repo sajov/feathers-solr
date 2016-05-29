@@ -3,7 +3,7 @@
  * https://cwiki.apache.org/confluence/display/solr/CoreAdmin+API
  */
 
-class CoreAdmin {
+export class CoreAdmin {
 
     constructor(request, opts) {
 
