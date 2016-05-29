@@ -56,7 +56,20 @@ class Service {
 
   create(data) {
 
-    return this.Solr.update(data);
+    let _self = this;
+
+    return new Promise((resolve, reject) => {
+      console.time('test');
+      this.Solr.update(data)
+        .then(function(res){
+          console.timeEnd('test');
+          resolve(res);
+        })
+        .catch(function (err) {
+          console.log('err',err);
+          return reject(new errors.BadRequest());
+        });
+    });
 
   }
 
