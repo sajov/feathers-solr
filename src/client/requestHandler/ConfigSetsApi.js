@@ -1,6 +1,6 @@
 /**
- * Solr Managed Resources
- * https://cwiki.apache.org/confluence/display/solr/Managed+Resources
+ * Solr ConfigSets API
+ * https://cwiki.apache.org/confluence/display/solr/ConfigSets+API
  */
 
 exports class ConfigSets {
@@ -9,7 +9,7 @@ exports class ConfigSets {
 
         this.options = {
             method: 'GET',
-            uri: opts.urlCore + '/schema/analysis/stopwords/english"',
+            uri: opts.url + '/admin/configs',
             json: true
         };
 

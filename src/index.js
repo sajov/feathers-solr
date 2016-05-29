@@ -1,6 +1,6 @@
 if (!global._babelPolyfill) { require('babel-polyfill'); }
 
-import { _ , filter, requestParser, responseParser } from './utils';
+import { _ , filter, requestParserJson, requestParser, responseParser } from './utils';
 import errors from 'feathers-errors';
 import Solr from './client/Solr';
 import makeDebug from 'debug';
@@ -10,7 +10,9 @@ const debug = makeDebug('feathers-solr');
 class Service {
 
   constructor(options = {}) {
+
     this.options = options;
+
     this.Solr = new Solr({
       scheme:'http',
       host:'localhost',
@@ -25,6 +27,7 @@ class Service {
             overwrite: true
           }
     });
+
   }
 
   find(params) {
@@ -32,9 +35,10 @@ class Service {
     let _self = this;
 
     return new Promise((resolve, reject) => {
-
-      this.Solr.search(requestParser(params))
+      console.time('test');
+      this.Solr.json(requestParserJson(params))
         .then(function(res){
+          console.timeEnd('test');
           resolve(responseParser(params, _self.options, res));
         })
         .catch(function (err) {
@@ -51,7 +55,9 @@ class Service {
   // }
 
   create(data) {
-     return this.Solr.update(data);
+
+    return this.Solr.update(data);
+
   }
 
   update(id, data) {

@@ -62,18 +62,17 @@ function queryParser(query, params, opt) {
   delete params.$select;
   // delete query.$populate;
 
+  let filter = [];
+
   if(_.has(params, '$or')) {
 
     let $or = _.get(params, '$or');
-
-    query.filter = [];
 
     Array.apply(null, Object.keys($or)).forEach(function(item,index){
       console.log('OR Array.each',item,index);
       // if(Array.isArray($or[item])) {
 
       // }
-
     });
     delete params.$or;
     console.log('query or???',params);
@@ -81,46 +80,67 @@ function queryParser(query, params, opt) {
 
   Array.apply(null, Object.keys(params)).forEach(function(item,index){
       console.log('DEFAULT Array.each',item,index);
-
       query.filter = query.filter || [];
 
       if(typeof params[item] === 'string') {
-        query.filter.push(item + ':' + params[item]);
+        filter.push(item + ':' + params[item]);
       }
 
       if(Array.isArray(params[item])) {
-        query.filter.push(item + ':' + params[item]);
+        filter.push(item + ':' + params[item]);
       }
 
   });
 
-  return query;
+  return filter;
 }
 
 /**
- * Request parser
+ * Solr default select parser
  * @param  {object} params Request params
  * @param  {object} opt    Adapter options
  * @return {object}        Solr query
  */
 export function requestParser(params, opt) {
+      // default $limit, $skip, $sort, and $select
+  let query = {
+    /* solr default SearchHandler*/
+    start: _.get(params, 'query.$skip') || 0,
+    rows: _.get(params, 'query.$limit') || 10,
+    sort: _.get(params, 'query.$sort') || '_version_ desc',
+    fl: _.get(params, 'query.$select') || '*'
+  };
+
+  // extended $q
+  if(_.has(params, 'query.$q')) {
+    query.q = params.query.$q;
+  }
+
+  if(_.has(params,'query')) {
+    query.fq = queryParser(query, params.query, opt);
+  }
+
+  console.log('query', query);
+  return query;
+}
+
+/**
+ * Solr Json Request Api
+ * @param  {object} params Request params
+ * @param  {object} opt    Adapter config
+ * @return {object}        Solr query object
+ */
+export function requestParserJson(params, opt) {
 
   console.log('requestParser ================================================================');
   console.log('params',params);
 
   // default $limit, $skip, $sort, and $select
   let query = {
-    /* solr Json Request Api */
     limit: _.get(params, 'query.$limit') || 10,
     offset: _.get(params, 'query.$skip') || 0,
     sort: _.get(params, 'query.$sort') || '_version_ desc',
     fields: _.get(params, 'query.$select') || '*'
-
-    /* solr default SearchHandler*/
-    // start: _.get(params, 'query.$skip') || 0,
-    // rows: _.get(params, 'query.$limit') || 10,
-    // sort: _.get(params, 'query.$sort') || '_version_ desc',
-    // fl: _.get(params, 'query.$select') || '*'
   };
 
   // extended $q
@@ -129,7 +149,7 @@ export function requestParser(params, opt) {
   }
 
   if(_.has(params,'query')) {
-    query = queryParser(query, params.query, opt);
+    query.filter = queryParser(query, params.query, opt);
   }
 
   console.log('query', query);

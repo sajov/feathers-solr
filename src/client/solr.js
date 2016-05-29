@@ -6,6 +6,7 @@
 **/
 import * as BlobStoreApi from './requestHandler/BlobStoreApi.js';
 import * as ConfigApi from './requestHandler/ConfigApi.js';
+import * as CoreAdminApi from './requestHandler/CoreAdminApi.js';
 import JsonRequestApi from './requestHandler/JsonRequestApi.js';
 import * as ManagedResources from './requestHandler/ManagedResources.js';
 import Ping from './requestHandler/Ping.js';
@@ -22,14 +23,18 @@ export default class Solr {
     constructor(opts) {
 
         this.opts = this.extend({
-            scheme:'http',
-            host:'localhost',
-            port:8983,
-            path:'/solr',
-            core:'/gettingstarted',
-            createUUID: true,
-            commitType: {commitWihtin:50}, // mixed: true||'softCommit'||{commitWihtin:50}
+            scheme: 'http',
+            host: 'localhost',
+            port: 8983,
+            path: '/solr',
+            core: '/gettingstarted',
             managedScheme: true,
+            /*commitStrategy softCommit: true, commit: true, commitWithin: 50*/
+            commitStrategy: {
+                softCommit: true,
+                commitWithin: 50000,
+                overwrite: true
+            }
         }, opts);
 
         this.opts.url = [this.opts.scheme, '://', this.opts.host, ':', this.opts.port, this.opts.path].join('');
@@ -48,6 +53,10 @@ export default class Solr {
 
     config(params) {
         return new ConfigApi(this.req, this.opts, params);
+    }
+
+    coreConfig(params) {
+        return new CoreAdminApi(this.req, this.opts, params);
     }
 
     json(params) {
@@ -75,8 +84,7 @@ export default class Solr {
     }
 
     search(params) {
-        // return new SearchHandlers(this.req, this.opts, params);
-        return new JsonRequestApi(this.req, this.opts, params);
+        return new SearchHandlers(this.req, this.opts, params);
     }
 
     shard(params) {
