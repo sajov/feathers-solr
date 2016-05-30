@@ -1,6 +1,6 @@
 if (!global._babelPolyfill) { require('babel-polyfill'); }
 
-import { _ , filter, requestParserJson, requestParser, responseParser } from './utils';
+import { _ , filter, requestParserJson, requestParser, responseParser, deleteParser } from './utils';
 import errors from 'feathers-errors';
 import Solr from './client/Solr';
 import makeDebug from 'debug';
@@ -103,7 +103,19 @@ class Service {
 
   }
 
-  remove(id, data, params) {
+  remove(id, params) {
+
+    let _self = this;
+
+    return new Promise((resolve, reject) => {
+      this.Solr.update(deleteParser(id, params))
+        .then(function(res){
+          resolve('id');
+        })
+        .catch(function (err) {
+          return reject(new errors.BadRequest());
+        });
+    });
 
   }
 

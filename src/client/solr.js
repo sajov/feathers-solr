@@ -15,7 +15,7 @@ import * as ReplicationHandlers from './requestHandler/ReplicationHandlers.js';
 import * as RequestParametersAPI from './requestHandler/RequestParametersAPI.js';
 import SearchHandlers from './requestHandler/SearchHandlers.js';
 import * as ShardHandlers from './requestHandler/ShardHandlers.js';
-import UpdateRequestHandlers from './requestHandler/UpdateRequestHandlers.js';
+import * as UpdateRequestHandlers from './requestHandler/UpdateRequestHandlers.js';
 var request = require('request-promise');
 
 export default class Solr {
@@ -92,6 +92,14 @@ export default class Solr {
     }
 
     update(data) {
-        return new UpdateRequestHandlers(this.req, this.opts, data);
+        return new UpdateRequestHandlers.update(this.req, this.opts, data);
+    }
+
+    updateJson(data) {
+        return new UpdateRequestHandlers.updateJson(this.req, this.opts, data);
+    }
+
+    updateJsonDocs(data) {
+        return new UpdateRequestHandlers.updateJsonDocs(this.req, this.opts, data);
     }
 }

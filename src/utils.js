@@ -206,3 +206,19 @@ export function responseDocsParser(res, maxCount = 1) {
   return _.get(res, 'response.docs') || [];
 
 }
+
+export function deleteParser(id, params) {
+
+  if(id) {
+    if(!Array.isArray(id)) {
+      id = [id];
+    }
+    return {delete: {id: id}};
+  }
+
+  if(params) {
+    return {delete: {query: params}};
+  }
+
+  return {delete: {id: []}};
+}
