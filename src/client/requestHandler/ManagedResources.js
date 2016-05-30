@@ -9,16 +9,16 @@ exports class ConfigSets {
 
         this.options = {
             method: 'GET',
-            uri: opts.urlCore + '/schema/analysis/stopwords/english"',
+            uri: opts.urlCore + '/schema/analysis',
             json: true
         };
 
         this.request = request;
     }
 
-    /* CREATE */
-    create(params) {
-
+    /* ADD */
+    add(params) {
+        this.options.uri += '/stopwords/english';
         this.options.qs = Object.assing({
             action: 'STATUS',
         }, params);
