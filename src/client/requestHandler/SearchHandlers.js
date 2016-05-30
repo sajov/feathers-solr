@@ -21,6 +21,6 @@ export default (request, opts, query) => {
         },
         json: true
     };
-    console.log('SearchHandlers OPTIONS',options);
+    // console.log('SearchHandlers OPTIONS',options);
     return request(options);
 };

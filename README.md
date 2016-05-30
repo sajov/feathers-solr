@@ -7,7 +7,7 @@
 ## Installation
 
 ```
-npm install feathers-authentication --save
+npm install feathers-solr --save
 ```
 
 ## Documentation

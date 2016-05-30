@@ -3,7 +3,7 @@
  * https://cwiki.apache.org/confluence/display/solr/Request+Parameters+API
  */
 
-exports class RequestParameters {
+export class RequestParameters {
 
     constructor(request, opts) {
 

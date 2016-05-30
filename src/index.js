@@ -1,6 +1,6 @@
 if (!global._babelPolyfill) { require('babel-polyfill'); }
 
-import { _ , filter, requestParserJson, requestParser, responseParser } from './utils';
+import { _ , filter, requestParserJson, requestParser, responseParser, deleteParser } from './utils';
 import errors from 'feathers-errors';
 import Solr from './client/Solr';
 import makeDebug from 'debug';
@@ -27,7 +27,6 @@ class Service {
             overwrite: true
           }
     });
-
   }
 
   find(params) {
@@ -35,40 +34,88 @@ class Service {
     let _self = this;
 
     return new Promise((resolve, reject) => {
-      console.time('test');
       this.Solr.json(requestParserJson(params))
         .then(function(res){
-          console.timeEnd('test');
           resolve(responseParser(params, _self.options, res));
         })
         .catch(function (err) {
-          console.log('err',err);
           return reject(new errors.BadRequest());
         });
-
     });
+  }
+
+  get(id) {
+
+    let _self = this;
+
+    return new Promise((resolve, reject) => {
+      this.Solr.json(requestParserJson({id: id}))
+      .then(function(res){
+        return resolve(res);
+      })
+      .catch(function (err) {
+        console.log('err',err);
+        return reject(new errors.NotFound(`No record found for id '${id}'`));
+      });
+    });
+
 
   }
 
-  // get(id) {
-
-  // }
-
   create(data) {
 
-    return this.Solr.update(data);
+    let _self = this;
 
+    return new Promise((resolve, reject) => {
+      this.Solr.update(data)
+      .then(function(res){
+        resolve(res);
+      })
+      .catch(function (err) {
+        return reject(new errors.BadRequest());
+      });
+    });
   }
 
   update(id, data) {
 
+    if(id === null || Array.isArray(data)) {
+      return Promise.reject(new errors.BadRequest(
+        `You can not replace multiple instances. Did you mean 'patch'?`
+      ));
+    }
+
+    let _self = this;
+
+    return new Promise((resolve, reject) => {
+      this.Solr.json(requestParserJson({id: id}))
+      .then(function(res){
+        return _self.create(res.data || res);
+      })
+      .catch(function (err) {
+        console.log('err',err);
+        return reject(new errors.BadRequest());
+      });
+    });
   }
 
   patch(id, data, params) {
 
   }
 
-  remove(id, data, params) {
+  remove(id, params) {
+
+    let _self = this;
+
+    return new Promise((resolve, reject) => {
+      this.Solr.update(deleteParser(id, params))
+        .then(function(res){
+          resolve('id');
+        })
+        .catch(function (err) {
+          return reject(new errors.BadRequest());
+        });
+    });
 
   }
 

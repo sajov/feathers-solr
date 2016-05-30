@@ -3,7 +3,7 @@
  * https://cwiki.apache.org/confluence/display/solr/Request+Parameters+API
  */
 
-exports class Schema {
+export class Schema {
 
     constructor(request, opts) {
 

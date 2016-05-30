@@ -1,9 +1,9 @@
 #!/bin/sh
 
-FILE="solr-6.0.0.tgz"
-URL="http://artfiles.org/apache.org/lucene/solr/6.0.0/"
+FILE="solr-6.0.1.tgz"
+URL="https://archive.apache.org/dist/lucene/solr/6.0.1/"
 
 wget $URL$FILE
-tar xfz solr-6.0.0.tgz
-cd solr-6.0.0
+tar xfz solr-6.0.1.tgz
+cd solr-6.0.1
 bin/solr start -e schemaless

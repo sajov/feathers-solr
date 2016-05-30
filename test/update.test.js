@@ -25,6 +25,8 @@ describe('Update', () => {
       });
   });
 
+
+
   describe('test update', () => {
 
     it('select return status "OK"', done => {
@@ -56,6 +58,27 @@ describe('Update', () => {
           expect(response.response.docs[0].title[0]).to.be.equal('Doc 45412');
           done();
     });
+  });
+
+  it('Adapter.create should return status "OK"', done => {
+    Adapter.create([
+                  {
+                    'id': '1199',
+                    'title': 'Doc 1199'
+                  },
+                  {
+                    'id': '11222',
+                    'title': 'Doc 11222'
+                  }
+                ])
+      .then(function(res){
+        expect(res.responseHeader.status).to.be.equal(0);
+        done();
+      })
+      .catch(function (err) {
+        console.log('err',err);
+        done();
+      });
   });
 
 });

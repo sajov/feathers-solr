@@ -158,7 +158,7 @@ export function requestParserJson(params, opt) {
 }
 
 /**
- * Request parser
+ * Response parser
  * @param  {object} params Request params
  * @param  {object} opt    Adapter options
  * @param  {object} opt    Solr response object
@@ -168,16 +168,57 @@ export function responseParser(params, opt, res) {
 
   console.log('Utils.responseParser',res);
 
-  let response = {
-    total: res.response.numFound || 0,  //"<total number of records>",
-    limit: _.get(opt, 'paginate.max') || _.get(params, 'query.$sort') || 10 ,  //"<max number of items per page>",
-    skip: parseInt(params.query.$skip),  //res.response.start "<number of skipped items (offset)>",
-    data: res.response.docs || []  //[/* data */]
-  };
+  let response = {};
+
+  if(_.has(opt, 'paginate.max')) {
+    response = {
+      total: res.response.numFound || 0,  //"<total number of records>",
+      limit: _.get(opt, 'paginate.max') || _.get(params, 'query.$sort') || 10 ,  //"<max number of items per page>",
+      skip: parseInt(params.query.$skip),  //res.response.start "<number of skipped items (offset)>",
+      data: res.response.docs || []  //[/* data */]
+    };
+  } else {
+    response = _.get(res, 'response.docs') || [];
+  }
 
   if(_.has(res, 'facet_counts.facet_fields')) {
     response.facet = _.get(res, 'facet_counts.facet_fields');
   }
 
   return response;
+}
+
+/**
+ * Response Docs parser
+ * @param  {object} params Request params
+ * @param  {object} opt    Adapter options
+ * @param  {object} opt    Solr response object
+ * @return {object}        Adapter response
+ */
+export function responseDocsParser(res, maxCount = 1) {
+
+  let response = maxCount === 1 ? {} : [];
+
+  if(!_.has(res, 'response.docs')) {
+    return response;
+  }
+
+  return _.get(res, 'response.docs') || [];
+
+}
+
+export function deleteParser(id, params) {
+
+  if(id) {
+    if(!Array.isArray(id)) {
+      id = [id];
+    }
+    return {delete: {id: id}};
+  }
+
+  if(params) {
+    return {delete: {query: params}};
+  }
+
+  return {delete: {id: []}};
 }
