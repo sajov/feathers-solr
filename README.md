@@ -1,6 +1,8 @@
 # feathers-solr
 
 [![Build Status](https://travis-ci.org/sajov/feathers-solr.png?branch=master)](https://travis-ci.org/sajov/feathers-solr)
+[![Coverage Status](https://coveralls.io/repos/sajov/feathers-solr/badge.svg?branch=master&service=github)](https://coveralls.io/github/sajov/feathers-solr?branch=master)
+[![Dependency Status](https://david-dm.org/sajov/feathers-solr.svg)](https://david-dm.org/jsdoc2md/feathers-solr)
 
 > Solr Adapter for Feathersjs
 
@@ -16,7 +18,7 @@ Please refer to the [feathers-solr documentation](http://docs.feathersjs.com/) f
 
 ## Complete Example
 
-Here's an example of a Feathers server that uses `feathers-solr`. 
+Here's an example of a Feathers server that uses `feathers-solr`.
 
 ```js
 const feathers = require('feathers');
