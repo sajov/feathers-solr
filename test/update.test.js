@@ -63,11 +63,11 @@ describe('Update', () => {
   it('Adapter.create should return status "OK"', done => {
     Adapter.create([
                   {
-                    'id': '1199',
+                    'id': '1199aa',
                     'title': 'Doc 1199'
                   },
                   {
-                    'id': '11222',
+                    'id': '11222bbb',
                     'title': 'Doc 11222'
                   }
                 ])

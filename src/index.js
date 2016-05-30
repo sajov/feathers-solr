@@ -1,6 +1,6 @@
 if (!global._babelPolyfill) { require('babel-polyfill'); }
 
-import { _ , filter, requestParserJson, requestParser, responseParser, deleteParser } from './utils';
+import { _ , filter, requestParserJson, requestParser, responseParser, responseDocsParser, deleteParser } from './utils';
 import errors from 'feathers-errors';
 import Solr from './client/Solr';
 import makeDebug from 'debug';
@@ -58,8 +58,6 @@ class Service {
         return reject(new errors.NotFound(`No record found for id '${id}'`));
       });
     });
-
-
   }
 
   create(data) {
@@ -88,14 +86,33 @@ class Service {
     let _self = this;
 
     return new Promise((resolve, reject) => {
-      this.Solr.json(requestParserJson({id: id}))
-      .then(function(res){
-        return _self.create(res.data || res);
-      })
-      .catch(function (err) {
-        console.log('err',err);
-        return reject(new errors.BadRequest());
-      });
+      this.Solr.json(requestParserJson({query:{id: id,$limit:1}}, this.options))
+        .then(function(res){
+
+          res = responseDocsParser(res);
+          data.id = id;
+          let copy = {};
+
+          Object.keys(res).forEach(key => {
+            if(typeof data[key] === 'undefined') {
+              copy[key] = null;
+            } else {
+              copy[key] = data[key];
+            }
+          });
+
+          _self.create(copy)
+            .then(function(res){
+              resolve(copy);
+            })
+            .catch(function (err) {
+              return reject(new errors.BadRequest());
+            });
+        })
+        .catch(function (err) {
+          console.log('err',err);
+          return reject(new errors.BadRequest());
+        });
     });
   }
 
@@ -108,9 +125,9 @@ class Service {
     let _self = this;
 
     return new Promise((resolve, reject) => {
-      this.Solr.update(deleteParser(id, params))
+      this.Solr.delete(deleteParser(id, params))
         .then(function(res){
-          resolve('id');
+          resolve(res);
         })
         .catch(function (err) {
           return reject(new errors.BadRequest());

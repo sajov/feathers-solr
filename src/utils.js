@@ -46,6 +46,70 @@ export const _ = {
   }
 };
 
+
+
+export function getOrder(sort={}) {
+  let order = {};
+
+  Object.keys(sort).forEach(name => {
+    order[name] = sort[name] === 1 ? 'asc' : 'desc';
+  });
+
+  return order;
+}
+
+const queryMappings = {
+  $lt: '<',
+  $lte: '<=',
+  $gt: '>',
+  $gte: '>=',
+  $ne: '!',
+  $nin: '!'
+};
+
+const specials = ['$sort', '$limit', '$skip', '$select'];
+
+function getValue(value, prop) {
+
+  if(typeof value === 'object' && specials.indexOf(prop) === -1) {
+    let query = {};
+
+    Object.keys(value).forEach(key => {
+      if(queryMappings[key]) {
+        query[queryMappings[key]] = value[key];
+      } else {
+        query[key] = value[key];
+      }
+    });
+
+    return query;
+  }
+
+  return value;
+}
+
+export function getWhere(query) {
+  let where = {};
+
+  if(typeof query !== 'object') {
+    return {};
+  }
+
+  Object.keys(query).forEach(prop => {
+    const value = query[prop];
+
+    if(prop === '$or') {
+      where.or = value;
+    } else if(value.$in) {
+      where[prop] = value.$in;
+    } else {
+      where[prop] = getValue(value, prop);
+    }
+  });
+
+  return where;
+}
+
 /**
  * Internal Query parser
  * @param  {object} query  Solr base query
@@ -69,30 +133,36 @@ function queryParser(query, params, opt) {
     let $or = _.get(params, '$or');
 
     Array.apply(null, Object.keys($or)).forEach(function(item,index){
-      console.log('OR Array.each',item,index);
+      // console.log('OR Array.each',item,index);
       // if(Array.isArray($or[item])) {
 
       // }
     });
     delete params.$or;
-    console.log('query or???',params);
+    // console.log('query or???',params);
   }
 
   Array.apply(null, Object.keys(params)).forEach(function(item,index){
-      console.log('DEFAULT Array.each',item,index);
       query.filter = query.filter || [];
 
-      if(typeof params[item] === 'string') {
-        filter.push(item + ':' + params[item]);
-      }
 
       if(Array.isArray(params[item])) {
+        filter.push(item + ':' + params[item]);
+      } else {
         filter.push(item + ':' + params[item]);
       }
 
   });
 
+
   return filter;
+}
+
+function getFilter(object) {
+
+  let pairs = _.pairs(object);
+  return (pairs[0] || '*') + ':' + (pairs[1] || '*');
+
 }
 
 /**
@@ -120,7 +190,7 @@ export function requestParser(params, opt) {
     query.fq = queryParser(query, params.query, opt);
   }
 
-  console.log('query', query);
+  // console.log('query', query);
   return query;
 }
 
@@ -131,9 +201,6 @@ export function requestParser(params, opt) {
  * @return {object}        Solr query object
  */
 export function requestParserJson(params, opt) {
-
-  console.log('requestParser ================================================================');
-  console.log('params',params);
 
   // default $limit, $skip, $sort, and $select
   let query = {
@@ -152,7 +219,7 @@ export function requestParserJson(params, opt) {
     query.filter = queryParser(query, params.query, opt);
   }
 
-  console.log('query', query);
+  // console.log('query', query);
   return query;
 
 }
@@ -166,7 +233,7 @@ export function requestParserJson(params, opt) {
  */
 export function responseParser(params, opt, res) {
 
-  console.log('Utils.responseParser',res);
+  // console.log('Utils.responseParser',res);
 
   let response = {};
 
@@ -175,7 +242,7 @@ export function responseParser(params, opt, res) {
       total: res.response.numFound || 0,  //"<total number of records>",
       limit: _.get(opt, 'paginate.max') || _.get(params, 'query.$sort') || 10 ,  //"<max number of items per page>",
       skip: parseInt(params.query.$skip),  //res.response.start "<number of skipped items (offset)>",
-      data: res.response.docs || []  //[/* data */]
+      data: responseDocsParser(res)  //[/* data */]
     };
   } else {
     response = _.get(res, 'response.docs') || [];
@@ -203,7 +270,9 @@ export function responseDocsParser(res, maxCount = 1) {
     return response;
   }
 
-  return _.get(res, 'response.docs') || [];
+  let docs = _.get(res, 'response.docs') || [];
+
+  return maxCount === 1 ? docs[0] : docs;
 
 }
 
@@ -211,14 +280,15 @@ export function deleteParser(id, params) {
 
   if(id) {
     if(!Array.isArray(id)) {
-      id = [id];
+      id = id;
     }
     return {delete: {id: id}};
   }
 
   if(params) {
-    return {delete: {query: params}};
+    //TODO' implement array
+    return {delete: {query: getFilter(params)}};
   }
 
-  return {delete: {id: []}};
+  return {delete: {query: '*'}};
 }

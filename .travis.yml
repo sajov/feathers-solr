@@ -2,3 +2,10 @@ language: node_js
 node_js:
   - 'node'
   - 'iojs'
+before_script:
+- bin/./install-solr.sh
+- npm install -g istanbul
+- npm install -g mocha
+script: make test
+after_success:
+- make coveralls

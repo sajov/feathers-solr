@@ -36,6 +36,7 @@
     "jshint": "jshint src/. test/. --config",
     "mocha": "mocha --recursive test/ --compilers js:babel-core/register",
     "test": "npm run compile && npm run jshint && npm run mocha",
+    "testadapter": "npm run compile && npm run jshint && mocha --recursive test/adapter.test.js --compilers js:babel-core/register",
     "start": "npm run compile && node example/app"
   },
   "directories": {

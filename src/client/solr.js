@@ -38,9 +38,10 @@ export default class Solr {
         }, opts);
 
         this.opts.url = [this.opts.scheme, '://', this.opts.host, ':', this.opts.port, this.opts.path].join('');
-        this.opts.coreUrl = [this.opts.url, this.opts.core].join('');
-        this.req = request;
 
+        this.opts.coreUrl = [this.opts.url, this.opts.core].join('');
+
+        this.req = request;
     }
 
     extend(... args) {
@@ -101,5 +102,17 @@ export default class Solr {
 
     updateJsonDocs(data) {
         return new UpdateRequestHandlers.updateJsonDocs(this.req, this.opts, data);
+    }
+
+    delete(data) {
+        return new UpdateRequestHandlers.deleteQuery(this.req, this.opts, data);
+    }
+
+    commit(data) {
+        return new UpdateRequestHandlers.commit(this.req, this.opts);
+    }
+
+    optimize(data) {
+        return new UpdateRequestHandlers.optimize(this.req, this.opts);
     }
 }
