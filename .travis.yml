@@ -2,6 +2,8 @@ language: node_js
 node_js:
   - 'node'
   - 'iojs'
+jdk:
+ - openjdk7
 before_script:
 - bin/./install-solr.sh
 - npm install -g istanbul
