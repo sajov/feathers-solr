@@ -242,7 +242,7 @@ export function responseParser(params, opt, res) {
       total: res.response.numFound || 0,  //"<total number of records>",
       limit: _.get(opt, 'paginate.max') || _.get(params, 'query.$sort') || 10 ,  //"<max number of items per page>",
       skip: parseInt(params.query.$skip),  //res.response.start "<number of skipped items (offset)>",
-      data: responseDocsParser(res)  //[/* data */]
+      data: responseDocsParser(res, true)  //[/* data */]
     };
   } else {
     response = _.get(res, 'response.docs') || [];
@@ -262,9 +262,9 @@ export function responseParser(params, opt, res) {
  * @param  {object} opt    Solr response object
  * @return {object}        Adapter response
  */
-export function responseDocsParser(res, maxCount = 1) {
+export function responseDocsParser(res, allDocs = false) {
 
-  let response = maxCount === 1 ? {} : [];
+  let response = allDocs === false ? {} : [];
 
   if(!_.has(res, 'response.docs')) {
     return response;
@@ -272,7 +272,7 @@ export function responseDocsParser(res, maxCount = 1) {
 
   let docs = _.get(res, 'response.docs') || [];
 
-  return maxCount === 1 ? docs[0] : docs;
+  return allDocs === false ? docs[0] : docs;
 
 }
 

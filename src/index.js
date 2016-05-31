@@ -30,7 +30,7 @@ class Service {
   }
 
   find(params) {
-
+    console.log('find(params) {');
     let _self = this;
 
     return new Promise((resolve, reject) => {
@@ -45,13 +45,13 @@ class Service {
   }
 
   get(id) {
-
+    console.log('get(id) {');
     let _self = this;
 
     return new Promise((resolve, reject) => {
       this.Solr.json(requestParserJson({id: id}))
       .then(function(res){
-        return resolve(res);
+        return resolve(responseParser({}, _self.options, res));
       })
       .catch(function (err) {
         console.log('err',err);
