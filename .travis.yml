@@ -6,13 +6,13 @@ addons:
         - oracle-java8-installer
 jdk: oraclejdk8
 before_script:
+  - npm install -g istanbul
+  - npm install -g mocha
+script:
   - java -version
   - jdk_switcher use oraclejdk8
   - java -version
   - bin/./install-solr.sh
-  - npm install -g istanbul
-  - npm install -g mocha
-script:
   - npm test
 after_success:
   - cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
