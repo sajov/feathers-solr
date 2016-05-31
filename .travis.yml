@@ -1,6 +1,7 @@
 language: node_js
 node_js: 'node'
-jdk: oraclejdk8
+jdk:
+  - oraclejdk8
 before_script:
   - npm install -g istanbul
   - npm install -g mocha
