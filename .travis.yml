@@ -1,15 +1,13 @@
 language: node_js
-node_js:
-  - 'node'
-jdk:
- - oraclejdk8
+node_js: 'node'
+jdk: oraclejdk8
 before_script:
-- bin/./install-solr.sh
-- npm install -g istanbul
-- npm install -g mocha
+  - sudo apt-get update && sudo apt-get install oracle-java8-installer
+  - java -version
+  - bin/./install-solr.sh
+  - npm install -g istanbul
+  - npm install -g mocha
 script:
-- sudo apt-get update && sudo apt-get install oracle-java8-installer
-- java -version
-- npm test
+  - npm test
 after_success:
-- cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
+  - cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
