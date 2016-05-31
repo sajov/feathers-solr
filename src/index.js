@@ -2,7 +2,7 @@ if (!global._babelPolyfill) { require('babel-polyfill'); }
 
 import { _ , filter, requestParserJson, requestParser, responseParser, responseDocsParser, deleteParser } from './utils';
 import errors from 'feathers-errors';
-import Solr from './client/Solr';
+import Solr from './client/solr';
 import makeDebug from 'debug';
 
 const debug = makeDebug('feathers-solr');
