@@ -1,9 +1,5 @@
 language: node_js
 node_js: 'node'
-addons:
-    apt:
-      packages:
-        - oracle-java8-installer
 jdk: oraclejdk8
 before_script:
   - npm install -g istanbul
