@@ -7,6 +7,6 @@ before_script:
 - bin/./install-solr.sh
 - npm install -g istanbul
 - npm install -g mocha
-script: make test
+script: npm test
 after_success:
-- make coveralls
+- cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
