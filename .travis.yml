@@ -10,10 +10,11 @@ before_install:
   - export JAVA_HOME=/home/travis/.linuxbrew/Cellar/jdk/1.8.0-40
 before_script:
   - java -version
+  - bin/./install-solr.sh
   - npm install -g istanbul
   - npm install -g mocha
 script:
-  - bin/./install-solr.sh
+
   - npm test
 after_success:
   - cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
