@@ -3,12 +3,10 @@ node_js: 'node'
 jdk:
   - oraclejdk8
 before_script:
+  - java -version
   - npm install -g istanbul
   - npm install -g mocha
 script:
-  - java -version
-  - jdk_switcher use oraclejdk8
-  - java -version
   - bin/./install-solr.sh
   - npm test
 after_success:
