@@ -1,7 +1,6 @@
 language: node_js
 node_js:
   - 'node'
-  - 'iojs'
 jdk:
  - openjdk7
 before_script:
