@@ -4,6 +4,7 @@ jdk:
   - oraclejdk8
 node_js: 'node'
 before_script:
+  - node -v
   - java -version
   - bin/./install-solr.sh
   - npm install -g istanbul
