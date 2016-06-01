@@ -31,11 +31,11 @@ describe('request module comparison', () => {
   // });
 
   it('Adapter request', done => {
-    console.time('    request ping');
+    // console.time('    request ping');
     Adapter.client().ping()
       .then(function(res){
         // console.log(res);
-        console.timeEnd('    request ping');
+        // console.timeEnd('    request ping');
         done();
       })
       .catch(function () {

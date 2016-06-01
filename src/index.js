@@ -30,7 +30,6 @@ class Service {
   }
 
   find(params) {
-    console.log('find(params) {');
     let _self = this;
 
     return new Promise((resolve, reject) => {
@@ -45,7 +44,6 @@ class Service {
   }
 
   get(id) {
-    console.log('get(id) {');
     let _self = this;
 
     return new Promise((resolve, reject) => {
