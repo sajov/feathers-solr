@@ -8,6 +8,7 @@ before_script:
   - bin/./install-solr.sh
   - npm install -g istanbul
   - npm install -g mocha
+  - npm install
 script:
 
   - npm test
