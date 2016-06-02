@@ -3,14 +3,17 @@
  * https://cwiki.apache.org/confluence/display/solr/CoreAdmin+API
  */
 
-export class CoreAdmin {
+export default class CoreAdminApi {
 
     constructor(request, opts) {
 
         this.options = {
             method: 'GET',
             uri: opts.url + '/admin/cores', // '/update/json' || /update/json/docs
-            json: true
+            json: true,
+            qs: {
+                wt:'json'
+            }
         };
 
         this.request = request;
@@ -19,7 +22,7 @@ export class CoreAdmin {
     /* STATUS */
     status(params) {
 
-        this.options.qs = Object.assing({
+        this.options.qs = Object.assign(this.options.qs, {
             action: 'STATUS',
         }, params);
 
@@ -30,7 +33,7 @@ export class CoreAdmin {
     /* CREATE */
     create(params) {
 
-        this.options.qs = Object.assing({
+        this.options.qs = Object.assign(this.options.qs, {
             action: 'CREATE',
         }, params);
 
@@ -41,7 +44,7 @@ export class CoreAdmin {
     /* RELOAD */
     reload(params) {
 
-        this.options.qs = Object.assing({
+        this.options.qs = Object.assign(this.options.qs, {
             action: 'RELOAD',
         }, params);
 
@@ -73,13 +76,12 @@ export class CoreAdmin {
         };
 
         return this.request(this.options);
-
     }
 
     /* UNLOAD */
     unload(params) {
 
-        this.options.qs = Object.assing({
+        this.options.qs = Object.assign(this.options.qs, {
             action: 'UNLOAD',
         }, params);
 
@@ -90,7 +92,7 @@ export class CoreAdmin {
     /* MERGEINDEXES */
     mergeindexes(params) {
 
-        this.options.qs = Object.assing({
+        this.options.qs = Object.assign(this.options.qs, {
             action: 'MERGEINDEXES',
         }, params);
 
@@ -101,7 +103,7 @@ export class CoreAdmin {
     /* SPLIT */
     split(params) {
 
-        this.options.qs = Object.assing({
+        this.options.qs = Object.assign(this.options.qs, {
             action: 'SPLIT',
         }, params);
 
@@ -112,7 +114,7 @@ export class CoreAdmin {
     /* REQUESTSTATUS */
     requeststatus(params) {
 
-        this.options.qs = Object.assing({
+        this.options.qs = Object.assign(this.options.qs, {
             action: 'REQUESTSTATUS',
         }, params);
 

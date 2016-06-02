@@ -49,7 +49,7 @@ class Service {
     return new Promise((resolve, reject) => {
       this.Solr.json(requestParserJson({id: id}))
       .then(function(res){
-        return resolve(responseParser({}, _self.options, res));
+        return resolve(responseDocsParser(res));
       })
       .catch(function (err) {
         console.log('err',err);

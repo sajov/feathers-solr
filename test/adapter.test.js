@@ -125,7 +125,7 @@ describe('Adapter', () => {
   describe('Update', () => {
     var response;
     it('update {id:adapter1,age:23}', done => {
-      Adapter.update('adapter1',{name:'sajo',country:'unknown'})
+      Adapter.update('adapter1',{name:'sajo',country:'mazedonia'})
         .then(function(res){
           response = res;
           // console.log('res',res);
@@ -152,6 +152,33 @@ describe('Adapter', () => {
           console.log('err',err);
           done();
         });
+    });
+
+  });
+
+  describe('Get', () => {
+    var response;
+    it('get {id:adapter1} should not be Array', done => {
+      Adapter.get('adapter1')
+        .then(function(res){
+          response = res;
+          expect(response).not.to.be.instanceof(Array);
+          done();
+        })
+        .catch(function (err) {
+          console.log('err',err);
+          done();
+        });
+    });
+
+    it('name should be sajo', done => {
+      expect(response.name).to.include('sajo');
+      done();
+    });
+
+    it('country should be mazedonia', done => {
+      expect(response.country).to.include('mazedonia');
+      done();
     });
 
   });

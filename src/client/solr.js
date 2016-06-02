@@ -6,7 +6,7 @@
 **/
 import * as BlobStoreApi from './requestHandler/BlobStoreApi.js';
 import * as ConfigApi from './requestHandler/ConfigApi.js';
-import * as CoreAdminApi from './requestHandler/CoreAdminApi.js';
+import CoreAdminApi from './requestHandler/CoreAdminApi.js';
 import JsonRequestApi from './requestHandler/JsonRequestApi.js';
 import * as ManagedResources from './requestHandler/ManagedResources.js';
 import Ping from './requestHandler/Ping.js';
@@ -56,8 +56,8 @@ export default class Solr {
         return new ConfigApi(this.req, this.opts, params);
     }
 
-    coreConfig(params) {
-        return new CoreAdminApi(this.req, this.opts, params);
+    coreAdmin() {
+        return new CoreAdminApi(this.req, this.opts);
     }
 
     json(params) {
