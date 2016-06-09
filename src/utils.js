@@ -201,10 +201,11 @@ export function requestParser(params, opt) {
  * @return {object}        Solr query object
  */
 export function requestParserJson(params, opt) {
+  console.log('Utils.requestParserJson',params);
 
   // default $limit, $skip, $sort, and $select
   let query = {
-    limit: _.get(params, 'query.$limit') || 10,
+    limit: _.get(params, 'query.$limit') || _.get(opt, 'paginate.default') || _.get(opt, 'paginate.max'),
     offset: _.get(params, 'query.$skip') || 0,
     sort: _.get(params, 'query.$sort') || '_version_ desc',
     fields: _.get(params, 'query.$select') || '*'
@@ -218,7 +219,6 @@ export function requestParserJson(params, opt) {
   if(_.has(params,'query')) {
     query.filter = queryParser(query, params.query, opt);
   }
-
   // console.log('query', query);
   return query;
 
@@ -231,17 +231,17 @@ export function requestParserJson(params, opt) {
  * @param  {object} opt    Solr response object
  * @return {object}        Adapter response
  */
-export function responseParser(params, opt, res) {
+export function responseParser(params, opt, res, _params) {
 
-  // console.log('Utils.responseParser',res);
+  console.log('Utils.responseParser',_params);
 
   let response = {};
 
   if(_.has(opt, 'paginate.max')) {
     response = {
-      total: res.response.numFound || 0,  //"<total number of records>",
-      limit: _.get(opt, 'paginate.max') || _.get(params, 'query.$sort') || 10 ,  //"<max number of items per page>",
-      skip: parseInt(params.query.$skip),  //res.response.start "<number of skipped items (offset)>",
+      total: _.get(res, 'response.numFound') || 0,  //"<total number of records>",
+      limit: _.get(params, 'query.$limit') || _.get(opt, 'paginate.default') || _.get(opt, 'paginate.max'),
+      skip: _.get(params, 'query.$skip') || 0,  //res.response.start "<number of skipped items (offset)>",
       data: responseDocsParser(res, true)  //[/* data */]
     };
   } else {

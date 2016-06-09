@@ -27,15 +27,20 @@ class Service {
             overwrite: true
           }
     });
+    console.log('feather-solr started');
   }
 
   find(params) {
     let _self = this;
-
+    let _params = params;
+    console.log('find????1',params);
     return new Promise((resolve, reject) => {
-      this.Solr.json(requestParserJson(params))
+      let query = params;
+      console.log('find????2',query);
+      this.Solr.json(requestParserJson(params, _self.options))
         .then(function(res){
-          resolve(responseParser(params, _self.options, res));
+    console.log('find????3',query);
+          resolve(responseParser(query, _self.options, res,_params));
         })
         .catch(function (err) {
           return reject(new errors.BadRequest());
@@ -45,11 +50,17 @@ class Service {
 
   get(id) {
     let _self = this;
-
+    console.log(requestParserJson({query:{id: id}}),'get ????');
     return new Promise((resolve, reject) => {
-      this.Solr.json(requestParserJson({id: id}))
+      this.Solr.json(requestParserJson({query:{id: id}}))
       .then(function(res){
-        return resolve(responseDocsParser(res));
+        let docs = responseDocsParser(res);
+        console.log('docs',docs);
+        if(typeof docs !== 'undefined') {
+          return resolve(docs);
+        } else {
+          return reject(new errors.NotFound(`No record found for id '${id}'`));
+        }
       })
       .catch(function (err) {
         console.log('err',err);
@@ -65,7 +76,11 @@ class Service {
     return new Promise((resolve, reject) => {
       this.Solr.update(data)
       .then(function(res){
-        resolve(res);
+        if(res.responseHeader.status === 0) {
+          resolve(data);
+        } else {
+          return reject(new errors.BadRequest());
+        }
       })
       .catch(function (err) {
         return reject(new errors.BadRequest());
