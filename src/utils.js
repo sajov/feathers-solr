@@ -231,17 +231,17 @@ export function requestParserJson(params, opt) {
  * @param  {object} opt    Solr response object
  * @return {object}        Adapter response
  */
-export function responseParser(params, opt, res, _params) {
+export function responseParser(params, opt, res) {
 
-  console.log('Utils.responseParser',_params);
+  console.log('Utils.responseParser',params);
 
   let response = {};
 
   if(_.has(opt, 'paginate.max')) {
     response = {
       total: _.get(res, 'response.numFound') || 0,  //"<total number of records>",
-      limit: _.get(params, 'query.$limit') || _.get(opt, 'paginate.default') || _.get(opt, 'paginate.max'),
-      skip: _.get(params, 'query.$skip') || 0,  //res.response.start "<number of skipped items (offset)>",
+      limit: parseInt(_.get(params, '_query.$limit')) || _.get(opt, 'paginate.default') || _.get(opt, 'paginate.max'),
+      skip: parseInt(_.get(params, '_query.$skip')) || 0,  //res.response.start "<number of skipped items (offset)>",
       data: responseDocsParser(res, true)  //[/* data */]
     };
   } else {

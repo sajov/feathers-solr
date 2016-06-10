@@ -32,15 +32,11 @@ class Service {
 
   find(params) {
     let _self = this;
-    let _params = params;
-    console.log('find????1',params);
+    params._query = Object.assign({}, params.query);
     return new Promise((resolve, reject) => {
-      let query = params;
-      console.log('find????2',query);
       this.Solr.json(requestParserJson(params, _self.options))
         .then(function(res){
-    console.log('find????3',query);
-          resolve(responseParser(query, _self.options, res,_params));
+          resolve(responseParser(params, _self.options, res));
         })
         .catch(function (err) {
           return reject(new errors.BadRequest());
