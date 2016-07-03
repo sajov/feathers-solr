@@ -64,11 +64,12 @@ describe('Adapter', () => {
                     }
                   ])
         .then(function(res){
-          expect(res.responseHeader.status).to.be.equal(0);
+          expect(res).not.to.be.equal(0);
           done();
         })
         .catch(function (err) {
           console.log('err',err);
+          expect(err).to.be.equal(1);
           done();
         });
     });

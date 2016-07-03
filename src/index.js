@@ -46,12 +46,12 @@ class Service {
 
   get(id) {
     let _self = this;
-    console.log(requestParserJson({query:{id: id}}),'get ????');
+    // console.log(requestParserJson({query:{id: id}}),'get ????');
     return new Promise((resolve, reject) => {
       this.Solr.json(requestParserJson({query:{id: id}}))
       .then(function(res){
         let docs = responseDocsParser(res);
-        console.log('docs',docs);
+        // console.log('docs',docs);
         if(typeof docs !== 'undefined') {
           return resolve(docs);
         } else {

@@ -201,7 +201,7 @@ export function requestParser(params, opt) {
  * @return {object}        Solr query object
  */
 export function requestParserJson(params, opt) {
-  console.log('Utils.requestParserJson',params);
+  // console.log('Utils.requestParserJson',params);
 
   // default $limit, $skip, $sort, and $select
   let query = {
@@ -233,7 +233,7 @@ export function requestParserJson(params, opt) {
  */
 export function responseParser(params, opt, res) {
 
-  console.log('Utils.responseParser',params);
+  // console.log('Utils.responseParser',params);
 
   let response = {};
 

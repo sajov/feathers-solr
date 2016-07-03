@@ -72,7 +72,7 @@ describe('Update', () => {
                   }
                 ])
       .then(function(res){
-        expect(res.responseHeader.status).to.be.equal(0);
+        expect(res).not.to.be.equal(0);
         done();
       })
       .catch(function (err) {
