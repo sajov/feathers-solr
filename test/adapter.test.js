@@ -62,6 +62,12 @@ describe('Adapter', () => {
                       'name': 'Doc adapter2',
                       'country': 'uk',
                       'age': 48
+                    },
+                    {
+                      'id': 'adapter3',
+                      'name': 'Doc adapter3',
+                      'country': 'es',
+                      'age': 24
                     }
                   ])
         .then(function(res){
@@ -97,8 +103,8 @@ describe('Adapter', () => {
     });
 
 
-    it('find ALL should return empty Array lengthOf 2', done => {
-      expect(response).to.have.lengthOf(2);
+    it('find ALL should return empty Array lengthOf 3', done => {
+      expect(response).to.have.lengthOf(3);
       done();
     });
 
@@ -120,6 +126,22 @@ describe('Adapter', () => {
     it('find by id should return empty Array lengthOf 1', done => {
       expect(response).to.have.lengthOf(1);
       done();
+    });
+
+
+    it('find ALL and sort by age', done => {
+      Adapter.find({query:{$sort:{age:1}}})
+        .then(function(res){
+          response = res;
+          // console.log('response',response);
+          expect(response).to.be.instanceof(Array);
+
+          done();
+        })
+        .catch(function (err) {
+          console.log('err',err);
+          done();
+        });
     });
 
   });
