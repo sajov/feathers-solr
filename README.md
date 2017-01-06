@@ -16,6 +16,11 @@ npm install feathers-solr --save
 
 Please refer to the [feathers-solr documentation](http://docs.feathersjs.com/) for more details.
 
+## Start Solr
+```
+ bin/solr start -e schemaless
+``` 
+
 ## Complete Example
 
 Here's an example of a Feathers server that uses `feathers-solr`.
