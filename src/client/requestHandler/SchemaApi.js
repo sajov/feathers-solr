@@ -1,17 +1,32 @@
 /**
  * Schema API
+ * https://cwiki.apache.org/confluence/display/solr/Managed+Resources
  * https://cwiki.apache.org/confluence/display/solr/Request+Parameters+API
  */
 
-export class Schema {
+export default class Schema {
 
     constructor(request, opts) {
-
+        console.log(opts);
         this.options = {
-            method: 'GET',
-            uri: opts.urlCore + '/schema',
+            method: 'POST',
+            uri: opts.coreUrl + '/schema',
             json: true
         };
+        console.log(this.options);
+
+    //       let options = {
+    //     method: 'POST',
+    //     uri: opts.coreUrl + '/query',
+
+    //     body:  Object.assign({
+    //         query: '*:*',
+    //     }, query),
+    //     json: true
+    // };
+    // console.log('JSON API OPTIONS',options);
+    // console.log('JSON API query',query.filter);
+    // return request.get(options);
 
         this.request = request;
     }
@@ -19,6 +34,7 @@ export class Schema {
     /* /schema/fields: retrieve information about all defined fields or a specific named field */
     fields() {
         this.options.uri += '/fields';
+        this.options.method = 'GET';
         return  this.request(this.options);
     }
     /* /schema/dynamicfields: retrieve information about all dynamic field rules or a specific named dynamic rule */
@@ -62,11 +78,19 @@ export class Schema {
         return  this.request(this.options);
     }
 
-    /* add-field: add a new field with parameters you provide. */
+    /* add-field: add a new field with parameters you provide.
+        curl -X POST -H 'Content-type:application/json' --data-binary '{
+          "add-field":[
+             { "name":"shelf",
+               "type":"myNewTxtField",
+               "stored":true },
+             { "name":"location",
+               "type":"myNewTxtField",
+               "stored":true }]
+        }' http://localhost:8983/solr/gettingstarted/schema
+    */
     addField(params) {
-        this.options.qs = {
-            'add-field' : params
-        };
+        this.options.body = {'add-field' : params};
         return this.request(this.options);
     }
     /* delete-field: delete a field. */

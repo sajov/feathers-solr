@@ -11,17 +11,43 @@ const app = feathers()
   .configure(hooks())
   // Needed for parsing bodies (login)
   .use(bodyParser.json())
-  .use(bodyParser.urlencoded({ extended: true }))
+  .use(bodyParser.urlencoded({ extended: true }));
   // Initialize your feathers plugin
-  .use('/products',
-    feathersSolr({
+  const Service = feathersSolr({
       paginate: {
-        default: 2,
+        default: 10,
         max: 4
       }
-    })
-  )
-  .use(errorHandler());
+    });
+  Service.define({
+    description: {
+        type: 'string',
+        stored: true,
+        default:'sajo'
+    },
+    //  age: {
+    //     type: 'tlongs',
+    //     stored: true,
+    //     default: 10
+    // },
+    // sometext: {
+    //     type: 'string',
+    //     stored: true,
+    //     default: 'i dont know'
+    // },
+    // revisits: {
+    //     type: 'float',
+    //     stored: true
+    // },
+    location: {
+        type: 'string',
+        stored: true,
+        default: 'Düsseldorf'
+    }
+  });
+  Service.describe();
+  app.use('/solr', Service);
+  app.use(errorHandler());
 
 app.listen(3030);
 

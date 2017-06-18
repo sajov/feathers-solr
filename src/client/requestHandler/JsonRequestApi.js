@@ -1,7 +1,7 @@
 /**
  * Solr Config API
  * https://cwiki.apache.org/confluence/display/solr/JSON+Request+API
- *
+ * http://yonik.com/solr-json-request-api/
  *  curl http://localhost:8983/solr/gettingstarted/query -d '
  *  {
  *    "query" : "*:*",
@@ -40,8 +40,8 @@ export default (request, opts, query) => {
         }, query),
         json: true
     };
-    // console.log('JSON API OPTIONS',options);
-    // console.log('JSON API query',query.filter);
+    console.log('JSON API OPTIONS',options);
+    console.log('JSON API query',query.filter);
     return request.get(options);
 };
 

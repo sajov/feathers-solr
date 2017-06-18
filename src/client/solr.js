@@ -7,6 +7,7 @@
 import * as BlobStoreApi from './requestHandler/BlobStoreApi.js';
 import * as ConfigApi from './requestHandler/ConfigApi.js';
 import CoreAdminApi from './requestHandler/CoreAdminApi.js';
+import SchemaApi from './requestHandler/SchemaApi.js';
 import JsonRequestApi from './requestHandler/JsonRequestApi.js';
 import * as ManagedResources from './requestHandler/ManagedResources.js';
 import Ping from './requestHandler/Ping.js';
@@ -90,6 +91,10 @@ export default class Solr {
 
     shard(params) {
         return new ShardHandlers(this.req, this.opts, params);
+    }
+
+    schema() {
+        return new SchemaApi(this.req, this.opts);
     }
 
     update(data) {

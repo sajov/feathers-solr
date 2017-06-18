@@ -3,111 +3,110 @@
  * @type {Object}
  */
 export const _ = {
-  values(obj) {
-    return Object.keys(obj).map(key => obj[key]);
-  },
-  isEmpty(obj) {
-    return Object.keys(obj).length === 0;
-  },
-  extend(... args) {
-    return Object.assign(... args);
-  },
-  omit(obj, ...keys) {
-    const result = Object.assign({}, obj);
-    for(let key of keys) {
-      delete result[key];
-    }
-    return result;
-  },
-  pairs(obj) {
-    return [Object.keys(obj)[0],obj[Object.keys(obj)[0]]];
-  },
-
-  pick(source, ...keys) {
-    const result = {};
-    for(let key of keys) {
-      result[key] = source[key];
-    }
-    return result;
-  },
-  has(obj, key) {
-    return key.split('.').every(function(x) {
-        if(typeof obj !== 'object' || obj === null || !(x in obj)) {
-            return false;
+    values(obj) {
+        return Object.keys(obj).map(key => obj[key]);
+    },
+    isEmpty(obj) {
+        return Object.keys(obj).length === 0;
+    },
+    extend(...args) {
+        return Object.assign(...args);
+    },
+    omit(obj, ...keys) {
+        const result = Object.assign({}, obj);
+        for (let key of keys) {
+            delete result[key];
         }
-        obj = obj[x];
-        return true;
-    });
-  },
-  get(obj, key) {
-    return key.split('.').reduce(function(o, x) {
-        return (typeof o === 'undefined' || o === null) ? o : o[x];
-    }, obj);
-  }
+        return result;
+    },
+    pairs(obj) {
+        return [Object.keys(obj)[0], obj[Object.keys(obj)[0]]];
+    },
+
+    pick(source, ...keys) {
+        const result = {};
+        for (let key of keys) {
+            result[key] = source[key];
+        }
+        return result;
+    },
+    has(obj, key) {
+        return key.split('.').every(function(x) {
+            if (typeof obj !== 'object' || obj === null || !(x in obj)) {
+                return false;
+            }
+            obj = obj[x];
+            return true;
+        });
+    },
+    get(obj, key) {
+        return key.split('.').reduce(function(o, x) {
+            return (typeof o === 'undefined' || o === null) ? o : o[x];
+        }, obj);
+    }
 };
 
 
+export function getOrder(sort = {}) {
+    let order = [];
 
-export function getOrder(sort={}) {
-  let order = {};
+    Object.keys(sort).forEach(name => {
+        order.push(name + (sort[name] === '1' ? ' asc' : ' desc'));
+    });
 
-  Object.keys(sort).forEach(name => {
-    order[name] = sort[name] === 1 ? 'asc' : 'desc';
-  });
-
-  return order;
+    return order.join(' ');
 }
 
 const queryMappings = {
-  $lt: '<',
-  $lte: '<=',
-  $gt: '>',
-  $gte: '>=',
-  $ne: '!',
-  $nin: '!'
+    $lt: '<',
+    $lte: '<=',
+    $gt: '>',
+    $gte: '>=',
+    $ne: '!',
+    $nin: '!'
 };
 
 const specials = ['$sort', '$limit', '$skip', '$select'];
 
 function getValue(value, prop) {
 
-  if(typeof value === 'object' && specials.indexOf(prop) === -1) {
-    let query = {};
+    if (typeof value === 'object' && specials.indexOf(prop) === -1) {
+        let query = {};
 
-    Object.keys(value).forEach(key => {
-      if(queryMappings[key]) {
-        query[queryMappings[key]] = value[key];
-      } else {
-        query[key] = value[key];
-      }
-    });
+        Object.keys(value).forEach(key => {
+            if (queryMappings[key]) {
+                query[queryMappings[key]] = value[key];
+            } else {
+                query[key] = value[key];
+            }
+        });
 
-    return query;
-  }
+        return query;
+    }
 
-  return value;
+    return value;
 }
 
 export function getWhere(query) {
-  let where = {};
+    let where = {};
 
-  if(typeof query !== 'object') {
-    return {};
-  }
-
-  Object.keys(query).forEach(prop => {
-    const value = query[prop];
-
-    if(prop === '$or') {
-      where.or = value;
-    } else if(value.$in) {
-      where[prop] = value.$in;
-    } else {
-      where[prop] = getValue(value, prop);
+    if (typeof query !== 'object') {
+        return {};
     }
-  });
 
-  return where;
+    Object.keys(query).forEach(prop => {
+        const value = query[prop];
+
+        if (prop === '$or') {
+            where.or = value;
+        } else if (value.$in) {
+            where[prop] = value.$in;
+        } else {
+            where[prop] = getValue(value, prop);
+        }
+    });
+
+    return where;
 }
 
 /**
@@ -119,50 +118,49 @@ export function getWhere(query) {
  */
 function queryParser(query, params, opt) {
 
-  delete params.$q;
-  delete params.$sort;
-  delete params.$limit;
-  delete params.$skip;
-  delete params.$select;
-  // delete query.$populate;
+    delete params.$q;
+    delete params.$sort;
+    delete params.$limit;
+    delete params.$skip;
+    delete params.$select;
+    // delete query.$populate;
 
-  let filter = [];
+    let filter = [];
 
-  if(_.has(params, '$or')) {
+    if (_.has(params, '$or')) {
 
-    let $or = _.get(params, '$or');
+        let $or = _.get(params, '$or');
 
-    Array.apply(null, Object.keys($or)).forEach(function(item,index){
-      // console.log('OR Array.each',item,index);
-      // if(Array.isArray($or[item])) {
+        Array.apply(null, Object.keys($or)).forEach(function(item, index) {
+            // console.log('OR Array.each',item,index);
+            // if(Array.isArray($or[item])) {
 
-      // }
+            // }
+        });
+        delete params.$or;
+        // console.log('query or???',params);
+    }
+
+    Array.apply(null, Object.keys(params)).forEach(function(item, index) {
+        query.filter = query.filter || [];
+
+
+        if (Array.isArray(params[item])) {
+            filter.push(item + ':' + params[item]);
+        } else {
+            filter.push(item + ':' + params[item]);
+        }
+
     });
-    delete params.$or;
-    // console.log('query or???',params);
-  }
-
-  Array.apply(null, Object.keys(params)).forEach(function(item,index){
-      query.filter = query.filter || [];
 
 
-      if(Array.isArray(params[item])) {
-        filter.push(item + ':' + params[item]);
-      } else {
-        filter.push(item + ':' + params[item]);
-      }
-
-  });
-
-
-  return filter;
+    return filter;
 }
 
 function getFilter(object) {
 
-  let pairs = _.pairs(object);
-  return (pairs[0] || '*') + ':' + (pairs[1] || '*');
-
+    let pairs = _.pairs(object);
+    return (pairs[0] || '*') + ':' + (pairs[1] || '*');
 }
 
 /**
@@ -172,26 +170,26 @@ function getFilter(object) {
  * @return {object}        Solr query
  */
 export function requestParser(params, opt) {
-      // default $limit, $skip, $sort, and $select
-  let query = {
-    /* solr default SearchHandler*/
-    start: _.get(params, 'query.$skip') || 0,
-    rows: _.get(params, 'query.$limit') || 10,
-    sort: _.get(params, 'query.$sort') || '_version_ desc',
-    fl: _.get(params, 'query.$select') || '*'
-  };
+    // default $limit, $skip, $sort, and $select
+    let query = {
+        /* solr default SearchHandler*/
+        start: _.get(params, 'query.$skip') || 0,
+        rows: _.get(params, 'query.$limit') || 10,
+        sort: _.get(params, 'query.$sort') || '_version_ desc',
+        fl: _.get(params, 'query.$select') || '*'
+    };
 
-  // extended $q
-  if(_.has(params, 'query.$q')) {
-    query.q = params.query.$q;
-  }
+    // extended $q
+    if (_.has(params, 'query.$q')) {
+        query.q = params.query.$q;
+    }
 
-  if(_.has(params,'query')) {
-    query.fq = queryParser(query, params.query, opt);
-  }
+    if (_.has(params, 'query')) {
+        query.fq = queryParser(query, params.query, opt);
+    }
 
-  // console.log('query', query);
-  return query;
+    // console.log('query', query);
+    return query;
 }
 
 /**
@@ -201,26 +199,30 @@ export function requestParser(params, opt) {
  * @return {object}        Solr query object
  */
 export function requestParserJson(params, opt) {
-  // console.log('Utils.requestParserJson',params);
+    // console.log('Utils.requestParserJson',params);
 
-  // default $limit, $skip, $sort, and $select
-  let query = {
-    limit: _.get(params, 'query.$limit') || _.get(opt, 'paginate.default') || _.get(opt, 'paginate.max'),
-    offset: _.get(params, 'query.$skip') || 0,
-    sort: _.get(params, 'query.$sort') || '_version_ desc',
-    fields: _.get(params, 'query.$select') || '*'
-  };
+    // default $limit, $skip, $sort, and $select
+    let query = {
+        limit: _.get(params, 'query.$limit') || _.get(opt, 'paginate.default') || _.get(opt, 'paginate.max'),
+        offset: _.get(params, 'query.$skip') || 0,
+        fields: _.get(params, 'query.$select') || '*'
+    };
 
-  // extended $q
-  if(_.has(params, 'query.$q')) {
-    query.query = params.query.$q;
-  }
+    // extended $q
+    if (_.has(params, 'query.$q')) {
+        query.query = params.query.$q;
+    }
 
-  if(_.has(params,'query')) {
-    query.filter = queryParser(query, params.query, opt);
-  }
-  // console.log('query', query);
-  return query;
+    // sort
+    if (_.has(params, 'query.$sort')) {
+        query.sort = getOrder(params.query.$sort);
+    }
+
+    if (_.has(params, 'query')) {
+        query.filter = queryParser(query, params.query, opt);
+    }
+    // console.log('query', query);
+    return query;
 
 }
 
@@ -233,26 +235,27 @@ export function requestParserJson(params, opt) {
  */
 export function responseParser(params, opt, res) {
 
-  // console.log('Utils.responseParser',params);
+    // console.log('Utils.responseParser',params);
 
-  let response = {};
+    let response = {};
 
-  if(_.has(opt, 'paginate.max')) {
-    response = {
-      total: _.get(res, 'response.numFound') || 0,  //"<total number of records>",
-      limit: parseInt(_.get(params, '_query.$limit')) || _.get(opt, 'paginate.default') || _.get(opt, 'paginate.max'),
-      skip: parseInt(_.get(params, '_query.$skip')) || 0,  //res.response.start "<number of skipped items (offset)>",
-      data: responseDocsParser(res, true)  //[/* data */]
-    };
-  } else {
-    response = _.get(res, 'response.docs') || [];
-  }
+    if (_.has(opt, 'paginate.max')) {
+        response = {
+            QTime: _.get(res, 'response.QTime') || 0, //"<total number of records>",
+            total: _.get(res, 'response.numFound') || 0, //"<total number of records>",
+            limit: parseInt(_.get(params, '_query.$limit')) || _.get(opt, 'paginate.default') || _.get(opt, 'paginate.max'),
+            skip: parseInt(_.get(params, '_query.$skip')) || 0, //res.response.start "<number of skipped items (offset)>",
+            data: responseDocsParser(res, true) //[/* data */]
+        };
+    } else {
+        response = _.get(res, 'response.docs') || [];
+    }
 
-  if(_.has(res, 'facet_counts.facet_fields')) {
-    response.facet = _.get(res, 'facet_counts.facet_fields');
-  }
+    if (_.has(res, 'facet_counts.facet_fields')) {
+        response.facet = _.get(res, 'facet_counts.facet_fields');
+    }
 
-  return response;
+    return response;
 }
 
 /**
@@ -264,31 +267,69 @@ export function responseParser(params, opt, res) {
  */
 export function responseDocsParser(res, allDocs = false) {
 
-  let response = allDocs === false ? {} : [];
+    let response = allDocs === false ? {} : [];
 
-  if(!_.has(res, 'response.docs')) {
-    return response;
-  }
+    if (!_.has(res, 'response.docs')) {
+        return response;
+    }
 
-  let docs = _.get(res, 'response.docs') || [];
+    let docs = _.get(res, 'response.docs') || [];
 
-  return allDocs === false ? docs[0] : docs;
+    return allDocs === false ? docs[0] : docs;
 
 }
 
 export function deleteParser(id, params) {
 
-  if(id) {
-    if(!Array.isArray(id)) {
-      id = id;
+    if (id) {
+        if (!Array.isArray(id)) {
+            id = id;
+        }
+        return { delete: { id: id } };
     }
-    return {delete: {id: id}};
-  }
 
-  if(params) {
-    //TODO' implement array
-    return {delete: {query: getFilter(params)}};
-  }
+    if (params) {
+        //TODO' implement array
+        return { delete: { query: getFilter(params.query) } };
+    }
 
-  return {delete: {query: '*'}};
+    return { delete: { query: '*' } };
+}
+
+export function definitionParser(type, fields) {
+    let definition = [];
+    Object.keys(fields).forEach(function(field, i) {
+
+        let solrField = {
+           'name':field,
+           'type': fields[field].type || 'strings',
+           'stored':fields[field].stored || true,
+           'indexed':fields[field].indexed || true
+        };
+
+        if(fields[field].default || fields[field].defaultValue) {
+            solrField.default = fields[field].default || fields[field].defaultValue;
+        }
+
+        // 'docValues':fields[field].docValues,
+        // 'sortMissingFirst':fields[field].sortMissingFirst,
+        // 'sortMissingLast':fields[field].sortMissingLast,
+        // 'multiValued':fields[field].multiValued,
+        // 'omitNorms':fields[field].omitNorms,
+        // 'omitTermFreqAndPositions':fields[field].omitTermFreqAndPositions,
+        // 'omitPositions':fields[field].omitPositions,
+        // 'termVectors':fields[field].termVectors,
+        // 'termPositions':fields[field].termPositions,
+        // 'termOffsets':fields[field].termOffsets,
+        // 'termPayloads':fields[field].termPayloads,
+        // 'required':fields[field].required,
+        // 'useDocValuesAsStored':fields[field].useDocValuesAsStored,
+        // 'large':fields[field].large,
+
+
+        // if(fields[field].stored)
+
+        definition.push(solrField);
+    });
+    return definition;
 }
