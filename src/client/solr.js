@@ -45,12 +45,12 @@ export default class Solr {
         this.req = request;
     }
 
-    extend(... args) {
-        return Object.assign(... args);
-    }
-
     blob(params) {
         return new BlobStoreApi(this.req, this.opts, params);
+    }
+
+    commit(data) {
+        return new UpdateRequestHandlers.commit(this.req, this.opts);
     }
 
     config(params) {
@@ -61,12 +61,20 @@ export default class Solr {
         return new CoreAdminApi(this.req, this.opts);
     }
 
+    delete(data) {
+        return new UpdateRequestHandlers.deleteQuery(this.req, this.opts, data);
+    }
+
+    extend(... args) {
+        return Object.assign(... args);
+    }
+
     json(params) {
         return new JsonRequestApi(this.req, this.opts, params);
     }
 
-    resources(params) {
-        return new ManagedResources(this.req, this.opts, params);
+    optimize(data) {
+        return new UpdateRequestHandlers.optimize(this.req, this.opts);
     }
 
     ping() {
@@ -75,6 +83,11 @@ export default class Solr {
 
     real(params) {
         return new RealTime(this.req, this.opts, params);
+
+    }
+
+    resources(params) {
+        return new ManagedResources(this.req, this.opts, params);
     }
 
     replication(params) {
@@ -85,6 +98,10 @@ export default class Solr {
         return new RequestParametersAPI(this.req, this.opts, params);
     }
 
+    schema() {
+        return new SchemaApi(this.req, this.opts);
+    }
+
     search(params) {
         return new SearchHandlers(this.req, this.opts, params);
     }
@@ -93,9 +110,6 @@ export default class Solr {
         return new ShardHandlers(this.req, this.opts, params);
     }
 
-    schema() {
-        return new SchemaApi(this.req, this.opts);
-    }
 
     update(data) {
         return new UpdateRequestHandlers.update(this.req, this.opts, data);
@@ -109,15 +123,6 @@ export default class Solr {
         return new UpdateRequestHandlers.updateJsonDocs(this.req, this.opts, data);
     }
 
-    delete(data) {
-        return new UpdateRequestHandlers.deleteQuery(this.req, this.opts, data);
-    }
 
-    commit(data) {
-        return new UpdateRequestHandlers.commit(this.req, this.opts);
-    }
 
-    optimize(data) {
-        return new UpdateRequestHandlers.optimize(this.req, this.opts);
-    }
 }
