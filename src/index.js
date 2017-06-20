@@ -119,6 +119,13 @@ class Service {
 		});
 	}
 
+	/**
+	 * adapter.update(id, data, params) -> Promise
+	 * @param  {[type]} id     [description]
+	 * @param  {[type]} data   [description]
+	 * @param  {[type]} params [description]
+	 * @return {[type]}        [description]
+	 */
 	update(id, data) {
 
 		if (id === null || Array.isArray(data)) {
@@ -128,11 +135,34 @@ class Service {
 		}
 
 		let _self = this;
+		data.id = id;
+
+		return new Promise((resolve, reject) => {
+			_self.create(data)
+				.then(function(res) {
+					resolve(data);
+				})
+				.catch(function(err) {
+					return reject(new errors.BadRequest());
+				});
+		});
+	}
+
+	/**
+	 * adapter.patch(id, data, params) -> Promise
+	 * @param  {[type]} id     [description]
+	 * @param  {[type]} data   [description]
+	 * @param  {[type]} params [description]
+	 * @return {[type]}        [description]
+	 */
+	patch(id, data, params) {
+
+
+		let _self = this;
 
 		return new Promise((resolve, reject) => {
 			this.Solr.json(requestParserJson({ query: { id: id, $limit: 1 } }, this.options))
 				.then(function(res) {
-
 					res = responseDocsParser(res);
 					data.id = id;
 					let copy = {};
@@ -144,12 +174,14 @@ class Service {
 							copy[key] = data[key];
 						}
 					});
-
+console.log('PATCH copy',copy);
 					_self.create(copy)
 						.then(function(res) {
+console.log('PATCH create copy res',copy, res);
 							resolve(copy);
 						})
 						.catch(function(err) {
+console.log('PATCH create catch copy err',copy, err);
 							return reject(new errors.BadRequest());
 						});
 				})
@@ -158,9 +190,8 @@ class Service {
 					return reject(new errors.BadRequest());
 				});
 		});
-	}
 
-	patch(id, data, params) {}
+	}
 
 	remove(id, params) {
 		// console.log('id, params',id, params);
