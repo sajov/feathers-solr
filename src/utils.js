@@ -118,11 +118,11 @@ export function getWhere(query) {
  */
 function queryParser(query, params, opt) {
 
+
     delete params.$q;
-    delete params.$sort;
-    delete params.$limit;
-    delete params.$skip;
-    delete params.$select;
+    delete params.$search;
+    delete params.$facet;
+
     // delete query.$populate;
 
     let filter = [];
@@ -141,9 +141,21 @@ function queryParser(query, params, opt) {
         // console.log('query or???',params);
     }
 
+    if(_.has(params, '$facet')) {
+        Array.apply(null, Object.keys(params)).forEach(function(item, index) {
+            query.filter = query.filter || [];
+
+            if (Array.isArray(params[item])) {
+                filter.push(item + ':' + params[item]);
+            } else {
+                filter.push(item + ':' + params[item]);
+            }
+
+        });
+    }
+
     Array.apply(null, Object.keys(params)).forEach(function(item, index) {
         query.filter = query.filter || [];
-
 
         if (Array.isArray(params[item])) {
             filter.push(item + ':' + params[item]);
@@ -161,6 +173,38 @@ function getFilter(object) {
 
     let pairs = _.pairs(object);
     return (pairs[0] || '*') + ':' + (pairs[1] || '*');
+}
+
+/**
+ * Solr Json Request Api
+ * @param  {object} params Request params
+ * @param  {object} opt    Adapter config
+ * @return {object}        Solr query object
+ */
+export function requestParserJson(params, opt) {
+    // console.log('Utils.requestParserJson',params);
+
+    // default $search $limit, $skip, $sort, and $select
+    let query = {
+        query: _.get(params, 'query.$search') || '*:*',
+        limit: _.get(params, 'query.$limit') || _.get(opt, 'paginate.default') || _.get(opt, 'paginate.max'),
+        offset: _.get(params, 'query.$skip') || 0,
+        fields: _.get(params, 'query.$select') || '*',
+        sort: _.get(params, 'query.$sort') || '_version_ desc'
+    };
+    delete params.$search;
+    delete params.$limit;
+    delete params.$skip;
+    delete params.$select;
+    delete params.$sort;
+
+    if (_.has(params, 'query')) {
+        query.filter = queryParser(query, params.query, opt);
+    }
+
+
+    return query;
+
 }
 
 /**
@@ -184,46 +228,16 @@ export function requestParser(params, opt) {
         query.q = params.query.$q;
     }
 
+    if (_.has(params, 'query.$search')) {
+        query.q = params.query.$search;
+    }
+
     if (_.has(params, 'query')) {
         query.fq = queryParser(query, params.query, opt);
     }
 
     // console.log('query', query);
     return query;
-}
-
-/**
- * Solr Json Request Api
- * @param  {object} params Request params
- * @param  {object} opt    Adapter config
- * @return {object}        Solr query object
- */
-export function requestParserJson(params, opt) {
-    // console.log('Utils.requestParserJson',params);
-
-    // default $limit, $skip, $sort, and $select
-    let query = {
-        limit: _.get(params, 'query.$limit') || _.get(opt, 'paginate.default') || _.get(opt, 'paginate.max'),
-        offset: _.get(params, 'query.$skip') || 0,
-        fields: _.get(params, 'query.$select') || '*'
-    };
-
-    // extended $q
-    if (_.has(params, 'query.$q')) {
-        query.query = params.query.$q;
-    }
-
-    // sort
-    if (_.has(params, 'query.$sort')) {
-        query.sort = getOrder(params.query.$sort);
-    }
-
-    if (_.has(params, 'query')) {
-        query.filter = queryParser(query, params.query, opt);
-    }
-    // console.log('query', query);
-    return query;
-
 }
 
 /**
@@ -276,7 +290,6 @@ export function responseDocsParser(res, allDocs = false) {
     let docs = _.get(res, 'response.docs') || [];
 
     return allDocs === false ? docs[0] : docs;
-
 }
 
 export function deleteParser(id, params) {
