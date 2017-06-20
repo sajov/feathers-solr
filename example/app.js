@@ -4,14 +4,17 @@ const hooks = require('feathers-hooks');
 const bodyParser = require('body-parser');
 const errorHandler = require('feathers-errors/handler');
 const feathersSolr = require('../lib/index');
+const socketio = require('feathers-socketio');
 
 // Initialize the application
 const app = feathers()
   .configure(rest())
+  .configure(socketio())
   .configure(hooks())
   // Needed for parsing bodies (login)
   .use(bodyParser.json())
-  .use(bodyParser.urlencoded({ extended: true }));
+  .use(bodyParser.urlencoded({ extended: true }))
+  .use('/', feathers.static('./public'));
   // Initialize your feathers plugin
   const Service = feathersSolr({
       paginate: {
