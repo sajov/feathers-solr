@@ -14,19 +14,20 @@ class Service {
 		this.options = options;
 
 		this.Solr = new Solr({
-			scheme: 'http',
-			host: 'localhost',
-			port: 8983,
-			path: '/solr',
-			core: '/gettingstarted',
-			managedScheme: false,
+			scheme: this.options.scheme || 'http',
+			host: this.options.host || 'localhost',
+			port: this.options.port || 8983,
+			path: this.options.path || '/solr',
+			core: this.options.core || '/gettingstarted',
+			managedScheme: this.options.managedScheme || false,
 			/*commitStrategy softCommit: true, commit: true, commitWithin: 50*/
-			commitStrategy: {
+			commitStrategy: this.options.commitStrategy || {
 				softCommit: true,
 				commitWithin: 50000,
 				overwrite: true
 			}
 		});
+
 		console.log('feather-solr Service started');
 	}
 
@@ -66,7 +67,7 @@ class Service {
 
 	find(params) {
 		let _self = this;
-		params._query = Object.assign({}, params.query);
+		// params._query = Object.assign({}, params.query);
 		return new Promise((resolve, reject) => {
 			this.Solr.json(requestParserJson(params, _self.options))
 				.then(function(res) {
