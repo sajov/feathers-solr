@@ -40,8 +40,8 @@ export default (request, opts, query) => {
         }, query),
         json: true
     };
-    console.log('JSON API OPTIONS',options);
-    console.log('JSON API query',query.filter);
+    // console.log('JSON API OPTIONS',options);
+    // console.log('JSON API query',query.filter);
     return request.get(options);
 };
 
