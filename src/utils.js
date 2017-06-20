@@ -47,7 +47,7 @@ export const _ = {
 };
 
 
-export function getOrder(sort = {}) {
+export function getSort(sort = {}) {
     let order = [];
 
     Object.keys(sort).forEach(name => {
@@ -119,14 +119,6 @@ export function getWhere(query) {
 function queryParser(query, params, opt) {
 
 
-    delete params.$q;
-    delete params.$search;
-    delete params.$facet;
-
-    // delete query.$populate;
-
-    let filter = [];
-
     if (_.has(params, '$or')) {
 
         let $or = _.get(params, '$or');
@@ -146,27 +138,28 @@ function queryParser(query, params, opt) {
             query.filter = query.filter || [];
 
             if (Array.isArray(params[item])) {
-                filter.push(item + ':' + params[item]);
+                query.filter.push(item + ':' + params[item]);
             } else {
-                filter.push(item + ':' + params[item]);
+                query.filter.push(item + ':' + params[item]);
             }
 
         });
+        delete params.$facet;
     }
 
     Array.apply(null, Object.keys(params)).forEach(function(item, index) {
         query.filter = query.filter || [];
 
         if (Array.isArray(params[item])) {
-            filter.push(item + ':' + params[item]);
+            query.filter.push(item + ':' + params[item]);
         } else {
-            filter.push(item + ':' + params[item]);
+            query.filter.push(item + ':' + params[item]);
         }
 
     });
 
 
-    return filter;
+    return query;
 }
 
 function getFilter(object) {
@@ -182,7 +175,6 @@ function getFilter(object) {
  * @return {object}        Solr query object
  */
 export function requestParserJson(params, opt) {
-    // console.log('Utils.requestParserJson',params);
 
     // default $search $limit, $skip, $sort, and $select
     let query = {
@@ -190,21 +182,16 @@ export function requestParserJson(params, opt) {
         limit: _.get(params, 'query.$limit') || _.get(opt, 'paginate.default') || _.get(opt, 'paginate.max'),
         offset: _.get(params, 'query.$skip') || 0,
         fields: _.get(params, 'query.$select') || '*',
-        sort: _.get(params, 'query.$sort') || '_version_ desc'
+        sort: getSort(_.get(params, 'query.$sort') || {})
     };
-    delete params.$search;
-    delete params.$limit;
-    delete params.$skip;
-    delete params.$select;
-    delete params.$sort;
+
 
     if (_.has(params, 'query')) {
-        query.filter = queryParser(query, params.query, opt);
+        params = _.omit(params.query,'$sort','$search','$limit','$skip','$select','$facet');
+        query = queryParser(query, params, opt);
     }
 
-
     return query;
-
 }
 
 /**

@@ -5,7 +5,7 @@
     {
       "type": "Project",
       "id": "1BC7BED8-224A-4F33-BA38-F82B142DB1D5",
-      "lastModified": "2017-06-20T21:24:53.494+02:00",
+      "lastModified": "2017-06-20T23:26:54.353+02:00",
       "name": "Solr"
     },
     {
@@ -404,18 +404,26 @@
       "descriptionHeight": 110,
       "description": "test feathers-solr client",
       "id": "F1C7C5C1-9F6B-42A5-84F2-AD1E599BDA61",
-      "lastModified": "2017-06-20T21:02:32.432+02:00",
+      "lastModified": "2017-06-20T23:26:54.353+02:00",
       "name": "feathers-solr-test",
       "requestOrder": [
         "create",
         "get",
         "find total",
-        "find filter simple",
         "find filter",
-        "find skip",
-        "find limit",
-        "find search",
+        "find filter simple",
         "find filter string",
+        "find $search",
+        "find Equality",
+        "find $limit",
+        "find $skip",
+        "find $sort",
+        "find $select",
+        "find $in, $nin",
+        "find $lt, $lte",
+        "find $gt, $gte",
+        "find $ne",
+        "find $or",
         "delete"
       ],
       "parentId": "1BC7BED8-224A-4F33-BA38-F82B142DB1D5"
@@ -538,6 +546,44 @@
           "items": [
             {
               "enabled": true,
+              "name": "name",
+              "value": "\"Doc\"*"
+            }
+          ]
+        },
+        "scheme": {
+          "name": "http",
+          "version": "V11"
+        },
+        "host": "localhost:3030",
+        "path": "/solr/"
+      },
+      "id": "E8D7F6DD-CE63-444B-9871-CB239BA1E7F3",
+      "lastModified": "2017-06-18T22:26:13.447+02:00",
+      "name": "find filter",
+      "headers": [],
+      "metaInfo": {
+        "ownerId": "auth0|5946bd83e536eb2bc07d0b8c"
+      },
+      "parentId": "F1C7C5C1-9F6B-42A5-84F2-AD1E599BDA61"
+    },
+    {
+      "type": "Request",
+      "method": {
+        "link": "http://tools.ietf.org/html/rfc7231#section-4.3.1",
+        "name": "GET"
+      },
+      "body": {
+        "bodyType": "Text",
+        "autoSetLength": true
+      },
+      "headersType": "Form",
+      "uri": {
+        "query": {
+          "delimiter": "&",
+          "items": [
+            {
+              "enabled": true,
               "name": "age",
               "value": "48"
             }
@@ -588,9 +634,9 @@
         "host": "localhost:3030",
         "path": "/solr/"
       },
-      "id": "E8D7F6DD-CE63-444B-9871-CB239BA1E7F3",
-      "lastModified": "2017-06-18T22:26:13.447+02:00",
-      "name": "find filter",
+      "id": "B40F955A-34E3-4788-AC99-B64C61F8913C",
+      "lastModified": "2017-06-18T22:27:35.721+02:00",
+      "name": "find filter string",
       "headers": [],
       "metaInfo": {
         "ownerId": "auth0|5946bd83e536eb2bc07d0b8c"
@@ -614,13 +660,9 @@
           "items": [
             {
               "enabled": true,
-              "name": "$skip",
-              "value": "2"
-            },
-            {
-              "enabled": true,
-              "name": "$sort[id]",
-              "value": "1"
+              "encoded": true,
+              "name": "$search",
+              "value": "48%20germany%201199%20adapter"
             }
           ]
         },
@@ -629,18 +671,46 @@
           "version": "V11"
         },
         "host": "localhost:3030",
+        "path": "/solr"
+      },
+      "id": "2ADF4D78-12C4-42DA-A5E0-FCDB6017D2AF",
+      "lastModified": "2017-06-20T23:25:03.213+02:00",
+      "name": "find $search",
+      "headers": [],
+      "metaInfo": {
+        "ownerId": "auth0|5946bd83e536eb2bc07d0b8c"
+      },
+      "parentId": "F1C7C5C1-9F6B-42A5-84F2-AD1E599BDA61"
+    },
+    {
+      "type": "Request",
+      "method": {
+        "link": "http://tools.ietf.org/html/rfc7231#section-4.3.1",
+        "name": "GET"
+      },
+      "body": {
+        "bodyType": "Text",
+        "autoSetLength": true
+      },
+      "headersType": "Form",
+      "uri": {
+        "scheme": {
+          "name": "http",
+          "version": "V11"
+        },
+        "host": "localhost:3030",
         "path": "/solr/"
       },
-      "id": "85946E20-8CC7-48B8-9B53-B6F4438F9993",
-      "lastModified": "2017-06-18T22:18:41.342+02:00",
-      "name": "find skip",
+      "id": "9C60D7E8-DDB1-44FC-80F5-AF16DB42342D",
+      "lastModified": "2017-06-20T23:20:36.934+02:00",
+      "name": "find Equality",
       "headers": [],
       "assertions": [
         {
           "comparison": "Equals",
           "subject": "ResponseJsonBody",
-          "path": "$.data.id",
-          "value": "adapter3"
+          "path": "$.total",
+          "value": "3"
         }
       ],
       "metaInfo": {
@@ -688,8 +758,8 @@
         "path": "/solr/"
       },
       "id": "1350BF67-2D3B-48DE-A392-C8F1F0727AE4",
-      "lastModified": "2017-06-18T22:20:27.109+02:00",
-      "name": "find limit",
+      "lastModified": "2017-06-20T23:21:38.850+02:00",
+      "name": "find $limit",
       "headers": [],
       "assertions": [
         {
@@ -721,9 +791,13 @@
           "items": [
             {
               "enabled": true,
-              "encoded": true,
-              "name": "$search",
-              "value": "48%20germany%201199%20adapter"
+              "name": "$skip",
+              "value": "2"
+            },
+            {
+              "enabled": true,
+              "name": "$sort[id]",
+              "value": "1"
             }
           ]
         },
@@ -732,12 +806,20 @@
           "version": "V11"
         },
         "host": "localhost:3030",
-        "path": "/solr"
+        "path": "/solr/"
       },
-      "id": "2ADF4D78-12C4-42DA-A5E0-FCDB6017D2AF",
-      "lastModified": "2017-06-20T21:02:00.363+02:00",
-      "name": "find search",
+      "id": "85946E20-8CC7-48B8-9B53-B6F4438F9993",
+      "lastModified": "2017-06-20T23:21:56.501+02:00",
+      "name": "find $skip",
       "headers": [],
+      "assertions": [
+        {
+          "comparison": "Equals",
+          "subject": "ResponseJsonBody",
+          "path": "$.data.id",
+          "value": "adapter3"
+        }
+      ],
       "metaInfo": {
         "ownerId": "auth0|5946bd83e536eb2bc07d0b8c"
       },
@@ -755,16 +837,6 @@
       },
       "headersType": "Form",
       "uri": {
-        "query": {
-          "delimiter": "&",
-          "items": [
-            {
-              "enabled": true,
-              "name": "name",
-              "value": "\"Doc\"*"
-            }
-          ]
-        },
         "scheme": {
           "name": "http",
           "version": "V11"
@@ -772,10 +844,234 @@
         "host": "localhost:3030",
         "path": "/solr/"
       },
-      "id": "B40F955A-34E3-4788-AC99-B64C61F8913C",
-      "lastModified": "2017-06-18T22:27:35.721+02:00",
-      "name": "find filter string",
+      "id": "7B357161-5187-4677-BEB3-F580A9CD8448",
+      "lastModified": "2017-06-20T23:22:17.499+02:00",
+      "name": "find $sort",
       "headers": [],
+      "assertions": [
+        {
+          "comparison": "Equals",
+          "subject": "ResponseJsonBody",
+          "path": "$.total",
+          "value": "3"
+        }
+      ],
+      "metaInfo": {
+        "ownerId": "auth0|5946bd83e536eb2bc07d0b8c"
+      },
+      "parentId": "F1C7C5C1-9F6B-42A5-84F2-AD1E599BDA61"
+    },
+    {
+      "type": "Request",
+      "method": {
+        "link": "http://tools.ietf.org/html/rfc7231#section-4.3.1",
+        "name": "GET"
+      },
+      "body": {
+        "bodyType": "Text",
+        "autoSetLength": true
+      },
+      "headersType": "Form",
+      "uri": {
+        "scheme": {
+          "name": "http",
+          "version": "V11"
+        },
+        "host": "localhost:3030",
+        "path": "/solr/"
+      },
+      "id": "D0430393-129D-43EF-BBC3-FFA533FB6A22",
+      "lastModified": "2017-06-20T23:22:36.905+02:00",
+      "name": "find $select",
+      "headers": [],
+      "assertions": [
+        {
+          "comparison": "Equals",
+          "subject": "ResponseJsonBody",
+          "path": "$.total",
+          "value": "3"
+        }
+      ],
+      "metaInfo": {
+        "ownerId": "auth0|5946bd83e536eb2bc07d0b8c"
+      },
+      "parentId": "F1C7C5C1-9F6B-42A5-84F2-AD1E599BDA61"
+    },
+    {
+      "type": "Request",
+      "method": {
+        "link": "http://tools.ietf.org/html/rfc7231#section-4.3.1",
+        "name": "GET"
+      },
+      "body": {
+        "bodyType": "Text",
+        "autoSetLength": true
+      },
+      "headersType": "Form",
+      "uri": {
+        "scheme": {
+          "name": "http",
+          "version": "V11"
+        },
+        "host": "localhost:3030",
+        "path": "/solr/"
+      },
+      "id": "2B41F9EB-A132-44D5-B78C-7E7C466871B8",
+      "lastModified": "2017-06-20T23:22:51.494+02:00",
+      "name": "find $in, $nin",
+      "headers": [],
+      "assertions": [
+        {
+          "comparison": "Equals",
+          "subject": "ResponseJsonBody",
+          "path": "$.total",
+          "value": "3"
+        }
+      ],
+      "metaInfo": {
+        "ownerId": "auth0|5946bd83e536eb2bc07d0b8c"
+      },
+      "parentId": "F1C7C5C1-9F6B-42A5-84F2-AD1E599BDA61"
+    },
+    {
+      "type": "Request",
+      "method": {
+        "link": "http://tools.ietf.org/html/rfc7231#section-4.3.1",
+        "name": "GET"
+      },
+      "body": {
+        "bodyType": "Text",
+        "autoSetLength": true
+      },
+      "headersType": "Form",
+      "uri": {
+        "scheme": {
+          "name": "http",
+          "version": "V11"
+        },
+        "host": "localhost:3030",
+        "path": "/solr/"
+      },
+      "id": "F5B212E3-D20E-4B31-B26D-140529F7C43F",
+      "lastModified": "2017-06-20T23:23:03.772+02:00",
+      "name": "find $lt, $lte",
+      "headers": [],
+      "assertions": [
+        {
+          "comparison": "Equals",
+          "subject": "ResponseJsonBody",
+          "path": "$.total",
+          "value": "3"
+        }
+      ],
+      "metaInfo": {
+        "ownerId": "auth0|5946bd83e536eb2bc07d0b8c"
+      },
+      "parentId": "F1C7C5C1-9F6B-42A5-84F2-AD1E599BDA61"
+    },
+    {
+      "type": "Request",
+      "method": {
+        "link": "http://tools.ietf.org/html/rfc7231#section-4.3.1",
+        "name": "GET"
+      },
+      "body": {
+        "bodyType": "Text",
+        "autoSetLength": true
+      },
+      "headersType": "Form",
+      "uri": {
+        "scheme": {
+          "name": "http",
+          "version": "V11"
+        },
+        "host": "localhost:3030",
+        "path": "/solr/"
+      },
+      "id": "F9B7A3FD-C331-48C3-B690-D41E3A622279",
+      "lastModified": "2017-06-20T23:23:14.109+02:00",
+      "name": "find $gt, $gte",
+      "headers": [],
+      "assertions": [
+        {
+          "comparison": "Equals",
+          "subject": "ResponseJsonBody",
+          "path": "$.total",
+          "value": "3"
+        }
+      ],
+      "metaInfo": {
+        "ownerId": "auth0|5946bd83e536eb2bc07d0b8c"
+      },
+      "parentId": "F1C7C5C1-9F6B-42A5-84F2-AD1E599BDA61"
+    },
+    {
+      "type": "Request",
+      "method": {
+        "link": "http://tools.ietf.org/html/rfc7231#section-4.3.1",
+        "name": "GET"
+      },
+      "body": {
+        "bodyType": "Text",
+        "autoSetLength": true
+      },
+      "headersType": "Form",
+      "uri": {
+        "scheme": {
+          "name": "http",
+          "version": "V11"
+        },
+        "host": "localhost:3030",
+        "path": "/solr/"
+      },
+      "id": "6360CCD6-0150-4A51-9E97-F05D90049EE0",
+      "lastModified": "2017-06-20T23:23:25.421+02:00",
+      "name": "find $ne",
+      "headers": [],
+      "assertions": [
+        {
+          "comparison": "Equals",
+          "subject": "ResponseJsonBody",
+          "path": "$.total",
+          "value": "3"
+        }
+      ],
+      "metaInfo": {
+        "ownerId": "auth0|5946bd83e536eb2bc07d0b8c"
+      },
+      "parentId": "F1C7C5C1-9F6B-42A5-84F2-AD1E599BDA61"
+    },
+    {
+      "type": "Request",
+      "method": {
+        "link": "http://tools.ietf.org/html/rfc7231#section-4.3.1",
+        "name": "GET"
+      },
+      "body": {
+        "bodyType": "Text",
+        "autoSetLength": true
+      },
+      "headersType": "Form",
+      "uri": {
+        "scheme": {
+          "name": "http",
+          "version": "V11"
+        },
+        "host": "localhost:3030",
+        "path": "/solr/"
+      },
+      "id": "0D05C933-3483-43EE-A3E8-66A24FBBB2A2",
+      "lastModified": "2017-06-20T23:23:36.706+02:00",
+      "name": "find $or",
+      "headers": [],
+      "assertions": [
+        {
+          "comparison": "Equals",
+          "subject": "ResponseJsonBody",
+          "path": "$.total",
+          "value": "3"
+        }
+      ],
       "metaInfo": {
         "ownerId": "auth0|5946bd83e536eb2bc07d0b8c"
       },
