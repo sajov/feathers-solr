@@ -133,6 +133,22 @@ function queryParser(query, params, opt) {
         // console.log('query or???',params);
     }
 
+    // pluck object.keys.foreach $pf=text $ps=100...
+    // # simple boosts by popularity
+    //  defType=lucene&df=text&q=%2Bsupervillians+_val_:"popularity"
+    //  defType=dismax&qf=text&q=supervillians&bf=popularity
+    //  q={!boost b=popularity}text:supervillians
+    //
+    //  # boosts based on complex functions of the popularity field
+    //  defType=lucene&q=%2Bsupervillians+_val_:"sqrt(popularity)"
+    //  defType=dismax&qf=text&q=supervillians&bf=sqrt(popularity)
+    //  q={!boost b=sqrt(popularity)}text:supervillians
+    if (_.has(params, '$qf')) {
+    // TODO: use config.qf otherwise copy field _text_ is used
+        query.params = Object.assign({}, query.params || {}, {qf: params.$qf});
+        delete params.$qf;
+    }
+
     if(_.has(params, '$facet')) {
         Array.apply(null, Object.keys(params)).forEach(function(item, index) {
             query.filter = query.filter || [];
@@ -178,10 +194,10 @@ export function requestParserJson(params, opt) {
 
     // default $search $limit, $skip, $sort, and $select
     let query = {
-        query: _.get(params, 'query.$search') || '*:*',
+        query: _.get(params, 'query.$search') || '*:*', // TODO:  score
         limit: _.get(params, 'query.$limit') || _.get(opt, 'paginate.default') || _.get(opt, 'paginate.max'),
         offset: _.get(params, 'query.$skip') || 0,
-        fields: _.get(params, 'query.$select') || '*',
+        fields: _.get(params, 'query.$select') || '*,score', // TODO:  score
         sort: getSort(_.get(params, 'query.$sort') || {})
     };
 

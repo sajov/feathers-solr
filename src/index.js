@@ -9,9 +9,9 @@ const debug = makeDebug('feathers-solr');
 
 class Service {
 
-	constructor(options = {}) {
+	constructor(opt = {}) {
 
-		this.options = options;
+		this.options = opt;
 
 		this.Solr = new Solr({
 			scheme: this.options.scheme || 'http',

@@ -34,16 +34,12 @@ export default (request, opts, query) => {
     let options = {
         method: 'POST',
         uri: opts.coreUrl + '/query',
-
         body:  Object.assign({
             query: '*:*',
         }, query),
         json: true
     };
     // console.log('JSON API OPTIONS',options);
-    // console.log('JSON API query',query.filter);
+    // console.log('JSON API query',options.body);
     return request.get(options);
 };
-
-
-
