@@ -1,6 +1,6 @@
 if (!global._babelPolyfill) { require('babel-polyfill'); }
 
-import { _, filter, requestParserJson, requestParser, responseParser, responseDocsParser, deleteParser, definitionParser } from './utils';
+import { _, queryJson, responseFind, responseGet, queryDelete, definitionParser } from './utils';
 import errors from 'feathers-errors';
 import Solr from './client/solr';
 import makeDebug from 'debug';
@@ -65,13 +65,16 @@ class Service {
 			});
 	}
 
+
 	find(params) {
 		let _self = this;
+		debug('Service.find',params);
+  // console.log('query',_.pairs({'name':'dude'}));
 		// params._query = Object.assign({}, params.query);
 		return new Promise((resolve, reject) => {
-			this.Solr.json(requestParserJson(params, _self.options))
+			this.Solr.json(queryJson(params, _self.options))
 				.then(function(res) {
-					resolve(responseParser(params, _self.options, res));
+					resolve(responseFind(params, _self.options, res));
 				})
 				.catch(function(err) {
 					return reject(new errors.BadRequest());
@@ -81,11 +84,12 @@ class Service {
 
 	get(id) {
 		let _self = this;
-		// console.log(requestParserJson({query:{id: id}}),'get ????');
+		debug('Service.get(id)',id);
+		// console.log(queryJson({query:{id: id}}),'get ????');
 		return new Promise((resolve, reject) => {
-			this.Solr.json(requestParserJson({ query: { id: id } }))
+			this.Solr.json(queryJson({ query: { id: id } }))
 				.then(function(res) {
-					let docs = responseDocsParser(res);
+					let docs = responseGet(res);
 					// console.log('docs',docs);
 					if (typeof docs !== 'undefined') {
 						return resolve(docs);
@@ -161,9 +165,9 @@ class Service {
 		let _self = this;
 
 		return new Promise((resolve, reject) => {
-			this.Solr.json(requestParserJson({ query: { id: id, $limit: 1 } }, this.options))
+			this.Solr.json(queryJson({ query: { id: id, $limit: 1 } }, this.options))
 				.then(function(res) {
-					res = responseDocsParser(res);
+					res = responseGet(res);
 					data.id = id;
 					let copy = {};
 
@@ -198,7 +202,7 @@ console.log('PATCH create catch copy err',copy, err);
 		let _self = this;
 
 		return new Promise((resolve, reject) => {
-			this.Solr.delete(deleteParser(id, params))
+			this.Solr.delete(queryDelete(id, params))
 				.then(function(res) {
 					resolve(res);
 				})
