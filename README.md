@@ -70,10 +70,12 @@ query: {
 ```
 Will search for 
 
-|----------------|----------------------------|------------------------------------------------------------------------------|---|---|
-| John           | will search in all fields  | See Solr copy field `copy:* to _text_`                                       |   |   |
-| !Doe           | will permit for all fields |                                                                              |   |   |
-| +age:[80 TO *] | will filter age > 80       | `+`will force this as an AND operation,  `[]` is $gte|$lte, `{}` is $gt|$lt  |   |   |
+
+| Search         | Description                                                                                       |
+|----------------|---------------------------------------------------------------------------------------------------|
+| John           | Search in all fields. See Solr copy field `copy:* to _text_`                                      |
+| !Doe           | Deny for all fields                                                                               |
+| +age:[80 TO *] | Add filter age > 80. `+`will force this as an AND operation,  `[]` is $gte|$lte, `{}` is $gt|$lt  |
 
 
 ### $facet
