@@ -70,10 +70,10 @@ query: {
 ```
 Will search for 
 
-| John           | will search in all fields | See Solr copy field `copy:* to _text_`                                    |   |   |
-|----------------|---------------------------|---------------------------------------------------------------------------|---|---|
-| !Doe           | will permit in all fields |                                                                           |   |   |
-| +age:[80 TO *] | will filter age > 80      |  `+`will force this as an AND operation,  `[]` is $gte|$lte, `{}` is $gt|$lt  |   |   |
+|----------------|----------------------------|------------------------------------------------------------------------------|---|---|
+| John           | will search in all fields  | See Solr copy field `copy:* to _text_`                                       |   |   |
+| !Doe           | will permit for all fields |                                                                              |   |   |
+| +age:[80 TO *] | will filter age > 80       | `+`will force this as an AND operation,  `[]` is $gte|$lte, `{}` is $gt|$lt  |   |   |
 
 
 ### $facet
@@ -100,21 +100,22 @@ Result
     skip: 0,
     data: [...],
     facet: {
-    count: 54,
-    age_ranges: {
-        buckets: [{
-            val: 0,
-            count: 4
-        }, {
-            val: 25,
-            count: 17
-        }, {
-            val: 50,
-            count: 15
-        }, {
-            val: 75,
-            count: 14
-        }]
+        count: 54,
+        age_ranges: {
+            buckets: [{
+                val: 0,
+                count: 4
+            }, {
+                val: 25,
+                count: 17
+            }, {
+                val: 50,
+                count: 15
+            }, {
+                val: 75,
+                count: 14
+            }]
+        }
     }
 }
 
