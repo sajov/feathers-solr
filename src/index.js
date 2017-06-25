@@ -45,8 +45,9 @@ class Service {
 			overwrite: true
 		});
 
-		if(this.options.schema != false) {
+		if(this.options.schema !== false) {
 			this.define(this.options.schema);
+
 		}
 	}
 
@@ -97,6 +98,7 @@ class Service {
 					resolve(responseFind(params, _self.options, res));
 				})
 				.catch(function(err) {
+                    debug('Service.find ERROR:',err);
 					return reject(new errors.BadRequest());
 				});
 		});

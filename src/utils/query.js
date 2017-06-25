@@ -1,6 +1,7 @@
 'use strict';
 
 import * as _ from './tools';
+import newQuery from './newQuery';
 
 function getSort(sort = {}) {
   let order = [];
@@ -11,7 +12,6 @@ function getSort(sort = {}) {
 
   return order.join(' ');
 }
-
 
 /**
  * Internal Query parser
@@ -81,20 +81,131 @@ function queryParser(query, params, opt) {
   return query;
 }
 
-const queryCriteriaMap = {
-  $nin: 'must_not.terms',
-  $in: 'filter.terms',
-  $gt: 'filter.range.gt',
-  $gte: 'filter.range.gte',
-  $lt: 'filter.range.lt',
-  $lte: 'filter.range.lte',
-  $ne: 'must_not.term',
-  $prefix: 'filter.prefix',
-  $match: 'must.match',
-  $phrase: 'must.match_phrase',
-  $phrase_prefix: 'must.match_phrase_prefix'
-};
+export const Query = {
 
+    query: {},
+
+    init (opt) {
+
+        this.opt = opt;
+        this.query = {
+            query: '*:*',// TODO:  score
+            filter: [],
+            sort:'',
+            fields:_.get(opt, 'query.$select') || '*,score', // TODO:  score
+            limit: _.get(opt, 'paginate.default') || _.get(opt, 'paginate.max') || 10,
+            offset: 0,
+        };
+
+    },
+
+    filter (field, param) {
+
+        if(typeof param === 'string') {
+
+            this.query.filter.push(field + ':' + param);
+
+        } else if(Array.isArray(param)) {
+
+            if(Array.isArray(param)) {
+                param = '(' + param.join(' OR ') + ')'
+            }
+            this.query.filter.push(field + ':' + param);
+
+        } else {
+
+            Object.keys(param).forEach(function(f) {
+                if(f[0] === '$' && typeof Query[f] !== 'undefined') {
+                    Query[f](field, param[f]);
+                }
+            });
+        }
+    },
+
+    $search (field, param) {
+        this.query.query = param;
+    },
+
+    $limit (field, param) {
+        this.query.limit = param;
+    },
+
+    $skip (field, param) {
+       this.query.offset = param;
+    },
+
+    $sort (field, param) {
+
+        let order = [];
+
+        Object.keys(param).forEach(name => {
+            order.push(name + (param[name] === '1' ? ' asc' : ' desc'));
+        });
+
+        this.query.sort = order.join(' ');
+    },
+
+    $select (field, param) {
+        this.query.fields = param;
+    },
+
+    $in (field, param) {
+        this.query.filter.push(field + ':(' + param.join(' OR ') + ')');
+    },
+
+    $nin (field, param) {
+        this.query.filter.push('!' + field + ':(' + param.join(' OR ') + ')');
+    },
+
+    $lt (field, param) {
+        this.query.filter.push(field + ':[* TO ' + param + '}');
+    },
+
+    $lte (field, param) {
+        this.query.filter.push(field + ':[* TO ' + param + ']');
+    },
+
+    $gt (field, param) {
+        this.query.filter.push(field + ':{' + param + ' TO *]');
+    },
+
+    $gte (field, param) {
+        this.query.filter.push(field + ':[' + param + ' TO *]');
+    },
+
+    $ne (field, param) {
+        this.query.filter.push('!' + field + ':' + param);
+    },
+
+    $or (field, param) {
+
+        let filter = this.query.filter;
+        this.query.filter = [];
+
+        Object.keys(param).forEach(function(item, index) {
+
+          if(item[0] === '$' && typeof Query[item] !== 'undefined') {
+            Query[item](item,param[item]);
+          } else {
+            Query.filter(item,param[item]);
+          }
+
+        });
+        filter.push('(' + this.query.filter.join(' OR ') + ')')
+        this.query.filter = filter;
+        console.log('??????',this.query.filter);
+    },
+
+    $qf (field, params) {
+        this.query.params = Object.assign({}, this.query.params || {}, {qf: params});
+    },
+
+    $facet (field, params) {
+        this.query.facet = this.query.facet || {};
+        this.query.facet[field] = params;
+    }
+
+};
 
 /**
  * Solr Json Request Api
@@ -104,33 +215,36 @@ const queryCriteriaMap = {
  */
 export function queryJson(params, opt) {
 
+    // let Q = new newQuery(opt);
+    console.log('queryparams',params);
+    Query.init(opt);
+    if (_.has(params, 'query')) {
+        Object.keys(params.query).forEach(function(item, index) {
+          if(item[0] === '$' && typeof Query[item] !== 'undefined') {
+            Query[item](item,params.query[item]);
+          } else {
+            Query.filter(item,params.query[item]);
+          }
+        });
+    }
+    console.log('queryNEW',Query.query);
+    return Query.query;
 
-  // console.log('queryparams',params);
-  // let queryNEW = {};
-  // Array.apply(null, Object.keys(params.query)).forEach(function(item, index) {
-  //   if(item[0] === '$') {
-  //   } else {
-  //     let pairs = _.pairs(params.query);
-  //     return { delete: { query: (pairs[0] || '*') + ':' + (pairs[1] || '*') } };
-  //   }
-  // console.log('item',item[0],item, params.query[item]);
-  // });
-  // default $search $limit, $skip, $sort, and $select
-  let query = {
-    query: _.get(params, 'query.$search') || '*:*', // TODO:  score
-    limit: _.get(params, 'query.$limit') || _.get(opt, 'paginate.default') || _.get(opt, 'paginate.max'),
-    offset: _.get(params, 'query.$skip') || 0,
-    fields: _.get(params, 'query.$select') || '*,score', // TODO:  score
-    sort: getSort(_.get(params, 'query.$sort') || {})
-  };
+  // let query = {
+  //   query: _.get(params, 'query.$search') || '*:*', // TODO:  score
+  //   limit: _.get(params, 'query.$limit') || _.get(opt, 'paginate.default') || _.get(opt, 'paginate.max'),
+  //   offset: _.get(params, 'query.$skip') || 0,
+  //   fields: _.get(params, 'query.$select') || '*,score', // TODO:  score
+  //   sort: getSort(_.get(params, 'query.$sort') || {})
+  // };
 
 
-  if (_.has(params, 'query')) {
-    params = _.omit(params.query,'$sort','$search','$limit','$skip','$select','$facet');
-    query = queryParser(query, params, opt);
-  }
+  // if (_.has(params, 'query')) {
+  //   params = _.omit(params.query,'$sort','$search','$limit','$skip','$select','$facet');
+  //   query = queryParser(query, params, opt);
+  // }
 
-  return query;
+  // return query;
 }
 
 /**

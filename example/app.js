@@ -11,17 +11,22 @@ const app = feathers()
   .configure(rest())
   .configure(socketio())
   .configure(hooks())
-  // Needed for parsing bodies (login)
   .use(bodyParser.json())
   .use(bodyParser.urlencoded({ extended: true }))
   .use('/', feathers.static('./public'));
+
+
   // Initialize your feathers plugin
   const Service = feathersSolr({
+      // conn: {},
+      // schema: {},
+      // commitStrategy: false,
       paginate: {
         default: 10,
         max: 4
       }
-    });
+  });
+
   Service.define({
     description: {
         type: 'string',
@@ -48,8 +53,11 @@ const app = feathers()
         default: 'Düsseldorf'
     }
   });
+
   Service.describe();
+
   app.use('/solr', Service);
+
   app.use(errorHandler());
 
 app.listen(3030);
