@@ -89,10 +89,10 @@ class Service {
 
 	find(params) {
 		let _self = this;
-		debug('Service.find',params);
-		return new Promise((resolve, reject) => {
-			this.Solr.json(queryJson(params, _self.options))
-				.then(function(res) {
+        return new Promise((resolve, reject) => {
+            this.Solr.json(queryJson(params, _self.options))
+                .then(function(res) {
+		            debug('Service.find',params,res);
 					resolve(responseFind(params, _self.options, res));
 				})
 				.catch(function(err) {

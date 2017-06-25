@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import plugin from '../src';
 let Adapter = new plugin.Service();
 
-describe('solr-client', () => {
+describe('Solr-Client', () => {
   it('is CommonJS compatible', () => {
     expect(typeof require('../lib')).to.equal('function');
   });

@@ -14,7 +14,7 @@ npm install feathers-solr --save
 
 ## Documentation
 
-Please refer to the [feathers-solr documentation](http://docs.feathersjs.com/) for more details.
+Please refer to the [feathersjs](http://docs.feathersjs.com/) for more details.
 
 ## Start Solr
 ```
@@ -49,10 +49,86 @@ app.listen(3030);
 console.log('Feathers app started on 127.0.0.1:3030');
 ```
 
+## Support all default Queries
+see [Feathers querying](https://docs.feathersjs.com/api/databases/querying.html)
+
+## Supported Solr Queries
+
+### $search
+Simple query
+```
+query: {
+  $search: "John"
+}
+```
+
+More complex query with a default Solr configuration. 
+```
+query: {
+  $search: "John !Doe age +age:[80 TO *]"
+}
+```
+Will search for 
+
+| John           | will search in all fields | See Solr copy field `copy:* to _text_`                                    |   |   |
+|----------------|---------------------------|---------------------------------------------------------------------------|---|---|
+| !Doe           | will permit in all fields |                                                                           |   |   |
+| +age:[80 TO *] | will filter age > 80      |  `+`will force this as an AND operation,  `[]` is $gte|$lte, `{}` is $gt|$lt  |   |   |
+
+
+### $facet
+Add a facet type range
+```
+query: {
+    $facet: {
+        age_ranges: {
+            type: "range",
+            field: "age",
+            start: 0,
+            end: 100,
+            gap: 25
+        }
+    }
+}
+```
+Result
+```
+{
+    QTime: 0,
+    total: 50,
+    limit: 10,
+    skip: 0,
+    data: [...],
+    facet: {
+    count: 54,
+    age_ranges: {
+        buckets: [{
+            val: 0,
+            count: 4
+        }, {
+            val: 25,
+            count: 17
+        }, {
+            val: 50,
+            count: 15
+        }, {
+            val: 75,
+            count: 14
+        }]
+    }
+}
+
+```
+
+### $suggest
+will comming next
+
+### $spellcheck
+will comming next
 
 ## Changelog
 
-__0.1.0__
+__0.1.1__
 
 - Initial release
 

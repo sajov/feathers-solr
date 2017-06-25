@@ -14,7 +14,7 @@ export function responseFind(params, opt, res) {
 
   let response = {};
 
-  if (_.has(opt, 'paginate.max')) {
+  if (_.has(opt, 'paginate.max')) { //TODO: ??
 
     response = {
       QTime: _.get(res, 'response.QTime') || 0, //"<total number of records>",
@@ -28,8 +28,8 @@ export function responseFind(params, opt, res) {
       response = _.get(res, 'response.docs') || [];
   }
 
-  if (_.has(res, 'facet_counts.facet_fields')) {
-      response.facet = _.get(res, 'facet_counts.facet_fields');
+  if (_.has(res, 'facets')) {
+      response.facet = _.get(res, 'facets');
   }
 
   return response;

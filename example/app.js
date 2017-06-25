@@ -62,7 +62,7 @@ const app = feathers()
   let demoData = require('./data/json-generator.js')
   app.service('solr').remove();
   app.service('solr').create(demoData)
-    .then(function(res){console.log('RESDATA',res)})
+    .then(function(res){})
     .catch(function(err){console.log('EROOR',err)});
 
 

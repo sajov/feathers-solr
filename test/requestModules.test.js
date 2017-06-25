@@ -4,7 +4,7 @@ let Adapter = new plugin.Service();
 // var hyperquest = require('./promisified-hyperquest.js');
 
 
-describe('request module comparison', () => {
+describe('Request module comparison', () => {
 
   //   it('Adapter hyperquest test', done => {
   //   console.time('    hyperquest ping');

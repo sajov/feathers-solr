@@ -134,8 +134,7 @@ export const Query = {
     },
 
     $facet (field, params) {
-        this.query.facet = this.query.facet || {};
-        this.query.facet[field] = params;
+        this.query.facet = Object.assign(this.query.facet || {},params);
     }
 
 };
