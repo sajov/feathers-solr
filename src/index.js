@@ -90,8 +90,6 @@ class Service {
 	find(params) {
 		let _self = this;
 		debug('Service.find',params);
-  // console.log('query',_.pairs({'name':'dude'}));
-		// params._query = Object.assign({}, params.query);
 		return new Promise((resolve, reject) => {
 			this.Solr.json(queryJson(params, _self.options))
 				.then(function(res) {
@@ -183,7 +181,6 @@ class Service {
 	 */
 	patch(id, data, params) {
 
-
 		let _self = this;
 
 		return new Promise((resolve, reject) => {
@@ -200,14 +197,11 @@ class Service {
 							copy[key] = data[key];
 						}
 					});
-console.log('PATCH copy',copy);
 					_self.create(copy)
 						.then(function(res) {
-console.log('PATCH create copy res',copy, res);
 							resolve(copy);
 						})
 						.catch(function(err) {
-console.log('PATCH create catch copy err',copy, err);
 							return reject(new errors.BadRequest());
 						});
 				})
@@ -232,19 +226,6 @@ console.log('PATCH create catch copy err',copy, err);
 					return reject(new errors.BadRequest());
 				});
 		});
-	}
-
-	test(param) {
-		// this.Solr.search.testMe('wow',param);
-		this.Solr.req('test solr client' + param);
-		return param;
-	}
-
-	init(param) {
-		console.log('wow');
-		console.log('wow', param);
-		console.log('wow', this.Solr);
-		// if ()
 	}
 
 	client() {
