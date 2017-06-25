@@ -80,6 +80,7 @@ Will search for
 
 ### $facet
 Add a facet type range
+
 ```
 query: {
     $facet: {
@@ -89,10 +90,18 @@ query: {
             start: 0,
             end: 100,
             gap: 25
-        }
+        },
+        age_avg : "avg(age_i)",
+        age_sum : "sum(age_i)"
     }
 }
 ```
+
+
+```
+http://localhost:3030/solr?&$facet[age_ranges][type]=range&$facet[age_ranges][field]=age&$facet[age_ranges][start]=0&$facet[age_ranges][end]=100&$facet[age_ranges][gap]=25&$facet[age_avg]=avg(age_i)&$facet[age_sum]=sum(age_i)
+```
+
 Result
 ```
 {
@@ -102,6 +111,8 @@ Result
     skip: 0,
     data: [...],
     facet: {
+        age_avg: 29.44,
+        age_sum: 1472,
         count: 54,
         age_ranges: {
             buckets: [{
