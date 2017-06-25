@@ -11,24 +11,43 @@ class Service {
 
 	constructor(opt = {}) {
 
-		this.options = opt;
-
-		this.Solr = new Solr({
-			scheme: this.options.scheme || 'http',
-			host: this.options.host || 'localhost',
-			port: this.options.port || 8983,
-			path: this.options.path || '/solr',
-			core: this.options.core || '/gettingstarted',
-			managedScheme: this.options.managedScheme || false,
+		this.options = Object.assign({},{
+			conn: {
+				scheme: 'http',
+				host: 'localhost',
+				port: 8983,
+				path: '/solr',
+				core: '/gettingstarted'
+			},
+			schema: false,
+			managedScheme: false,
 			/*commitStrategy softCommit: true, commit: true, commitWithin: 50*/
-			commitStrategy: this.options.commitStrategy || {
+			commitStrategy: {
 				softCommit: true,
 				commitWithin: 50000,
 				overwrite: true
 			}
+		},opt);
+
+		this.Solr = new Solr({
+			scheme: this.options.conn.scheme,
+			host: this.options.conn.host,
+			port: this.options.conn.port,
+			path: this.options.conn.path,
+			core: this.options.conn.core,
+			managedScheme: this.options.conn.managedScheme,
+			commitStrategy: this.options.commitStrategy
 		});
 
-		console.log('feather-solr Service started');
+		console.log('feather-solr Service started',this.options.commitStrategy || {
+			softCommit: true,
+			commitWithin: 50000,
+			overwrite: true
+		});
+
+		if(this.options.schema != false) {
+			this.define(this.options.schema);
+		}
 	}
 
 	status() {
@@ -45,6 +64,7 @@ class Service {
 
 	define(fields) {
 		let schemaApi = this.Solr.schema();
+		this.options.schema = fields;
 		schemaApi.addField(definitionParser('add', fields))
 			.then(function(res) {
 				console.log('schemaApi.addField',res.errors);
