@@ -75,7 +75,7 @@ Will search for
 |----------------|---------------------------------------------------------------------------------------------------|
 | John           | Search in all fields. See Solr copy field `copy:* to _text_`                                      |
 | !Doe           | Deny for all fields                                                                               |
-| +age:[80 TO *] | Add filter age > 80. `+`will force this as an AND operation,  `[]` is $gte|$lte, `{}` is $gt|$lt  |
+| +age:[80 TO *] | Add filter age > 80. `+`will force this as an AND operation,  `[]` for $gte/$lte, `{}` for $gt/$lt|
 
 
 ### $facet
