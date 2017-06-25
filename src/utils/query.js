@@ -1,7 +1,6 @@
 'use strict';
 
 import * as _ from './tools';
-import newQuery from './newQuery';
 
 export const Query = {
 
@@ -141,28 +140,15 @@ export const Query = {
 
 };
 
-/**
- * Solr Json Request Api
- * @param  {object} params Request params
- * @param  {object} opt    Adapter config
- * @return {object}        Solr query object
- */
+
 export function queryJson(params, opt) {
 
-    let Q = new newQuery(opt);
-    console.log('queryparams',params);
     Query.init(opt);
+
     if (_.has(params, 'query')) {
         Query.parseQuery(params.query);
-        // Object.keys(params.query).forEach(function(item, index) {
-        //   if(item[0] === '$' && typeof Query[item] !== 'undefined') {
-        //     Query[item](item,params.query[item]);
-        //   } else {
-        //     Query.filter(item,params.query[item]);
-        //   }
-        // });
     }
-    console.log('queryNEW',Query.query);
+
     return Query.query;
 
 }
