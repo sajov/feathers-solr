@@ -45,7 +45,7 @@ class Service {
 			overwrite: true
 		});
 
-		if(this.options.schema !== false) {
+		if (this.options.schema !== false) {
 			this.define(this.options.schema);
 
 		}
@@ -244,7 +244,7 @@ console.log('PATCH create catch copy err',copy, err);
 		console.log('wow');
 		console.log('wow', param);
 		console.log('wow', this.Solr);
-		// if()
+		// if ()
 	}
 
 	client() {

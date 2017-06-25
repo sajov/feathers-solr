@@ -54,9 +54,17 @@ const app = feathers()
     }
   });
 
-  Service.describe();
+  // Service.describe();
+
 
   app.use('/solr', Service);
+
+  let demoData = require('./data/json-generator.js')
+  app.service('solr').remove();
+  app.service('solr').create(demoData)
+    .then(function(res){console.log('RESDATA',res)})
+    .catch(function(err){console.log('EROOR',err)});
+
 
   app.use(errorHandler());
 

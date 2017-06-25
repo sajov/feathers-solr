@@ -23,7 +23,7 @@ export const Query = {
     parseQuery (query) {
 
         Object.keys(query).forEach(function(item, index) {
-          if(item[0] === '$' && typeof Query[item] !== 'undefined') {
+          if (item[0] === '$' && typeof Query[item] !== 'undefined') {
             Query[item](item,query[item]);
           } else {
             Query.filter(item,query[item]);
@@ -34,21 +34,21 @@ export const Query = {
 
     filter (field, param) {
 
-        if(typeof param === 'string') {
+        if (typeof param === 'string') {
 
             this.query.filter.push(field + ':' + param);
 
-        } else if(Array.isArray(param)) {
+        } else if (Array.isArray(param)) {
 
-            if(Array.isArray(param)) {
-                param = '(' + param.join(' OR ') + ')'
+            if (Array.isArray(param)) {
+                param = '(' + param.join(' OR ') + ')';
             }
             this.query.filter.push(field + ':' + param);
 
         } else {
 
             Object.keys(param).forEach(function(f) {
-                if(f[0] === '$' && typeof Query[f] !== 'undefined') {
+                if (f[0] === '$' && typeof Query[f] !== 'undefined') {
                     Query[f](field, param[f]);
                 }
             });
@@ -117,16 +117,16 @@ export const Query = {
 
         Object.keys(param).forEach(function(item, index) {
 
-          if(item[0] === '$' && typeof Query[item] !== 'undefined') {
+          if (item[0] === '$' && typeof Query[item] !== 'undefined') {
             Query[item](item,param[item]);
           } else {
             Query.filter(item,param[item]);
           }
 
         });
-        filter.push('(' + this.query.filter.join(' OR ') + ')')
+
+        filter.push('(' + this.query.filter.join(' OR ') + ')');
         this.query.filter = filter;
-        console.log('??????',this.query.filter);
     },
 
     $qf (field, params) {
