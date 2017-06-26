@@ -86,15 +86,17 @@ Will search for
 ### $facet Functions and Analytics
 See [Solr Facet Functions and Analytics](http://yonik.com/solr-facet-functions/)
 
-| Aggregation | Example | Effect |
-| sum | sum(sales) | summation of numeric values |
-| avg | avg(popularity) | average of numeric values |
-| sumsq | sumsq(rent) | sum of squares |
-| min | min(salary) | minimum value |
-| max | max(mul(price,popularity)) | maximum value |
-| unique | unique(state) | number of unique values (count distinct) |
-| hll | hll(state) | number of unique values using the HyperLogLog algorithm |
-| percentile | percentile(salary,50,75,99,99.9) | calculates percentiles |
+|Aggregation|Example|Effect|
+|--- |--- |--- |
+|sum|sum(sales)|summation of numeric values|
+|avg|avg(popularity)|average of numeric values|
+|sumsq|sumsq(rent)|sum of squares|
+|min|min(salary)|minimum value|
+|max|max(mul(price,popularity))|maximum value|
+|unique|unique(state)|number of unique values (count distinct)|
+|hll|hll(state)|number of unique values using the HyperLogLog algorithm|
+|percentile|percentile(salary,50,75,99,99.9)|calculates percentiles|
+
 
 ```
 query: {
