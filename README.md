@@ -17,9 +17,12 @@ npm install feathers-solr --save
 Please refer to the [feathersjs](http://docs.feathersjs.com/) for more details.
 
 ## Start Solr
+
 ```
  bin/solr start -e schemaless
 ``` 
+Or see `feathers-solr/bin/install-solr.sh` for a kickstart installation
+
 
 ## Complete Example
 
@@ -78,7 +81,32 @@ Will search for
 | +age:[80 TO *] | Add filter age > 80. `+`will force this as an AND operation,  `[]` for $gte/$lte, `{}` for $gt/$lt|
 
 
-### $facet
+
+
+### $facet Functions and Analytics
+See [Solr Facet Functions and Analytics](http://yonik.com/solr-facet-functions/)
+
+| Aggregation | Example | Effect |
+| sum | sum(sales) | summation of numeric values |
+| avg | avg(popularity) | average of numeric values |
+| sumsq | sumsq(rent) | sum of squares |
+| min | min(salary) | minimum value |
+| max | max(mul(price,popularity)) | maximum value |
+| unique | unique(state) | number of unique values (count distinct) |
+| hll | hll(state) | number of unique values using the HyperLogLog algorithm |
+| percentile | percentile(salary,50,75,99,99.9) | calculates percentiles |
+
+```
+query: {
+    $facet: {
+        age_avg : "avg(age_i)",
+        age_sum : "sum(age_i)"
+    }
+}
+
+```
+
+### $facet Ranges
 Add a facet type range
 
 ```
@@ -90,14 +118,12 @@ query: {
             start: 0,
             end: 100,
             gap: 25
-        },
-        age_avg : "avg(age_i)",
-        age_sum : "sum(age_i)"
+        }
     }
 }
 ```
 
-
+Feathers Rest query
 ```
 http://localhost:3030/solr?&$facet[age_ranges][type]=range&$facet[age_ranges][field]=age&$facet[age_ranges][start]=0&$facet[age_ranges][end]=100&$facet[age_ranges][gap]=25&$facet[age_avg]=avg(age_i)&$facet[age_sum]=sum(age_i)
 ```
@@ -133,6 +159,23 @@ Result
 }
 
 ```
+
+See more query variants (JSON Facet API)[http://yonik.com/json-facet-api/],(Solr Facet Functions and Analytics)[http://yonik.com/solr-facet-functions/], (Solr Subfacets)[http://yonik.com/solr-subfacets/], (Multi-Select Faceting)[http://yonik.com/multi-select-faceting/]
+
+
+### $params
+This will add all kind of solr query params. This
+This example will group the result.
+```
+query: {
+    $params: {
+        
+        group : true,
+        "group.field" : "age_i"
+    }
+}
+```
+
 
 ### $suggest
 will comming next
