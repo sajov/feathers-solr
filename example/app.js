@@ -17,15 +17,21 @@ const app = feathers()
 
 
   // Initialize your feathers plugin
-  const Service = feathersSolr({
-      // conn: {},
-      // schema: {},
-      // commitStrategy: false,
-      paginate: {
-        default: 10,
-        max: 4
-      }
-  });
+    const Service = feathersSolr({
+        host: 'http://localhost:8983/solr',
+        core: '/gettingstarted',
+        managedScheme: true,
+        commitStrategy: {
+            softCommit: true,
+            commitWithin: 50000,
+            overwrite: true
+        },
+        paginate: {
+            default: 10,
+            max: 4
+        }
+    });
+
 
   Service.define({
     description: {

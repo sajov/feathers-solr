@@ -8,6 +8,47 @@ export function isEmpty(obj) {
     return Object.keys(obj).length === 0;
 }
 
+export function isObject(item) {
+  return (item && typeof item === 'object' && !Array.isArray(item));
+}
+
+export function isPlainObject(obj) {
+    return isObject(obj) && (
+        obj.constructor === Object || obj.constructor === undefined // obj = Object.create(null)
+    );
+}
+
+export function mergeDeep(target, sources) {
+  if (!sources.length) {
+    return target;
+  }
+    const source = sources.shift();
+
+    if(Array.isArray(target)) {
+        if(Array.isArray(source)) {
+            target.push(...source);
+        } else {
+            target.push(source);
+        }
+    } else if(isPlainObject(target)) {
+        if(isPlainObject(source)) {
+            for(let key of Object.keys(source)) {
+                if(!target[key]) {
+                    target[key] = source[key];
+                } else {
+                    mergeDeep(target[key], source[key]);
+                }
+            }
+        } else {
+            throw new Error(`Cannot merge object with non-object`);
+        }
+    } else {
+        target = source;
+    }
+
+    return mergeDeep(target, ...sources);
+}
+
 export function extend(...args) {
     return Object.assign(...args);
 }
@@ -52,3 +93,5 @@ export function get(obj, key) {
         return (typeof o === 'undefined' || o === null) ? o : o[x];
     }, obj);
 }
+
+

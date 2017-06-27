@@ -14,14 +14,53 @@ npm install feathers-solr --save
 
 ## Documentation
 
-Please refer to the [feathersjs](http://docs.feathersjs.com/) for more details.
+Please refer to the [Feathers database adapter documentation](http://docs.feathersjs.com/databases/readme.html) for more details or directly at:
 
-## Start Solr
+- [Extending](http://docs.feathersjs.com/databases/extending.html) - How to extend a database adapter
+- [Pagination and Sorting](http://docs.feathersjs.com/databases/pagination.html) - How to use pagination and sorting for the database adapter
+- [Querying](http://docs.feathersjs.com/databases/querying.html) - The common adapter querying mechanism
+
+## Getting Started
+
+#### Install Solr
 
 ```
  bin/solr start -e schemaless
 ``` 
-Or see `feathers-solr/bin/install-solr.sh` for a kickstart installation
+
+Use `feathers-solr/bin/install-solr.sh for a kickstart installation.
+
+
+## Options
+
+| Option            | Default                                                   | Description                   |
+|----------------   |---------------------------------------------------------- |---------------------------    |
+| host              | http://localhost:8983/solr                                |                               |
+| core              | /gettingstarted                                           |                               |
+| schema            | false                                                     | {title: {type:"string"}}      |
+| commitStrategy    | {softCommit: true, commitWithin: 50000, overwrite: true}  |                               |
+
+
+### Schema
+[Schemaless Mode](https://lucene.apache.org/solr/guide/6_6/schemaless-mode.html) is recommended.
+Use [Solr Field Types](https://cwiki.apache.org/confluence/display/solr/Solr+Field+Types) and [Field Type Definitions and Properties](https://cwiki.apache.org/confluence/display/solr/Field+Type+Definitions+and+Properties) to define Model properties
+
+
+```
+{
+    title: {
+        type: "text_general", // For more flexible searching. Default type is 'string'
+        stored: true, // default, keep value visible in results
+        indexed: true, // default, make it searchable
+    }
+}
+```
+
+See your current schema definition
+
+```
+ http://localhost:8983/solr/gettingstarted/schema/
+```
 
 
 ## Complete Example
@@ -34,7 +73,24 @@ const rest = require('feathers-rest');
 const hooks = require('feathers-hooks');
 const bodyParser = require('body-parser');
 const errorHandler = require('feathers-errors/handler');
-const plugin = require('feathers-solr');
+const solr = require('feathers-solr');
+
+
+// Initialize your feathers plugin
+const Service = feathersSolr({
+    host: 'http://localhost:8983/solr',
+    core: '/gettingstarted',
+    managedScheme: true,
+    commitStrategy: {
+        softCommit: true,
+        commitWithin: 50000,
+        overwrite: true
+    },
+    paginate: {
+        default: 10,
+        max: 4
+});
+
 
 // Initialize the application
 const app = feathers()
@@ -43,45 +99,66 @@ const app = feathers()
   // Needed for parsing bodies (login)
   .use(bodyParser.json())
   .use(bodyParser.urlencoded({ extended: true }))
-  // Initialize your feathers plugin
-  .use('/plugin', plugin())
+  // Initialize your feathers solr
+  .use('/solr', Service())
   .use(errorHandler());
+
 
 app.listen(3030);
 
 console.log('Feathers app started on 127.0.0.1:3030');
 ```
 
-## Support all default Queries
-see [Feathers querying](https://docs.feathersjs.com/api/databases/querying.html)
+### Run Demo App
+
+```
+ /example/app.js
+```
+
+## Support all Feathers Queries 
+See [Feathers querying](https://docs.feathersjs.com/api/databases/querying.html) for more detail
 
 ## Supported Solr Queries
 
 ### $search
 Simple query
+
 ```
 query: {
   $search: "John"
 }
 ```
 
+'$search' will try to match against Solr default search field '_text_' [Schemaless Mode](https://cwiki.apache.org/confluence/display/solr/Schemaless+Mode)
+
+
+
 More complex query with a default Solr configuration. 
+
 ```
 query: {
-  $search: "John !Doe age +age:[80 TO *]"
+  
+  $search: "John !Doe +age:[80 TO *]", // Search in default field _text_. See Solr copy field `copy:* to _text_`
+  // $params: {
+  //   qf: "name^10 friends" define explicit fields to query and boost
+  // }
+  // or $search: "name:John^10 AND !name:Doe AND age:[80 TO *]", 
+  
 }
 ```
-Will search for 
 
+### $params
+To add all kind of Solr query params!
+This example will group the result.
 
-| Search         | Description                                                                                       |
-|----------------|---------------------------------------------------------------------------------------------------|
-| John           | Search in all fields. See Solr copy field `copy:* to _text_`                                      |
-| !Doe           | Deny for all fields                                                                               |
-| +age:[80 TO *] | Add filter age > 80. `+`will force this as an AND operation,  `[]` for $gte/$lte, `{}` for $gt/$lt|
-
-
-
+```
+query: {
+    $params: {
+        group : true,
+        "group.field" : "country"
+    }
+}
+```
 
 ### $facet Functions and Analytics
 See [Solr Facet Functions and Analytics](http://yonik.com/solr-facet-functions/)
@@ -126,11 +203,13 @@ query: {
 ```
 
 Feathers Rest query
+
 ```
 http://localhost:3030/solr?&$facet[age_ranges][type]=range&$facet[age_ranges][field]=age&$facet[age_ranges][start]=0&$facet[age_ranges][end]=100&$facet[age_ranges][gap]=25&$facet[age_avg]=avg(age_i)&$facet[age_sum]=sum(age_i)
 ```
 
-Result
+Feathers Result
+
 ```
 {
     QTime: 0,
@@ -162,21 +241,8 @@ Result
 
 ```
 
-See more query variants (JSON Facet API)[http://yonik.com/json-facet-api/],(Solr Facet Functions and Analytics)[http://yonik.com/solr-facet-functions/], (Solr Subfacets)[http://yonik.com/solr-subfacets/], (Multi-Select Faceting)[http://yonik.com/multi-select-faceting/]
+See more query variants [JSON Facet API](http://yonik.com/json-facet-api/),[Solr Facet Functions and Analytics](http://yonik.com/solr-facet-functions/), [Solr Subfacets](http://yonik.com/solr-subfacets/), [Multi-Select Faceting](http://yonik.com/multi-select-faceting/)
 
-
-### $params
-This will add all kind of solr query params. This
-This example will group the result.
-```
-query: {
-    $params: {
-        
-        group : true,
-        "group.field" : "age_i"
-    }
-}
-```
 
 
 ### $suggest

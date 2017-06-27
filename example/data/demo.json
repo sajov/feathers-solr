@@ -1,0 +1,23 @@
+[
+    {
+        "id": 1,
+        "name": "John Doe",
+        "skills": ["gaming","running"],
+        "age": 23,
+        "country": "United States"
+    },
+    {
+        "id": 2,
+        "name": "Max Mustermann",
+        "skills": ["running","climbing"],
+        "age": 40,
+        "country": "Germany"
+    },
+    {
+        "id": 3,
+        "name": "Sajo",
+        "skills": ["martial art","climbing"],
+        "age": 45,
+        "country": "Mazedonia"
+    },
+]

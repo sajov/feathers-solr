@@ -24,13 +24,9 @@ export default class Solr {
     constructor(opts) {
 
         this.opts = this.extend({
-            scheme: 'http',
-            host: 'localhost',
-            port: 8983,
-            path: '/solr',
+            host: 'http://localhost:8983/solr',
             core: '/gettingstarted',
             managedScheme: true,
-            /*commitStrategy softCommit: true, commit: true, commitWithin: 50*/
             commitStrategy: {
                 softCommit: true,
                 commitWithin: 50000,
@@ -38,9 +34,9 @@ export default class Solr {
             }
         }, opts);
 
-        this.opts.url = [this.opts.scheme, '://', this.opts.host, ':', this.opts.port, this.opts.path].join('');
+        this.opts.url = this.opts.host;
 
-        this.opts.coreUrl = [this.opts.url, this.opts.core].join('');
+        this.opts.coreUrl = this.opts.host + this.opts.core;
 
         this.req = request;
     }

@@ -19,8 +19,8 @@ export function responseFind(params, opt, res) {
     response = {
       QTime: _.get(res, 'response.QTime') || 0, //"<total number of records>",
       total: _.get(res, 'response.numFound') || 0, //"<total number of records>",
-      limit: parseInt(_.get(params, '_query.$limit')) || _.get(opt, 'paginate.default') || _.get(opt, 'paginate.max'),
-      skip: parseInt(_.get(params, '_query.$skip')) || 0, //res.response.start "<number of skipped items (offset)>",
+      limit: parseInt(_.get(params, 'query.$limit')) || _.get(opt, 'paginate.default') || _.get(opt, 'paginate.max'),
+      skip: parseInt(_.get(params, 'query.$skip')) || 0, //res.response.start "<number of skipped items (offset)>",
       data: responseGet(res, true) //[/* data */]
     };
 

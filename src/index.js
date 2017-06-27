@@ -12,13 +12,8 @@ class Service {
 	constructor(opt = {}) {
 
 		this.options = Object.assign({},{
-			conn: {
-				scheme: 'http',
-				host: 'localhost',
-				port: 8983,
-				path: '/solr',
-				core: '/gettingstarted'
-			},
+			host: 'http://localhost:8983/solr',
+			core: '/gettingstarted',
 			schema: false,
 			managedScheme: false,
 			/*commitStrategy softCommit: true, commit: true, commitWithin: 50*/
@@ -30,12 +25,9 @@ class Service {
 		},opt);
 
 		this.Solr = new Solr({
-			scheme: this.options.conn.scheme,
-			host: this.options.conn.host,
-			port: this.options.conn.port,
-			path: this.options.conn.path,
-			core: this.options.conn.core,
-			managedScheme: this.options.conn.managedScheme,
+			host: this.options.host,
+			core: this.options.core,
+			managedScheme: this.options.managedScheme,
 			commitStrategy: this.options.commitStrategy
 		});
 
@@ -127,17 +119,18 @@ class Service {
 	create(data) {
 
 		let _self = this;
-
 		return new Promise((resolve, reject) => {
 			this.Solr.update(data)
 				.then(function(res) {
 					if (res.responseHeader.status === 0) {
 						resolve(data);
 					} else {
+                        console.log('res', res);
 						return reject(new errors.BadRequest());
 					}
 				})
 				.catch(function(err) {
+                    console.log('err', err);
 					return reject(new errors.BadRequest());
 				});
 		});
@@ -167,6 +160,7 @@ class Service {
 					resolve(data);
 				})
 				.catch(function(err) {
+                    console.log('err', err);
 					return reject(new errors.BadRequest());
 				});
 		});
@@ -174,6 +168,9 @@ class Service {
 
 	/**
 	 * adapter.patch(id, data, params) -> Promise
+     * Using update / overide the doc instead of atomic
+     * field update http://yonik.com/solr/atomic-updates/
+     * because
 	 * @param  {[type]} id     [description]
 	 * @param  {[type]} data   [description]
 	 * @param  {[type]} params [description]
@@ -181,29 +178,48 @@ class Service {
 	 */
 	patch(id, data, params) {
 
-		let _self = this;
+        let _self = this;
+        let query =  params.query;
 
-		return new Promise((resolve, reject) => {
-			this.Solr.json(queryJson({ query: { id: id, $limit: 1 } }, this.options))
-				.then(function(res) {
-					res = responseGet(res);
-					data.id = id;
-					let copy = {};
+        if(id !== null) {
+            query = { id: id, $limit: 1 };
+        } else {
+            query.$limit = 100000; // TODO: ?
+        }
 
-					Object.keys(res).forEach(key => {
-						if (typeof data[key] === 'undefined') {
-							copy[key] = null;
-						} else {
-							copy[key] = data[key];
-						}
-					});
-					_self.create(copy)
-						.then(function(res) {
-							resolve(copy);
-						})
-						.catch(function(err) {
-							return reject(new errors.BadRequest());
-						});
+        return new Promise((resolve, reject) => {
+
+            _self.Solr
+                .json(queryJson({ query: query }, _self.options))
+                .then(function(response) {
+
+                    response = responseFind(params, _self.options, response);
+                    if(response.data.length > 0) {
+
+                        response.data.forEach((doc, index, ref) => {
+                            Object.keys(data).forEach(key => {
+                                if(Array.isArray(response.data[index][key])) {
+                                    response.data[index][key].push(data[key]);
+                                } else {
+                                    response.data[index][key] = data[key];
+                                }
+                            });
+                            delete response.data[index]._version_;
+                        });
+
+
+                        _self.create(response.data)
+                            .then(function(res) {
+                               resolve(res);
+                            })
+                            .catch(function(err) {
+                               console.log('err', err);
+                               return reject(new errors.BadRequest());
+                            });
+
+                    } else {
+                        resolve();
+                    }
 				})
 				.catch(function(err) {
 					console.log('err', err);
