@@ -258,6 +258,7 @@ will comming next
 
 ## Adittional Client Methods
 
+
 | Solr Api's                                                                                                                                                     | Returns a Promise                                  | ./client/requestHandler/  |
 | -------------------------------------------------------------------------------------------------------------------------------------------------------------  | -------------------------------------------------- | ------------------------- |
 | ~~[Solr BolbStore API](https://cwiki.apache.org/confluence/display/solr/Blob+Store+API)~~                                                                      |                                                    | BlobStoreApi.js           |
@@ -276,6 +277,13 @@ will comming next
 | [SearchHandlers]()                                                                                                                                             | Adapter.client().search()                          | SearchHandlers.js         |
 | ~~[ShardHandlers](https://cwiki.apache.org/confluence/display/solr/RequestHandlers+and+SearchComponents+in+SolrConfig)~~                                       |                                                    | ShardHandlers.js          |
 | [Update](https://cwiki.apache.org/confluence/display/solr/Uploading+Data+with+Index+Handlers#UploadingDatawithIndexHandlers-UpdateRequestHandlerConfiguration) | Used by Adapter .create(), .update() and  .patch() | UpdateRequestHandlers.js  |
+
+Not all Solr API's implemented at the moment
+
+## TODO
+* Write more tests
+* Implement $suggest and $spellcheck
+* Demo search page with autocompleter with suggestions. Search result with facet navigation, filter(ranges, sliders), pagination and result listing by just one query.
 
 
 ## Changelog
