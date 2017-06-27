@@ -1,6 +1,6 @@
 /**
  * Solr BolbStore API
- * https://cwiki.apache.org/confluence/display/solr/RequestHandlers+and+SearchComponents+in+SolrConfig
+ * https://cwiki.apache.org/confluence/display/solr/Blob+Store+API
  */
 export function someMethod() {
     console.log('someMethod');

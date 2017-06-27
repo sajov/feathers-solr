@@ -3,7 +3,7 @@
  * https://cwiki.apache.org/confluence/display/solr/Managed+Resources
  */
 
-export class ConfigSets {
+export class ManagedResources {
 
     constructor(request, opts) {
 

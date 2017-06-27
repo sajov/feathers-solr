@@ -6,6 +6,7 @@
 **/
 import * as BlobStoreApi from './requestHandler/BlobStoreApi.js';
 import * as ConfigApi from './requestHandler/ConfigApi.js';
+import CollectionsApi from './requestHandler/CollectionsApi.js';
 import CoreAdminApi from './requestHandler/CoreAdminApi.js';
 import SchemaApi from './requestHandler/SchemaApi.js';
 import JsonRequestApi from './requestHandler/JsonRequestApi.js';
@@ -43,6 +44,10 @@ export default class Solr {
 
     blob(params) {
         return new BlobStoreApi(this.req, this.opts, params);
+    }
+
+    collectionsApi(params) {
+        return new CollectionsApi(this.req, this.opts, params);
     }
 
     commit(data) {

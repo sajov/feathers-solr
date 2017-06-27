@@ -1,5 +1,5 @@
 /**
- * Solr Config API
+ * JSON Request API
  * https://cwiki.apache.org/confluence/display/solr/JSON+Request+API
  * http://yonik.com/solr-json-request-api/
  *  curl http://localhost:8983/solr/gettingstarted/query -d '
