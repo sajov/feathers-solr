@@ -43,11 +43,11 @@ export function responseFind(params, opt, res) {
  */
 export function responseGet(res, allDocs = false) {
 
-  if (!_.has(res, 'response.docs')) {
+  if (!_.has(res, 'response.docs') && !_.has(res, 'grouped')) {
     return allDocs === false ? {} : [];
   }
 
-  let docs = _.get(res, 'response.docs') || [];
+  let docs = _.get(res, 'response.docs') || _.get(res, 'grouped') || [];
 
   return allDocs === false ? docs[0] : docs;
 }

@@ -143,6 +143,10 @@ query: {
   //   qf: "name^10 friends" define explicit fields to query and boost
   // }
   // or $search: "name:John^10 AND !name:Doe AND age:[80 TO *]", 
+  // or $search: "joh*", 
+  // or $search: '"john doe"', 
+  // or $search: '"john doe"', 
+  // or $search: 'jon', 
   
 }
 ```
