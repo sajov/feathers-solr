@@ -7,6 +7,7 @@
 import * as BlobStoreApi from './requestHandler/BlobStoreApi.js';
 import * as ConfigApi from './requestHandler/ConfigApi.js';
 import CollectionsApi from './requestHandler/CollectionsApi.js';
+import ConfigSetsApi from './requestHandler/ConfigSetsApi.js';
 import CoreAdminApi from './requestHandler/CoreAdminApi.js';
 import SchemaApi from './requestHandler/SchemaApi.js';
 import JsonRequestApi from './requestHandler/JsonRequestApi.js';
@@ -46,7 +47,11 @@ export default class Solr {
         return new BlobStoreApi(this.req, this.opts, params);
     }
 
-    collectionsApi(params) {
+    collections(params) {
+        return new CollectionsApi(this.req, this.opts, params);
+    }
+
+    configSets(params) {
         return new CollectionsApi(this.req, this.opts, params);
     }
 
@@ -95,7 +100,7 @@ export default class Solr {
         return new ReplicationHandlers(this.req, this.opts, params);
     }
 
-    requestParametersAPI(params) {
+    requestParameters(params) {
         return new RequestParametersAPI(this.req, this.opts, params);
     }
 

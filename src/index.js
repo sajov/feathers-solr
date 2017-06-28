@@ -1,6 +1,6 @@
 if (!global._babelPolyfill) { require('babel-polyfill'); }
 
-import { _, queryJson, responseFind, responseGet, queryDelete, definitionParser } from './utils';
+import { _, queryJson, responseFind, responseGet, queryDelete, describeSchemaFields, parseSchemaFields,  deleteSchemaFields, addFields} from './utils';
 import errors from 'feathers-errors';
 import Solr from './client/solr';
 import makeDebug from 'debug';
@@ -14,8 +14,9 @@ class Service {
 		this.options = Object.assign({},{
 			host: 'http://localhost:8983/solr',
 			core: '/gettingstarted',
-			schema: false,
-			managedScheme: false,
+            schema: false,
+			migrate: 'drop',
+			managedScheme: true,
 			/*commitStrategy softCommit: true, commit: true, commitWithin: 50*/
 			commitStrategy: {
 				softCommit: true,
@@ -31,18 +32,36 @@ class Service {
 			commitStrategy: this.options.commitStrategy
 		});
 
-		console.log('feather-solr Service started',this.options.commitStrategy || {
-			softCommit: true,
-			commitWithin: 50000,
-			overwrite: true
-		});
+        debug('Initializing feathers-solr Service');
 
-		if (this.options.schema !== false) {
-			this.define(this.options.schema);
+        let _self = this;
 
-		}
+        _self.describe()
+            .then(res => {
+                _self.options._schema = parseSchemaFields(res.fields);
+                _self.define()
+                    .then(res => {
+                        debug('feather-solr Service started',_self.options.commitStrategy || {
+                            softCommit: true,
+                            commitWithin: 50000,
+                            overwrite: true
+                        }, res);
+
+                    })
+                    .catch(err => {
+                        debug('Service.define ERROR',err);
+                    });
+            })
+            .catch(err => {
+                debug('Service.describe ERROR',err);
+            });
+
 	}
 
+    /**
+     * [status description]
+     * @return {[type]} [description]
+     */
 	status() {
 		let coreAdmin = this.Solr.coreAdmin();
 		coreAdmin.status()
@@ -55,30 +74,97 @@ class Service {
 			});
 	}
 
+    /**
+     * [define description]
+     * @param  {[type]} fields [description]
+     * @return {[type]}        [description]
+     */
 	define(fields) {
 		let schemaApi = this.Solr.schema();
-		this.options.schema = fields;
-		schemaApi.addField(definitionParser('add', fields))
-			.then(function(res) {
-				console.log('schemaApi.addField',res.errors);
-			})
-			.catch(function(err){
-				console.error(err);
-			});
+        let _self = this;
+
+        return new Promise((resolve, reject) => {
+
+            if (_.isObject(fields)) {
+    		  _self.options.schema = fields;
+            }
+
+            if ( _self.options.migrate === 'safe' || _self.options.managedScheme === false || _.isObject(_self.options.schema) === false) {
+                return true;
+            }
+            debug('feathers-solr migrate start');
+
+            if (_self.options.migrate === 'drop') {
+
+                this.remove()
+                    .then(res => {
+                        debug('feathers-solr migrate drop data');
+
+                        schemaApi.deleteField(deleteSchemaFields(_self.options._schema)) ///
+                            .then(res => {
+                                debug('feathers-solr migrate reset schema');
+
+                                schemaApi.addField(describeSchemaFields(_self.options.schema))
+                                    .then(function(res) {
+                                        debug('feathers-solr migrate define schema');
+                                        resolve(res);
+                                    })
+                                    .catch(function(err){
+                                        debug('Service.define addField ERROR:',err);
+                                        return reject(new errors.BadRequest());
+                                    });
+                            })
+                            .catch(err => {
+                                debug('Service.define removeField ERROR:',err);
+                                return reject(new errors.BadRequest());
+                            });
+                    })
+                    .catch(err => {
+                        debug('Service.define remove ERROR:',err);
+                        return reject(new errors.BadRequest());
+                    });
+
+            } else {
+                /* define fields */
+                schemaApi.addField(describeSchemaFields(_self.options.schema))
+                    .then(function(res) {
+                         debug('feathers-solr migrate define schema');
+                        resolve(res);
+                    })
+                    .catch(function(err){
+                        debug('Service.define addField ERROR:',err);
+                        return reject(new errors.BadRequest());
+                    });
+            }
+
+        });
 	}
 
+    /**
+     * [describe description]
+     * @return {[type]} [description]
+     */
 	describe() {
-		let schemaApi = this.Solr.schema();
-		schemaApi.fields()
-			.then(function(res) {
-				console.log('schemaApi.fields',res.fields);
-			})
-			.catch(function(err){
-				console.error(err);
-			});
+        let _self = this;
+		let schemaApi = _self.Solr.schema();
+        return new Promise((resolve, reject) => {
+            schemaApi.fields()
+                .then(function(res) {
+                    debug('feathers-solr describe');
+                    resolve(res);
+                })
+                .catch(function(err){
+                    debug('Service.find ERROR:',err);
+                    return reject(new errors.BadRequest());
+                });
+        });
 	}
 
-
+    /**
+     * [find description]
+     * @param  {[type]} params [description]
+     * @return {[type]}        [description]
+     */
 	find(params) {
 		let _self = this;
         return new Promise((resolve, reject) => {
@@ -94,6 +180,11 @@ class Service {
 		});
 	}
 
+    /**
+     * [get description]
+     * @param  {[type]} id [description]
+     * @return {[type]}    [description]
+     */
 	get(id) {
 		let _self = this;
 		debug('Service.get(id)',id);
@@ -116,6 +207,11 @@ class Service {
 		});
 	}
 
+    /**
+     * [create description]
+     * @param  {[type]} data [description]
+     * @return {[type]}      [description]
+     */
 	create(data) {
 
 		let _self = this;
@@ -181,7 +277,7 @@ class Service {
         let _self = this;
         let query =  params.query;
 
-        if(id !== null) {
+        if (id !== null) {
             query = { id: id, $limit: 1 };
         } else {
             query.$limit = 100000; // TODO: ?
@@ -194,11 +290,11 @@ class Service {
                 .then(function(response) {
 
                     response = responseFind(params, _self.options, response);
-                    if(response.data.length > 0) {
+                    if (response.data.length > 0) {
 
                         response.data.forEach((doc, index, ref) => {
                             Object.keys(data).forEach(key => {
-                                if(Array.isArray(response.data[index][key])) {
+                                if (Array.isArray(response.data[index][key])) {
                                     response.data[index][key].push(data[key]);
                                 } else {
                                     response.data[index][key] = data[key];
@@ -229,12 +325,16 @@ class Service {
 
 	}
 
+    /**
+     * Remove Data
+     * @param  {[type]} id     [description]
+     * @param  {[type]} params [description]
+     * @return {[type]}        [description]
+     */
 	remove(id, params) {
-		// console.log('id, params',id, params);
 		let _self = this;
-
 		return new Promise((resolve, reject) => {
-			this.Solr.delete(queryDelete(id, params))
+			this.Solr.delete(queryDelete(id || null, params || {}))
 				.then(function(res) {
 					resolve(res);
 				})
@@ -244,14 +344,16 @@ class Service {
 		});
 	}
 
+    /**
+     * Get Solr Client and use additional functions
+     * @return {[type]} [description]
+     */
 	client() {
 		return this.Solr;
 	}
 }
 
 export default function init(options) {
-	debug('Initializing feathers-solr plugin');
-	console.log('Initializing feathers-solr plugin', options);
 	return new Service(options);
 }
 

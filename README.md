@@ -34,12 +34,13 @@ Use feathers-solr/bin/install-solr.sh for a kickstart installation.
 
 ## Options
 
-| Option            | Default                                                   | Description                   |
-|----------------   |---------------------------------------------------------- |---------------------------    |
-| host              | http://localhost:8983/solr                                |                               |
-| core              | /gettingstarted                                           |                               |
-| schema            | false                                                     | {title: {type:"string"}}      |
-| commitStrategy    | {softCommit: true, commitWithin: 50000, overwrite: true}  |                               |
+| Option           | Default                                                    | Description                                                        |
+| ---------------- | ---------------------------------------------------------- | ------------------------------------------------------------------ |
+| host             | http://localhost:8983/solr                                 |                                                                    |
+| core             | /gettingstarted                                            |                                                                    |
+| schema           | false                                                      | {title: {type:"string"}}                                           |
+| migrate          | alter                                                      | *safe*, *alter* and  *drop* (delete all data and reset schema)     |
+| commitStrategy   | {softCommit: true, commitWithin: 50000, overwrite: true}   |                                                                    |
 
 
 ### Schema
@@ -70,45 +71,44 @@ Here's an example of a Feathers server that uses `feathers-solr`.
 
 ```javascript
 
-const feathers = require('feathers');
-const rest = require('feathers-rest');
-const hooks = require('feathers-hooks');
-const bodyParser = require('body-parser');
-const errorHandler = require('feathers-errors/handler');
-const solr = require('feathers-solr');
+    const feathers = require('feathers');
+    const rest = require('feathers-rest');
+    const hooks = require('feathers-hooks');
+    const bodyParser = require('body-parser');
+    const errorHandler = require('feathers-errors/handler');
+    const solr = require('feathers-solr');
+
+    const Service = feathersSolr({
+        host: 'http://localhost:8983/solr',
+        core: '/gettingstarted',
+        schema:{
+            title: {
+                type: 'text_general'
+            },
+            desciption: {
+                type: 'text_general'
+            }
+        },
+        paginate: {
+            default: 10,
+            max: 4
+    });
+
+    const app = feathers()
+      .configure(rest())
+      .configure(hooks())
+      .use(bodyParser.json())
+      .use(bodyParser.urlencoded({ extended: true }))
+      .use('/solr', Service())
+      .use(errorHandler());
 
 
+    app.listen(3030);
 
-const Service = feathersSolr({
-    host: 'http://localhost:8983/solr',
-    core: '/gettingstarted',
-    managedScheme: true,
-    commitStrategy: {
-        softCommit: true,
-        commitWithin: 50000,
-        overwrite: true
-    },
-    paginate: {
-        default: 10,
-        max: 4
-});
-
-
-
-const app = feathers()
-  .configure(rest())
-  .configure(hooks())
-  .use(bodyParser.json())
-  .use(bodyParser.urlencoded({ extended: true }))
-  .use('/solr', Service())
-  .use(errorHandler());
-
-
-app.listen(3030);
-
-console.log('Feathers app started on 127.0.0.1:3030');
+    console.log('Feathers app started on 127.0.0.1:3030');
 
 ```
+
 
 ### Run Demo App
 

@@ -1,41 +1,67 @@
 'use strict';
 
-export function definitionParser(type, fields) {
+import * as _ from './tools';
 
-  let definition = [];
+export function describeSchemaFields(fields) {
 
-  Object.keys(fields).forEach(function(field, i) {
+    let definition = [];
+    Object.keys(fields).forEach(function(field, i) {
 
-    let solrField = {
-       'name':field,
-       'type': fields[field].type || 'strings',
-       'stored':fields[field].stored || true,
-       'indexed':fields[field].indexed || true
-    };
+        let solrField = {
+            'name': field,
+            'type': fields[field].type || 'strings',
+            'stored': fields[field].stored || true,
+            'indexed': fields[field].indexed || true,
+            'multiValued': fields[field].multiValued || false
+        };
 
-    if(fields[field].default || fields[field].defaultValue) {
-        solrField.default = fields[field].default || fields[field].defaultValue;
+        if (fields[field].default || fields[field].defaultValue) {
+            solrField.default = fields[field].default || fields[field].defaultValue;
+        }
+
+        // 'docValues':fields[field].docValues,
+        // 'sortMissingFirst':fields[field].sortMissingFirst,
+        // 'sortMissingLast':fields[field].sortMissingLast,
+        // 'multiValued':fields[field].multiValued,
+        // 'omitNorms':fields[field].omitNorms,
+        // 'omitTermFreqAndPositions':fields[field].omitTermFreqAndPositions,
+        // 'omitPositions':fields[field].omitPositions,
+        // 'termVectors':fields[field].termVectors,
+        // 'termPositions':fields[field].termPositions,
+        // 'termOffsets':fields[field].termOffsets,
+        // 'termPayloads':fields[field].termPayloads,
+        // 'required':fields[field].required,
+        // 'useDocValuesAsStored':fields[field].useDocValuesAsStored,
+        // 'large':fields[field].large,
+
+        // if(fields[field].stored)
+
+        definition.push(solrField);
+    });
+    return definition;
+}
+
+export function parseSchemaFields(fields) {
+
+    let schemaFields = {};
+    if (Array.isArray(fields)) {
+        fields.forEach(function(field) {
+            if (_.has(field, 'name')) {
+                schemaFields[field.name] = _.omit(field, 'name');
+            }
+        });
+    } else {
+        schemaFields = fields;
     }
+    return _.omit(schemaFields, 'id', '_root_', '_text_', '_version_');
+}
 
-    // 'docValues':fields[field].docValues,
-    // 'sortMissingFirst':fields[field].sortMissingFirst,
-    // 'sortMissingLast':fields[field].sortMissingLast,
-    // 'multiValued':fields[field].multiValued,
-    // 'omitNorms':fields[field].omitNorms,
-    // 'omitTermFreqAndPositions':fields[field].omitTermFreqAndPositions,
-    // 'omitPositions':fields[field].omitPositions,
-    // 'termVectors':fields[field].termVectors,
-    // 'termPositions':fields[field].termPositions,
-    // 'termOffsets':fields[field].termOffsets,
-    // 'termPayloads':fields[field].termPayloads,
-    // 'required':fields[field].required,
-    // 'useDocValuesAsStored':fields[field].useDocValuesAsStored,
-    // 'large':fields[field].large,
+export function deleteSchemaFields(fields) {
 
-
-    // if(fields[field].stored)
-
-    definition.push(solrField);
-  });
-  return definition;
+    let fieldsToDelete = [];
+    fields = _.omit(fields, 'id', '_root_', '_text_', '_version_');
+    Object.keys(fields).forEach(function(field, i) {
+        fieldsToDelete.push({ name: field });
+    });
+    return fieldsToDelete;
 }

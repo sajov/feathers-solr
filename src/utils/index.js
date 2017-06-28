@@ -1,13 +1,15 @@
 'use strict';
 
 import * as _ from './tools';
-import {definitionParser} from './schema';
+import {describeSchemaFields, deleteSchemaFields ,parseSchemaFields} from './schema';
 import {queryJson, queryDelete} from './query';
 import {responseFind, responseGet} from './response';
 
 export {
     _,
-    definitionParser,
+    describeSchemaFields,
+    deleteSchemaFields,
+    parseSchemaFields,
     queryJson,
     queryDelete,
     responseFind,

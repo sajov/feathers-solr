@@ -151,26 +151,24 @@ export function queryJson(params, opt) {
     if (_.has(params, 'query')) {
         Query.parseQuery(params.query);
     }
-
     return Query.query;
 
 }
 
 
 export function queryDelete(id, params) {
-
-  if (id) {
-    if (!Array.isArray(id)) {
-        id = id;
-    }
+  if (id !== null) {
+    // if (Array.isArray(id)) {
+    //     id = id;
+    // }
     return { delete: { id: id } };
   }
 
-  if (params) {
-    //TODO' implement array
-    let pairs = _.pairs(params.query);
-    return { delete: { query: (pairs[0] || '*') + ':' + (pairs[1] || '*') } };
-  }
+  // if (params) {
+  //   //TODO' implement array
+  //   let pairs = _.pairs(params.query);
+  //   return { delete: { query: (pairs[0] || '*') + ':' + (pairs[1] || '*') } };
+  // }
 
   return { delete: { query: '*' } };
 }

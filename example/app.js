@@ -8,71 +8,84 @@ const socketio = require('feathers-socketio');
 
 // Initialize the application
 const app = feathers()
-  .configure(rest())
-  .configure(socketio())
-  .configure(hooks())
-  .use(bodyParser.json())
-  .use(bodyParser.urlencoded({ extended: true }))
-  .use('/', feathers.static('./public'));
+    .configure(rest())
+    .configure(socketio())
+    .configure(hooks())
+    .use(bodyParser.json())
+    .use(bodyParser.urlencoded({ extended: true }))
+    .use('/', feathers.static('./public'));
 
 
-  // Initialize your feathers plugin
-    const Service = feathersSolr({
-        host: 'http://localhost:8983/solr',
-        core: '/gettingstarted',
-        managedScheme: true,
-        commitStrategy: {
-            softCommit: true,
-            commitWithin: 50000,
-            overwrite: true
-        },
-        paginate: {
-            default: 10,
-            max: 4
-        }
-    });
-
-
-  Service.define({
-    description: {
-        type: 'string',
-        stored: true,
-        default:'sajo'
-    },
-    //  age: {
-    //     type: 'tlongs',
-    //     stored: true,
-    //     default: 10
-    // },
-    // sometext: {
-    //     type: 'string',
-    //     stored: true,
-    //     default: 'i dont know'
-    // },
-    // revisits: {
-    //     type: 'float',
-    //     stored: true
-    // },
-    location: {
-        type: 'string',
-        stored: true,
-        default: 'Düsseldorf'
+// Initialize your feathers plugin
+const Service = feathersSolr({
+    host: 'http://localhost:8983/solr',
+    core: '/gettingstarted',
+    migrate: 'drop',
+    paginate: {
+        default: 10,
+        max: 4
     }
-  });
+});
 
-  // Service.describe();
+app.use('/solr', Service);
+
+// you can pass schema {...} to constructor
+// this ist just for adding demo data
+app.service('solr').remove(null, {})
+    .then(res => {
+        app.service('solr').define({
+                name: {
+                    type: 'text_general'
+                },
+                company: {
+                    type: 'text_general'
+                },
+                email: {
+                    type: 'text_general'
+                },
+                colorolor: {
+                    type: 'text_general',
+                    multiValued: true,
+                },
+                email: {
+                    type: 'text_general'
+                },
+                email: {
+                    type: 'text_general'
+                },
+                email: {
+                    type: 'text_general'
+                },
+                email: {
+                    type: 'text_general'
+                },
+
+                address: {
+                    type: 'string',
+                    default: 'Düsseldorf'
+                }
+            })
+            .then(res => {
+                let demoData = require('./data/json-generator.js')
+                app.service('solr').create(demoData)
+                    .then(res => {
+                        console.log('added demo data')
+                    })
+                    .catch(err => { console.log('EROOR', err) });
+            }).catch(err => { console.log(err) });
+    }).catch(err => { console.log(err) });
+
+// Accessing all client methods
+// app.service('solr').client().schemaApi()
+//       .addDynamicField().then(res => {})
+//       .addFieldType().then(res => {})
+//       .addCopyField().then(res => {})
 
 
-  app.use('/solr', Service);
-
-  let demoData = require('./data/json-generator.js')
-  app.service('solr').remove();
-  app.service('solr').create(demoData)
-    .then(function(res){})
-    .catch(function(err){console.log('EROOR',err)});
 
 
-  app.use(errorHandler());
+
+app.use(errorHandler());
 
 app.listen(3030);
 

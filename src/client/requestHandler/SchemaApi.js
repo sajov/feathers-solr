@@ -7,13 +7,11 @@
 export default class Schema {
 
     constructor(request, opts) {
-        console.log(opts);
         this.options = {
             method: 'POST',
             uri: opts.coreUrl + '/schema',
             json: true
         };
-        console.log(this.options);
 
     //       let options = {
     //     method: 'POST',
@@ -91,13 +89,18 @@ export default class Schema {
     */
     addField(params) {
         this.options.body = {'add-field' : params};
+        console.log('add-field', this.options.body);
         return this.request(this.options);
     }
     /* delete-field: delete a field. */
     deleteField(params) {
-        this.options.qs = {
+         this.options.body = {
             'delete-field' : params
         };
+        // this.options.qs = {
+        //     'delete-field' : params
+        // };
+        console.log('deleteField', this.options.body);
         return this.request(this.options);
     }
     /* replace-field: replace an existing field with one that is differently configured. */
@@ -108,7 +111,7 @@ export default class Schema {
         return this.request(this.options);
     }
     /* add-dynamic-field: add a new dynamic field rule with parameters you provide. */
-    addFynamicField(params) {
+    addDynamicField(params) {
         this.options.qs = {
             'add-dynamic-field' : params
         };
@@ -150,14 +153,14 @@ export default class Schema {
         return this.request(this.options);
     }
     /* add-copy-field: add a new copy field rule. */
-    addFopyField(params) {
+    addCopyField(params) {
         this.options.qs = {
             'add-copy-field' : params
         };
         return this.request(this.options);
     }
     /* delete-copy-field: delete a copy field rule. */
-    deleteFopyField(params) {
+    deleteCopyField(params) {
         this.options.qs = {
             'delete-copy-field' : params
         };

@@ -18,6 +18,21 @@ export function isPlainObject(obj) {
     );
 }
 
+export function isEqual(target, sources) {
+    var targetProps = Object.getOwnPropertyNames(target);
+    var sourcesProps = Object.getOwnPropertyNames(sources);
+    if (targetProps.length !== sourcesProps.length) {
+        return false;
+    }
+    for (var i = 0; i < targetProps.length; i++) {
+        var propName = targetProps[i];
+        if (target[propName] !== sources[propName]) {
+            return false;
+        }
+    }
+    return true;
+}
+
 export function mergeDeep(target, sources) {
   if (!sources.length) {
     return target;
@@ -54,7 +69,7 @@ export function extend(...args) {
 }
 
 export function omit(obj, ...keys) {
-    const result = Object.assign({}, obj);
+    let result = Object.assign({}, obj);
     for (let key of keys) {
         delete result[key];
     }
