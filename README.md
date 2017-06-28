@@ -29,7 +29,7 @@ Please refer to the [Feathers database adapter documentation](http://docs.feathe
  bin/solr start -e schemaless
 ``` 
 
-Use `feathers-solr/bin/install-solr.sh for a kickstart installation.
+Use feathers-solr/bin/install-solr.sh for a kickstart installation.
 
 
 ## Options
@@ -47,7 +47,7 @@ Use `feathers-solr/bin/install-solr.sh for a kickstart installation.
 Use [Solr Field Types](https://cwiki.apache.org/confluence/display/solr/Solr+Field+Types) and [Field Type Definitions and Properties](https://cwiki.apache.org/confluence/display/solr/Field+Type+Definitions+and+Properties) to define Model properties
 
 
-```
+```javascript
 {
     title: {
         type: "text_general", // For more flexible searching. Default type is 'string'
@@ -68,7 +68,8 @@ See your current schema definition
 
 Here's an example of a Feathers server that uses `feathers-solr`.
 
-```js
+```javascript
+
 const feathers = require('feathers');
 const rest = require('feathers-rest');
 const hooks = require('feathers-hooks');
@@ -77,7 +78,7 @@ const errorHandler = require('feathers-errors/handler');
 const solr = require('feathers-solr');
 
 
-// Initialize your feathers plugin
+
 const Service = feathersSolr({
     host: 'http://localhost:8983/solr',
     core: '/gettingstarted',
@@ -93,14 +94,12 @@ const Service = feathersSolr({
 });
 
 
-// Initialize the application
+
 const app = feathers()
   .configure(rest())
   .configure(hooks())
-  // Needed for parsing bodies (login)
   .use(bodyParser.json())
   .use(bodyParser.urlencoded({ extended: true }))
-  // Initialize your feathers solr
   .use('/solr', Service())
   .use(errorHandler());
 
@@ -108,12 +107,13 @@ const app = feathers()
 app.listen(3030);
 
 console.log('Feathers app started on 127.0.0.1:3030');
+
 ```
 
 ### Run Demo App
 
 ```
- /example/app.js
+ node /example/app.js
 ```
 
 ## Support all Feathers Queries 
@@ -124,7 +124,7 @@ See [Feathers querying](https://docs.feathersjs.com/api/databases/querying.html)
 ### $search
 Simple query
 
-```
+```javascript
 query: {
   $search: "John"
 }
@@ -136,7 +136,7 @@ query: {
 
 More complex query with a default Solr configuration. 
 
-```
+```javascript
 query: {
   
   $search: "John !Doe +age:[80 TO *]", // Search in default field _text_. See Solr copy field `copy:* to _text_`
@@ -156,7 +156,7 @@ query: {
 To add all kind of Solr query params!
 This example will group the result.
 
-```
+```javascript
 query: {
     $params: {
         group : true,
@@ -180,7 +180,7 @@ See [Solr Facet Functions and Analytics](http://yonik.com/solr-facet-functions/)
 |percentile|percentile(salary,50,75,99,99.9)|calculates percentiles|
 
 
-```
+```javascript
 query: {
     $facet: {
         age_avg : "avg(age_i)",
@@ -193,7 +193,7 @@ query: {
 ### $facet Ranges
 Add a facet type range
 
-```
+```javascript
 query: {
     $facet: {
         age_ranges: {
@@ -215,7 +215,7 @@ http://localhost:3030/solr?&$facet[age_ranges][type]=range&$facet[age_ranges][fi
 
 Feathers Result
 
-```
+```javascript
 {
     QTime: 0,
     total: 50,
