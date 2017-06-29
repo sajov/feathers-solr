@@ -16,7 +16,7 @@ export function describeSchemaFields(fields) {
         };
 
         if(_.isObject(fields[field])) {
-            solrField = _.assign(solrField, fields[field]);
+            solrField = Object.assign(solrField, fields[field]);
             if (fields[field].default || fields[field].defaultValue) {
                 solrField.default = fields[field].default || fields[field].defaultValue;
             }

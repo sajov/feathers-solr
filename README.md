@@ -389,7 +389,7 @@ Not all Solr API's implemented at the moment
 
 ## Changelog
 
-__0.1.2__
+__0.1.3__
 
 - Initial release
 
