@@ -281,8 +281,8 @@ See [Solr Facet Functions and Analytics](http://yonik.com/solr-facet-functions/)
 ```javascript
 query: {
     $facet: {
-        age_avg : "avg(age_i)",
-        age_sum : "sum(age_i)"
+        age_avg : "avg(age)",
+        age_sum : "sum(age)"
     }
 }
 
@@ -308,7 +308,7 @@ query: {
 Feathers Rest query
 
 ```
-http://localhost:3030/solr?&$facet[age_ranges][type]=range&$facet[age_ranges][field]=age&$facet[age_ranges][start]=0&$facet[age_ranges][end]=100&$facet[age_ranges][gap]=25&$facet[age_avg]=avg(age_i)&$facet[age_sum]=sum(age_i)
+http://localhost:3030/solr?&$facet[age_ranges][type]=range&$facet[age_ranges][field]=age&$facet[age_ranges][start]=0&$facet[age_ranges][end]=100&$facet[age_ranges][gap]=25&$facet[age_avg]=avg(age)&$facet[age_sum]=sum(age)
 ```
 
 Feathers Result
