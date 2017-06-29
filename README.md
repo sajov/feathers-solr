@@ -349,13 +349,13 @@ See more query variants [JSON Facet API](http://yonik.com/json-facet-api/),[Solr
 
 
 ### $suggest
-will comming next
+will coming next
 
 ### $spellcheck
-will comming next
+will coming next
 
 
-## Adittional Client Methods
+## Additional Client Methods
 
 
 | Solr Api's                                                                                                                                                     | Returns a Promise                                  | ./client/requestHandler/  |
