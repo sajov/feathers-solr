@@ -9,15 +9,21 @@ export function describeSchemaFields(fields) {
 
         let solrField = {
             'name': field,
-            'type': fields[field].type || 'strings',
-            'stored': fields[field].stored || true,
-            'indexed': fields[field].indexed || true,
-            'multiValued': fields[field].multiValued || false
+            'type': 'string',
+            'stored': true,
+            'indexed': true,
+            'multiValued': false
         };
 
-        if (fields[field].default || fields[field].defaultValue) {
-            solrField.default = fields[field].default || fields[field].defaultValue;
+        if(_.isObject(fields[field])) {
+            solrField = _.assign(solrField, fields[field]);
+            if (fields[field].default || fields[field].defaultValue) {
+                solrField.default = fields[field].default || fields[field].defaultValue;
+            }
+        } else {
+            solrField.type = fields[field];
         }
+
 
         // 'docValues':fields[field].docValues,
         // 'sortMissingFirst':fields[field].sortMissingFirst,

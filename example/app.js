@@ -34,32 +34,15 @@ app.use('/solr', Service);
 app.service('solr').remove(null, {})
     .then(res => {
         app.service('solr').define({
-                name: {
-                    type: 'text_general'
-                },
-                company: {
-                    type: 'text_general'
-                },
-                email: {
-                    type: 'text_general'
-                },
+                name: 'text_general',
+                company: 'text_general',
+                email: 'text_general',
+                age:  'int',
+                gender: 'string',
                 colorolor: {
-                    type: 'text_general',
+                    type: 'string',
                     multiValued: true,
                 },
-                email: {
-                    type: 'text_general'
-                },
-                email: {
-                    type: 'text_general'
-                },
-                email: {
-                    type: 'text_general'
-                },
-                email: {
-                    type: 'text_general'
-                },
-
                 address: {
                     type: 'string',
                     default: 'Düsseldorf'

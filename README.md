@@ -23,7 +23,7 @@ Please refer to the [Feathers database adapter documentation](http://docs.feathe
 
 ## Getting Started
 
-#### Install Solr
+### Install Solr
 
 ```
  bin/solr start -e schemaless
@@ -43,7 +43,7 @@ Use feathers-solr/bin/install-solr.sh for a kickstart installation.
 | commitStrategy   | {softCommit: true, commitWithin: 50000, overwrite: true}   |                                                                    |
 
 
-### Schema
+## Managed Schema
 [Schemaless Mode](https://lucene.apache.org/solr/guide/6_6/schemaless-mode.html) is recommended.
 Use [Solr Field Types](https://cwiki.apache.org/confluence/display/solr/Solr+Field+Types) and [Field Type Definitions and Properties](https://cwiki.apache.org/confluence/display/solr/Field+Type+Definitions+and+Properties) to define Model properties
 
@@ -54,6 +54,7 @@ Use [Solr Field Types](https://cwiki.apache.org/confluence/display/solr/Solr+Fie
         type: "text_general", // For more flexible searching. Default type is 'string'
         stored: true, // default, keep value visible in results
         indexed: true, // default, make it searchable
+        multiValued: false, // default, true becomes an array field
     }
 }
 ```
@@ -63,6 +64,7 @@ See your current schema definition
 ```
  http://localhost:8983/solr/gettingstarted/schema/
 ```
+
 
 
 ## Complete Example
@@ -82,12 +84,19 @@ Here's an example of a Feathers server that uses `feathers-solr`.
         host: 'http://localhost:8983/solr',
         core: '/gettingstarted',
         schema:{
-            title: {
-                type: 'text_general'
-            },
-            desciption: {
-                type: 'text_general'
-            }
+                name: 'text_general',
+                company: 'text_general',
+                email: 'text_general',
+                age:  'int',
+                gender: 'string',
+                color: {
+                    type: 'string',
+                    multiValued: true,
+                },
+                address: {
+                    type: 'string',
+                    default: 'Düsseldorf'
+                }
         },
         paginate: {
             default: 10,
@@ -160,10 +169,98 @@ This example will group the result.
 query: {
     $params: {
         group : true,
-        "group.field" : "country"
+        "group.field" : "country",
+        "group.format" : "simple",
     }
 }
 ```
+
+Feathers Rest query
+
+```
+http://localhost:3030/solr?$params[group]=true&$params[group.field]=gender&$params[group.field]=age&$params[group.limit]=1&$params[group.format]=grouped&$select=id,age,gender
+```
+
+Feathers Result
+
+```javascript
+{
+  "QTime": 0,
+  "total": 0,
+  "limit": 10,
+  "skip": 0,
+  "data": {
+    "gender": {
+      "matches": 50,
+      "groups": [
+        {
+          "groupValue": "male",
+          "doclist": {
+            "numFound": 24,
+            "start": 0,
+            "docs": [
+              {
+                "id": "59501959f2786e0207a8b29f",
+                "age": "45",
+                "gender": "male"
+              }
+            ]
+          }
+        },
+        {
+          "groupValue": "female",
+          "doclist": {
+            "numFound": 26,
+            "start": 0,
+            "docs": [
+              {
+                "id": "595019590a8632fecd292592",
+                "age": "51",
+                "gender": "female"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "age": {
+      "matches": 50,
+      "groups": [
+        {
+          "groupValue": "45",
+          "doclist": {
+            "numFound": 3,
+            "start": 0,
+            "docs": [
+              {
+                "id": "59501959f2786e0207a8b29f",
+                "age": "45",
+                "gender": "male"
+              }
+            ]
+          }
+        },
+        {
+          "groupValue": "51",
+          "doclist": {
+            "numFound": 2,
+            "start": 0,
+            "docs": [
+              {
+                "id": "595019590a8632fecd292592",
+                "age": "51",
+                "gender": "female"
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}
+
+```
+
 
 ### $facet Functions and Analytics
 See [Solr Facet Functions and Analytics](http://yonik.com/solr-facet-functions/)
