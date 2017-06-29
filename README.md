@@ -380,10 +380,11 @@ will comming next
 Not all Solr API's implemented at the moment
 
 ## TODO
-* Write more tests
+* Write more Tests
 * Write more Docs
 * Implement $suggest and $spellcheck
-* Demo search page with autocompleter with suggestions. Search result with facet navigation, filter(ranges, sliders), pagination and result listing by just one query.
+* Add demo autocompleter with suggestions.
+* Add demo search page with facet navigation, filter(ranges, sliders), pagination and result listing by just one query.
 
 
 ## Changelog
