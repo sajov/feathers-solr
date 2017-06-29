@@ -162,7 +162,8 @@ query: {
 ```
 
 ### $params
-To add all kind of Solr query params!
+Add all kind of Solr query params! 
+Combine hughe Solr features like facets, stats, ranges, grouping and more with the default response.
 This example will group the result.
 
 ```javascript
