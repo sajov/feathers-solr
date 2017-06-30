@@ -22,8 +22,6 @@ export default class Schema {
     //     }, query),
     //     json: true
     // };
-    // console.log('JSON API OPTIONS',options);
-    // console.log('JSON API query',query.filter);
     // return request.get(options);
 
         this.request = request;
@@ -89,7 +87,7 @@ export default class Schema {
     */
     addField(params) {
         this.options.body = {'add-field' : params};
-        console.log('add-field', this.options.body);
+        // console.log('add-field', this.options.body);
         return this.request(this.options);
     }
     /* delete-field: delete a field. */
@@ -100,7 +98,7 @@ export default class Schema {
         // this.options.qs = {
         //     'delete-field' : params
         // };
-        console.log('deleteField', this.options.body);
+        // console.log('deleteField', this.options.body);
         return this.request(this.options);
     }
     /* replace-field: replace an existing field with one that is differently configured. */
