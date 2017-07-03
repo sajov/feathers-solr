@@ -1,6 +1,6 @@
 if (!global._babelPolyfill) { require('babel-polyfill'); }
 
-import { _, queryJson, responseFind, responseGet, queryDelete, describeSchemaFields, parseSchemaFields,  deleteSchemaFields, addFields} from './utils';
+import { _, queryJson, querySuggest, responseFind, responseGet, queryDelete, describeSchemaFields, parseSchemaFields,  deleteSchemaFields, addFields} from './utils';
 import errors from 'feathers-errors';
 import Solr from './client/solr';
 import makeDebug from 'debug';
@@ -100,13 +100,12 @@ class Service {
                     .then(res => {
                         debug('feathers-solr migrate drop data');
 
-                        schemaApi.deleteField(deleteSchemaFields(_self.options._schema)) ///
+                        schemaApi.deleteField(deleteSchemaFields(_self.options.schema)) ///
                             .then(res => {
-                                debug('feathers-solr migrate reset schema');
-
+                                debug('feathers-solr migrate reset schema',res);
                                 schemaApi.addField(describeSchemaFields(_self.options.schema))
                                     .then(function(res) {
-                                        debug('feathers-solr migrate define schema');
+                                        debug('feathers-solr migrate define schema',res.errors);
                                         resolve(res);
                                     })
                                     .catch(function(err){
@@ -166,19 +165,52 @@ class Service {
      * @return {[type]}        [description]
      */
 	find(params) {
-		let _self = this;
+        if(!_.has(params.query,'$suggest')) {
+            return this.search(params);
+        } else{
+            return this.suggest(params);
+        }
+	}
+
+    /**
+     * [find description]
+     * @param  {[type]} params [description]
+     * @return {[type]}        [description]
+     */
+    search(params) {
+        let _self = this;
         return new Promise((resolve, reject) => {
             this.Solr.json(queryJson(params, _self.options))
                 .then(function(res) {
-		            debug('Service.find',params,res);
-					resolve(responseFind(params, _self.options, res));
-				})
-				.catch(function(err) {
+                    debug('Service.find',params,res);
+                    resolve(responseFind(params, _self.options, res));
+                })
+                .catch(function(err) {
                     debug('Service.find ERROR:',err);
-					return reject(new errors.BadRequest());
-				});
-		});
-	}
+                    return reject(new errors.BadRequest());
+                });
+        });
+    }
+
+    /**
+     * Suggest
+     * @param  {object} params Query Object
+     * @return {object}        Promise
+     */
+    suggest(params) {
+        let _self = this;
+        return new Promise((resolve, reject) => {
+            this.Solr.suggest(querySuggest(params, _self.options))
+                .then(function(res) {
+                    debug('Service.find',params,res);
+                    resolve(res);
+                })
+                .catch(function(err) {
+                    debug('Service.find ERROR:',err);
+                    return reject(new errors.BadRequest());
+                });
+        });
+    }
 
     /**
      * [get description]
@@ -290,6 +322,7 @@ class Service {
                 .then(function(response) {
 
                     response = responseFind(params, _self.options, response);
+
                     if (response.data.length > 0) {
 
                         response.data.forEach((doc, index, ref) => {

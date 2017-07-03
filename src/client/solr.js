@@ -1,31 +1,36 @@
 'use strict';
 
-/**
-  The entry point.
-  @module Solr
-**/
 import * as BlobStoreApi from './requestHandler/BlobStoreApi.js';
-import * as ConfigApi from './requestHandler/ConfigApi.js';
+import ConfigApi from './requestHandler/ConfigApi.js';
 import CollectionsApi from './requestHandler/CollectionsApi.js';
 import ConfigSetsApi from './requestHandler/ConfigSetsApi.js';
 import CoreAdminApi from './requestHandler/CoreAdminApi.js';
-import SchemaApi from './requestHandler/SchemaApi.js';
 import JsonRequestApi from './requestHandler/JsonRequestApi.js';
 import * as ManagedResources from './requestHandler/ManagedResources.js';
 import Ping from './requestHandler/Ping.js';
 import * as RealTime from './requestHandler/RealTime.js';
 import * as ReplicationHandlers from './requestHandler/ReplicationHandlers.js';
 import * as RequestParametersAPI from './requestHandler/RequestParametersAPI.js';
+import SchemaApi from './requestHandler/SchemaApi.js';
 import SearchHandlers from './requestHandler/SearchHandlers.js';
 import * as ShardHandlers from './requestHandler/ShardHandlers.js';
+import SuggestHandlers from './requestHandler/SuggestHandlers.js';
 import * as UpdateRequestHandlers from './requestHandler/UpdateRequestHandlers.js';
-var request = require('request-promise');
+import request from 'request-promise';
 
+/**
+ * A Solr Rest Adapter for full Managed Solr ENV
+ * @module Solr Adapter
+ */
 export default class Solr {
 
+    /**
+     * Set up Solr Adapter
+     * @constructor
+     */
     constructor(opts) {
 
-        this.opts = this.extend({
+        this.opts = Object.assign({
             host: 'http://localhost:8983/solr',
             core: '/gettingstarted',
             managedScheme: true,
@@ -43,10 +48,23 @@ export default class Solr {
         this.req = request;
     }
 
+    /**
+     * [Solr Blob Api](https://cwiki.apache.org/confluence/display/solr/Blob+Store+API)  Interface
+     * @method
+     * @param  {object} params Params
+     * @return {object}        Promise
+     */
     blob(params) {
         return new BlobStoreApi(this.req, this.opts, params);
     }
 
+    /**
+     * Solr Collections API
+     * [Solr Docs](https://cwiki.apache.org/confluence/display/solr/Collections+API)  Interface
+     * @method
+     * @param  {object} params Params
+     * @return {object}        Promise
+     */
     collections(params) {
         return new CollectionsApi(this.req, this.opts, params);
     }
@@ -71,12 +89,12 @@ export default class Solr {
         return new UpdateRequestHandlers.deleteQuery(this.req, this.opts, data);
     }
 
-    extend(... args) {
-        return Object.assign(... args);
-    }
-
     json(params) {
         return new JsonRequestApi(this.req, this.opts, params);
+    }
+
+    suggest(params) {
+        return new SuggestHandlers(this.req, this.opts, params);
     }
 
     optimize(data) {

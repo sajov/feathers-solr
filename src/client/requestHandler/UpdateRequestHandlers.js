@@ -31,6 +31,9 @@
  *    "delete": { "query":"QUERY" }    // delete by query
  *  }'
  */
+
+
+
 export function update (request, opts, data) {
 
 

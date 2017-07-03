@@ -2,7 +2,7 @@
 
 import * as _ from './tools';
 import {describeSchemaFields, deleteSchemaFields ,parseSchemaFields} from './schema';
-import {queryJson, queryDelete} from './query';
+import {queryJson, querySuggest, queryDelete} from './query';
 import {responseFind, responseGet} from './response';
 
 export {
@@ -11,6 +11,7 @@ export {
     deleteSchemaFields,
     parseSchemaFields,
     queryJson,
+    querySuggest,
     queryDelete,
     responseFind,
     responseGet

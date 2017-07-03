@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import plugin from '../src';
-var demodata = require('../example/data/json-generator.js');
+var demodata = require('../example/data/json-generator-data.js');
 
 let Service = new plugin.Service({
     paginate: {
