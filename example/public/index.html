@@ -20,8 +20,6 @@
     <!--[if gt IE 8]><!-->
     <link rel="stylesheet" href="css/layouts/marketing.css">
     <!--<![endif]-->
-    <script src="//unpkg.com/feathers-client@^2.0.0/dist/feathers.js"></script>
-    <script src="//unpkg.com/socket.io-client@1.7.3/dist/socket.io.js"></script>
 </head>
 
 <body>
@@ -30,43 +28,15 @@
             <a class="pure-menu-heading" href="">Feathers-Solr on RIOT</a>
             <ul class="pure-menu-list">
                 <li class="pure-menu-item"><a href="#" class="pure-menu-link">Tour</a></li>
-                <li class="pure-menu-item"><a href="https://github.com/sajov/feathers-solr" class="pure-menu-link"><img width="20"  src="/img/GitHub-Mark-Light-64px.png"></a></li>
+                <li class="pure-menu-item">
+                    <a href="https://github.com/sajov/feathers-solr" class="pure-menu-link"><img width="20" src="/img/GitHub-Mark-Light-64px.png"></a>
+                </li>
             </ul>
         </div>
     </div>
     <div class="splash-container">
         <div class="splash">
-
-
-            <svg xmlns="http://www.w3.org/2000/svg" style="display:none">
-                <symbol xmlns="http://www.w3.org/2000/svg" id="sbx-icon-search-1" viewBox="0 0 40 40">
-                    <path d="M27.6 29.15c-1.99 1.643-4.543 2.63-7.326 2.63-6.355 0-11.507-5.15-11.507-11.506 0-6.355 5.152-11.507 11.507-11.507 6.355 0 11.507 5.152 11.507 11.507 0 2.783-.987 5.335-2.63 7.325l7.392 7.392c.43.43.436 1.124.005 1.555-.428.428-1.122.428-1.555-.005L27.6 29.15zm-7.326.44c5.145 0 9.315-4.17 9.315-9.316 0-5.145-4.17-9.315-9.316-9.315-5.145 0-9.315 4.17-9.315 9.314 0 5.145 4.17 9.315 9.314 9.315zm16.813.81C38.982 27.292 40 23.72 40 20 40 8.954 31.046 0 20 0S0 8.954 0 20s8.954 20 20 20c3.76 0 7.37-1.04 10.5-2.974.514-.32.674-.994.355-1.51-.318-.514-.993-.673-1.508-.355C26.56 36.884 23.35 37.81 20 37.81c-9.835 0-17.808-7.973-17.808-17.808S10.165 2.192 20 2.192 37.808 10.165 37.808 20c0 3.314-.905 6.492-2.593 9.26-.315.515-.15 1.19.365 1.505.517.315 1.19.152 1.507-.365z" fill-rule="evenodd" />
-                </symbol>
-                <symbol xmlns="http://www.w3.org/2000/svg" id="sbx-icon-clear-5" viewBox="0 0 20 20">
-                    <path d="M10 20c5.523 0 10-4.477 10-10S15.523 0 10 0 0 4.477 0 10s4.477 10 10 10zm1.35-10.123l3.567 3.568-1.225 1.226-3.57-3.568-3.567 3.57-1.226-1.227 3.568-3.568-3.57-3.57 1.227-1.224 3.568 3.568 3.57-3.567 1.224 1.225-3.568 3.57zM10 18.272c4.568 0 8.272-3.704 8.272-8.272S14.568 1.728 10 1.728 1.728 5.432 1.728 10 5.432 18.272 10 18.272z" fill-rule="evenodd" />
-                </symbol>
-            </svg>
-            <form novalidate="novalidate" onsubmit="return false;" class="searchbox sbx-custom">
-                <div role="search" class="sbx-custom__wrapper">
-                    <input type="search" name="search" placeholder="Search your website" autocomplete="off" required="required" class="sbx-custom__input">
-                    <button type="submit" title="Submit your search query." class="sbx-custom__submit">
-                        <svg role="img" aria-label="Search">
-                            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#sbx-icon-search-1"></use>
-                        </svg>
-                    </button>
-                    <button type="reset" title="Clear the search query." class="sbx-custom__reset">
-                        <svg role="img" aria-label="Reset">
-                            <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#sbx-icon-clear-5"></use>
-                        </svg>
-                    </button>
-                </div>
-            </form>
-            <script type="text/javascript">
-            document.querySelector('.searchbox [type="reset"]').addEventListener('click', function() {
-                this.parentNode.querySelector('input').focus();
-            });
-            </script>
-
+            <autocomplete></autocomplete>
         </div>
     </div>
     <div class="content-wrapper">
@@ -113,7 +83,7 @@
         </div>
         <div class="ribbon l-box-lrg pure-g">
             <div class="l-box-lrg is-center pure-u-1 pure-u-md-1-2 pure-u-lg-2-5">
-                <img width="300" alt="File Icons" class="pure-img-responsive" src="img/common/file-icons.png">
+                <img width="300" alt="File Icons" class="pure-img-responsive" src="img/solr.png">
             </div>
             <div class="pure-u-1 pure-u-md-1-2 pure-u-lg-3-5">
                 <h2 class="content-head content-head-ribbon">Laboris nisi ut aliquip.</h2>
@@ -151,9 +121,21 @@
             </div>
         </div>
         <div class="footer l-box is-center">
-            View the source of this layout to learn more. Made with love by the YUI Team.
+            View the docs to learn more.
         </div>
     </div>
+    <script src="//unpkg.com/feathers-client@^2.0.0/dist/feathers.js"></script>
+    <script src="//unpkg.com/socket.io-client@1.7.3/dist/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/riot@3.6/riot+compiler.min.js"></script>
+    <script type="riot/tag" src="/tags/autocomplete.tag"></script>
+    <script>
+        window.socket = io();
+        window.client = feathers()
+                .configure(feathers.hooks())
+                .configure(feathers.socketio(socket));
+
+        riot.mount('autocomplete');
+    </script>
 </body>
 
 </html>

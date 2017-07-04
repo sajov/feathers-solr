@@ -78,51 +78,51 @@ app.use('/solr', Service);
 // });
 
 
-app.service('solr').client().config({
-        'delete-searchcomponent': 'suggest',
-        'delete-requesthandler': '/suggest',
-        'add-searchcomponent': {
-            'name': 'suggest',
-            'class': 'solr.SuggestComponent',
-            'suggester': {
-                'name': 'suggest',
-                'lookupImpl': 'FuzzyLookupFactory',
-                'dictionaryImpl': 'DocumentDictionaryFactory',
-                'field': 'autocomplete',
-                'suggestAnalyzerFieldType': 'string',
-                'buildOnStartup': true,
-                'buildOnCommit': true
-            }
-        },
-        'add-requesthandler': {
-            'startup': 'lazy',
-            'name': '/suggest',
-            'class': 'solr.SearchHandler',
-            'defaults': {
-                'suggest': true,
-                'suggest.count': 10,
-                'suggest.dictionary': 'suggest',
-                'spellcheck': 'on',
-                'spellcheck.count': 10,
-                'spellcheck.extendedResults': true,
-                'spellcheck.collate': true,
-                'spellcheck.maxCollations': 10,
-                'spellcheck.maxCollationTries': 10,
-                'spellcheck.accuracy': 0.003,
-            },
-            'components': ['spellcheck', 'suggest']
-        }
-    })
-    .then(res => {
-        console.log('?????? res',
-            util.inspect(res, showHidden=false, depth=10, colorize=true)
-        );
-    })
-    .catch(err => {
-        console.log('?????? err',
-            util.inspect(err, showHidden=false, depth=10, colorize=true)
-        );
-    });
+// app.service('solr').client().config({
+//         'delete-searchcomponent': 'suggest',
+//         'delete-requesthandler': '/suggest',
+//         'add-searchcomponent': {
+//             'name': 'suggest',
+//             'class': 'solr.SuggestComponent',
+//             'suggester': {
+//                 'name': 'suggest',
+//                 'lookupImpl': 'FuzzyLookupFactory',
+//                 'dictionaryImpl': 'DocumentDictionaryFactory',
+//                 'field': 'autocomplete',
+//                 'suggestAnalyzerFieldType': 'string',
+//                 'buildOnStartup': 'true',
+//                 'buildOnCommit': 'true'
+//             }
+//         },
+//         'add-requesthandler': {
+//             'startup': 'lazy',
+//             'name': '/suggest',
+//             'class': 'solr.SearchHandler',
+//             'defaults': {
+//                 'suggest': 'true',
+//                 'suggest.count': 10,
+//                 'suggest.dictionary': 'suggest',
+//                 'spellcheck': 'on',
+//                 'spellcheck.count': 10,
+//                 'spellcheck.extendedResults': 'true',
+//                 'spellcheck.collate': 'true',
+//                 'spellcheck.maxCollations': 10,
+//                 'spellcheck.maxCollationTries': 10,
+//                 'spellcheck.accuracy': 0.003,
+//             },
+//             'components': ['spellcheck', 'suggest']
+//         }
+//     })
+//     .then(res => {
+//         console.log('?????? res',
+//             util.inspect(res, showHidden=false, depth=10, colorize=true)
+//         );
+//     })
+//     .catch(err => {
+//         console.log('?????? err',
+//             util.inspect(err, showHidden=false, depth=10, colorize=true)
+//         );
+//     });
     // you can pass schema {...} to constructor
     // this ist just for adding demo data
     // - remove all data
