@@ -493,6 +493,9 @@ Not all Solr API's implemented at the moment
 
 ## Changelog
 
+__0.1.5__
+- Add $suggest feature
+__0.1.4__
 __0.1.3__
 
 - Initial release
