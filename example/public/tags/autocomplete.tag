@@ -1,13 +1,23 @@
+<raw>
+  <span></span>
+
+
+  this.root.innerHTML = opts.content
+</raw>
+
 <autocomplete>
 
     <div show={this.suggestions} id="suggestions">
         <input name="acinput" placeholder="enter your search" id="acinput" onkeyup="{ search }" />
         <i class="icon">&#9906;</i>
         <!-- <i>&#8981;</i> -->
-        <ul>
-            <li if={spellcheck.length > 0}><b>Did you mean: <i>{ spellcheck[0].word }</i> ?</b></li>
+        <ul show={suggestions.length > 0 || spellcheck.length > 0}>
+            <li if={spellcheck.length > 0}>
+                <span><b>Did you mean: <i>{ spellcheck[0].word }</i> ?</b></span>
+            </li>
             <li each={suggest, i in suggestions} onclick="{ parent.selected }" class="{ active: parent.active==i}">
-                <span>{ suggest.term }</span>
+                <!-- <span>{ suggest.term }</span> -->
+                <raw content="{ suggest.term }"/>
             </li>
         </ul>
     </div>
@@ -74,7 +84,12 @@
                 .find({query:{ $suggest: e.target.value}})
                 .then(res => {
                     if(typeof res.suggest.suggest[e.target.value].suggestions != 'undefined') {
-                        self.suggestions = res.suggest.suggest[e.target.value].suggestions;
+                        // self.suggestions = res.suggest.suggest[e.target.value].suggestions;
+                        self.suggestions = [];
+                        res.suggest.suggest[e.target.value].suggestions.forEach(function(suggest){
+                            var result = suggest.term.replace(new RegExp(e.target.value,'i'),'<i>$&</i>');
+                            self.suggestions.push({term:result})
+                        })
                     } else {
                         self.suggestions = [];
                     }
@@ -89,10 +104,6 @@
                 .catch(err => {
                     console.log('suggest err',err)
                 })
-
-
-
-
         }
 
     </script>
@@ -103,6 +114,9 @@
             -webkit-box-shadow: 10px 10px 50px -3px rgba(0,0,0,0.75);
             -moz-box-shadow: 10px 10px 50px -3px rgba(0,0,0,0.75);
             box-shadow: 10px 10px 50px -3px rgba(0,0,0,0.75);
+            border-radius: 12px 12px 12px 12px;
+            -moz-border-radius: 12px 12px 12px 12px;
+            -webkit-border-radius: 12px 12px 12px 12px;
             padding: 4px;
         }
 
@@ -117,6 +131,7 @@
                 font-size: 32px;
         }
         #suggestions ul {
+            border-top: 1px #1f8dd6 solid;
             list-style: none;
             text-align: left;
             color:#1f8dd6;
@@ -154,6 +169,7 @@
           color:#1f8dd6;
           font-size: 18px;
 
+
         }
         #acinput:after {
             content: "&#9906;"
@@ -168,7 +184,7 @@
 
         #acinput:focus, #acinput:active {
           outline: 0;
-          border-bottom: 1px #1f8dd6 solid;
+
           /*box-shadow: inset 0 0 0 1px #1f8dd6;*/
           /* background: #808080; */
         }
