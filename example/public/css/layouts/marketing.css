@@ -108,7 +108,7 @@ a.pure-button-primary {
 .home-menu .pure-menu-heading {
     color: #1f8dd6;
     font-weight: 400;
-    font-size: 120%;
+    font-size: 100%;
 }
 
 .home-menu .pure-menu-selected a {
@@ -276,6 +276,10 @@ a.pure-button-primary {
         border: none;
     }
 
+    .home-menu .pure-menu-heading {
+        font-size: 100%;
+    }
+
 }
 
 /*
@@ -284,6 +288,10 @@ a.pure-button-primary {
  * of the mobile and tablet styles.
  */
 @media (min-width: 78em) {
+    .splash {
+        width: 25%;
+        height: 50%;
+    }
     /* We increase the header font size even more */
     .splash-head {
         font-size: 300%;

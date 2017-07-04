@@ -30,10 +30,6 @@ const Service = feathersSolr({
 
 app.use('/solr', Service);
 
-
-
-
-
 // http://localhost:8983/solr/gettingstarted/suggest?q=Handcrfted&wt=json
 // app.service('solr').client().schema({
 //     'delete-field': { name: 'autocomplete' },
