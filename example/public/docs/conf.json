@@ -1,0 +1,27 @@
+{
+    "tags": {
+        "allowUnknownTags": true
+    },
+    "plugins": ["plugins/markdown"],
+    "templates": {
+        "systemName": "Feathers-Solr",
+        "footer": "@sajov",
+        "copyright": "MIT",
+        "includeDate": true,
+        "navType": "inline",
+        "theme": "cyborg",
+        "linenums": true,
+        "collapseSymbols": true,
+        "inverseNav": true,
+        "outputSourceFiles": true,
+        "outputSourcePath": "./public/docs",
+        "dateFormat": "ddd MMM Do YYYY",
+        "syntaxTheme": "dark",
+        "sort": true,
+        "search": true
+    },
+    "markdown": {
+        "parser": "gfm",
+        "hardwrap": true
+    }
+}
