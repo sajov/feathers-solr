@@ -75,8 +75,8 @@ app.use('/solr', Service);
 
 
 // app.service('solr').client().config({
-//         'delete-searchcomponent': 'suggest',
-//         'delete-requesthandler': '/suggest',
+//         // 'delete-searchcomponent': 'suggest',
+//         // 'delete-requesthandler': '/suggest',
 //         'add-searchcomponent': {
 //             'name': 'suggest',
 //             'class': 'solr.SuggestComponent',
