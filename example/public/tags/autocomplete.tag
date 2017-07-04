@@ -2,7 +2,7 @@
 
     <div show={this.suggestions} id="suggestions">
         <input name="acinput" placeholder="enter your search" id="acinput" onkeyup="{ search }" />
-        <i>&#9906;</i>
+        <i class="icon">&#9906;</i>
         <!-- <i>&#8981;</i> -->
         <ul>
             <li if={spellcheck.length > 0}><b>Did you mean: <i>{ spellcheck[0].word }</i> ?</b></li>
@@ -106,7 +106,7 @@
             padding: 4px;
         }
 
-        #suggestions i {
+        #suggestions i.icon {
             -webkit-transform: rotate(35deg);
                -moz-transform: rotate(35deg);
                  -o-transform: rotate(35deg);
