@@ -36,8 +36,8 @@
               //   console.log('monted')
         })
 
-        this.on('mounted', function(){
-            document.getElementById("acinput").focus();
+        this.on('mount', function(){
+            setTimeout(function(){document.getElementById("acinput").focus()},1000);
         })
 
         this.search = (e) =>  {
@@ -73,8 +73,6 @@
             this.rest
                 .find({query:{ $suggest: e.target.value}})
                 .then(res => {
-                    console.log('res', e.target.value, res, res.suggestions, res.spellcheck);
-                    console.log('item', typeof res.suggest.suggest[e.target.value].suggestions);
                     if(typeof res.suggest.suggest[e.target.value].suggestions != 'undefined') {
                         self.suggestions = res.suggest.suggest[e.target.value].suggestions;
                     } else {
@@ -89,7 +87,7 @@
                     self.update();
                 })
                 .catch(err => {
-                    console.log('suggest err ???',err)
+                    console.log('suggest err',err)
                 })
 
 
@@ -140,7 +138,6 @@
           -webkit-transition: box-shadow .4s ease, background .4s ease;
           transition: box-shadow .4s ease, background .4s ease;
           border: 0;
-          border-bottom: 1px #1f8dd6 solid;
           border-radius: 0px;
           box-shadow: inset 0 0 0 2px #000000;
           background: #000000;
@@ -171,24 +168,25 @@
 
         #acinput:focus, #acinput:active {
           outline: 0;
+          border-bottom: 1px #1f8dd6 solid;
           /*box-shadow: inset 0 0 0 1px #1f8dd6;*/
           /* background: #808080; */
         }
 
         #acinput::-webkit-input-placeholder {
-          color: #7A7A7A;
+          color: #313131;
         }
 
         #acinput::-moz-placeholder {
-          color: #7A7A7A;
+          color: #313131;
         }
 
         #acinput:-ms-input-placeholder {
-          color: #7A7A7A;
+          color: #313131;
         }
 
         #acinput::placeholder {
-          color: #7A7A7A;
+          color: #313131;
         }
 
 
