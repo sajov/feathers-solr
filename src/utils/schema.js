@@ -24,7 +24,6 @@ export function describeSchemaFields(fields) {
             solrField.type = fields[field];
         }
 
-
         // 'docValues':fields[field].docValues,
         // 'sortMissingFirst':fields[field].sortMissingFirst,
         // 'sortMissingLast':fields[field].sortMissingLast,

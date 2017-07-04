@@ -349,10 +349,114 @@ See more query variants [JSON Facet API](http://yonik.com/json-facet-api/),[Solr
 
 
 ### $suggest
-will coming next
+A custom response object for autocompleter suggestions.
+See example *app.js* for creating a custom searchcomponent and requesthandler including a spellcheck component
+```
+query: {
+    $suggest: 'Handmake',
+    $params: {} // to plain solr parameter
+}
+```
+
+Feathers Rest query
+
+```
+http://localhost:3030/solr?&$suggest=Handmake
+```
+
+Feathers Result 
+This is a plain solr response
+
+```javascript
+{
+    {
+        "responseHeader": {
+            "status": 0,
+            "QTime": 1
+        },
+        "spellcheck": {
+            "suggestions": [
+                "handmake", {
+                    "numFound": 1,
+                    "startOffset": 0,
+                    "endOffset": 8,
+                    "origFreq": 0,
+                    "suggestion": [{
+                        "word": "handmade",
+                        "freq": 1
+                    }]
+                }
+            ],
+            "correctlySpelled": false,
+            "collations": [
+                "collation",
+                "handmade"
+            ]
+        },
+        "suggest": {
+            "suggest": {
+                "Handmake": {
+                    "numFound": 1,
+                    "suggestions": [{
+                        "term": "Handmade Wooden Keyboard",
+                        "weight": 0,
+                        "payload": ""
+                    }]
+                }
+            }
+        }
+    }
+}
+
+```
 
 ### $spellcheck
-will coming next
+This feature add a spellcheck component to the default find result
+```
+query: {
+    $search: "Handmake",
+    $spellcheck:1,
+    color: "sky blue",
+    $limit: 10,
+
+}
+```
+
+Feathers Rest query
+
+```
+http://localhost:3030/solr?$search=Handmake&color=Handmke&color="sky blue"&$limit=10&$spellcheck
+```
+
+Feathers Result 
+```javascript
+{
+    "QTime": 0,
+    "total": 6,
+    "limit": 10,
+    "skip": 0,
+    "data": [...],
+    "spellcheck": {
+            "suggestions": [
+                "handmake", {
+                    "numFound": 1,
+                    "startOffset": 0,
+                    "endOffset": 8,
+                    "origFreq": 0,
+                    "suggestion": [{
+                        "word": "handmade",
+                        "freq": 1
+                    }]
+                }
+            ],
+            "correctlySpelled": false,
+            "collations": [
+                "collation",
+                "handmade"
+            ]
+        },
+```
+
 
 
 ## Additional Client Methods

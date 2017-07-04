@@ -155,6 +155,16 @@ export function queryJson(params, opt) {
 
 }
 
+export function querySuggest(params, opt) {
+
+    let query = {q: params.query.$suggest};
+
+    if(_.has(params.query, '$params')) {
+        query.params = params.query.$params;
+    }
+
+    return query;
+}
 
 export function queryDelete(id, params) {
   if (id !== null) {
