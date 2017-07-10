@@ -6,6 +6,10 @@
 
 > Solr Adapter for Feathersjs
 
+## Online Demo
+[feather-solr](http://feathers-solr.sajo-media.de/)
+This demonstrate ease of a single query
+
 ## Installation
 
 ```
