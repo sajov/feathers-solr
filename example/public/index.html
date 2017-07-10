@@ -1,141 +1,199 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="A layout example that shows off a responsive product landing page.">
-    <title>Feathers-Solr on RIOT</title>
-    <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-" crossorigin="anonymous">
-    <!--[if lte IE 8]>
-        <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/grids-responsive-old-ie-min.css">
-    <![endif]-->
-    <!--[if gt IE 8]><!-->
-    <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/grids-responsive-min.css">
-    <!--<![endif]-->
-    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
-    <!--[if lte IE 8]>
-            <link rel="stylesheet" href="css/layouts/marketing-old-ie.css">
-        <![endif]-->
-    <!--[if gt IE 8]><!-->
-    <link rel="stylesheet" href="css/layouts/marketing.css">
-    <!--<![endif]-->
+  <meta charset="UTF-8" />
+  <meta name="robots" content="index, follow" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="author" content="https://github.com/picturepan2/" />
+  <title>Feathers-Solr on RIOT</title>
+  <link rel="stylesheet" href="/css/spectre-exp.min.css" />
+  <link rel="stylesheet" href="/css/spectre-icons.min.css" />
+  <link rel="stylesheet" href="/css/spectre.min.css" />
+  <link rel="stylesheet" href="/css/docs.css" />
 </head>
-
 <body>
-    <div class="header">
-        <div class="home-menu pure-menu pure-menu-horizontal pure-menu-fixed">
-            <a class="pure-menu-heading" href="">Feathers-Solr on RIOT</a>
-            <ul class="pure-menu-list">
-                <li class="pure-menu-item"><a href="#" class="pure-menu-link">Tour</a></li>
-                <li class="pure-menu-item">
-                    <a href="https://github.com/sajov/feathers-solr" class="pure-menu-link"><img width="20" src="/img/GitHub-Mark-Light-64px.png"></a>
-                </li>
-            </ul>
-        </div>
-    </div>
-    <div class="splash-container">
-        <div class="splash">
-            <autocomplete></autocomplete>
-        </div>
-    </div>
-    <div class="content-wrapper">
-        <div class="content">
-            <h2 class="content-head is-center">Excepteur sint occaecat cupidatat.</h2>
-            <div class="pure-g">
-                <div class="l-box pure-u-1 pure-u-md-1-2 pure-u-lg-1-4">
-                    <h3 class="content-subhead">
-                    <i class="fa fa-rocket"></i>
-                    Get Started Quickly
-                </h3>
-                    <p>
-                        Phasellus eget enim eu lectus faucibus vestibulum. Suspendisse sodales pellentesque elementum.
-                    </p>
-                </div>
-                <div class="l-box pure-u-1 pure-u-md-1-2 pure-u-lg-1-4">
-                    <h3 class="content-subhead">
-                    <i class="fa fa-mobile"></i>
-                    Responsive Layouts
-                </h3>
-                    <p>
-                        Phasellus eget enim eu lectus faucibus vestibulum. Suspendisse sodales pellentesque elementum.
-                    </p>
-                </div>
-                <div class="l-box pure-u-1 pure-u-md-1-2 pure-u-lg-1-4">
-                    <h3 class="content-subhead">
-                    <i class="fa fa-th-large"></i>
-                    Modular
-                </h3>
-                    <p>
-                        Phasellus eget enim eu lectus faucibus vestibulum. Suspendisse sodales pellentesque elementum.
-                    </p>
-                </div>
-                <div class="l-box pure-u-1 pure-u-md-1-2 pure-u-lg-1-4">
-                    <h3 class="content-subhead">
-                    <i class="fa fa-check-square-o"></i>
-                    Plays Nice
-                </h3>
-                    <p>
-                        Phasellus eget enim eu lectus faucibus vestibulum. Suspendisse sodales pellentesque elementum.
-                    </p>
-                </div>
-            </div>
-        </div>
-        <div class="ribbon l-box-lrg pure-g">
-            <div class="l-box-lrg is-center pure-u-1 pure-u-md-1-2 pure-u-lg-2-5">
-                <img width="300" alt="File Icons" class="pure-img-responsive" src="img/solr.png">
-            </div>
-            <div class="pure-u-1 pure-u-md-1-2 pure-u-lg-3-5">
-                <h2 class="content-head content-head-ribbon">Laboris nisi ut aliquip.</h2>
-                <p>
-                    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor.
-                </p>
-            </div>
-        </div>
-        <div class="content">
-            <h2 class="content-head is-center">Dolore magna aliqua. Uis aute irure.</h2>
-            <div class="pure-g">
-                <div class="l-box-lrg pure-u-1 pure-u-md-2-5">
-                    <form class="pure-form pure-form-stacked">
-                        <fieldset>
-                            <label for="name">Your Name</label>
-                            <input id="name" type="text" placeholder="Your Name">
-                            <label for="email">Your Email</label>
-                            <input id="email" type="email" placeholder="Your Email">
-                            <label for="password">Your Password</label>
-                            <input id="password" type="password" placeholder="Your Password">
-                            <button type="submit" class="pure-button">Sign Up</button>
-                        </fieldset>
-                    </form>
-                </div>
-                <div class="l-box-lrg pure-u-1 pure-u-md-3-5">
-                    <h4>Contact Us</h4>
-                    <p>
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                    </p>
-                    <h4>More Information</h4>
-                    <p>
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                    </p>
-                </div>
-            </div>
-        </div>
-        <div class="footer l-box is-center">
-            View the docs to learn more.
-        </div>
-    </div>
+
+  <section class="section section-header bg-gray">
+    <section class="grid-header container grid-1280">
+      <nav class="navbar">
+        <section class="navbar-section">
+          <a href="#sidebar" class="btn btn-lg btn-link btn-action show-sm"><i class="icon icon-menu"></i></a>
+          <a href="index.html" class="navbar-brand mr-10">Feathers-Solr</a>
+        </section>
+        <section class="navbar-section">
+          <a href="https://github.com/sajov/feathers-solr" target="_blank" class="btn btn-primary">GitHub</a>
+        </section>
+      </nav>
+    </section>
+  </section>
+
+  <section class="container grid-1280">
+    <section class="columns">
+      <div id="sidebar" class="docs-sidebar column col-3 col-sm-12">
+
+        <navigation></navigation>
+        <filter></filter>
+
+      </div>
+      <a href="#sidebar-close" id="sidebar-close" class="docs-nav-clear"></a>
+
+      <div class="docs-content column col-9 col-sm-12">
+        <section id="grid" class="container">
+        <br>
+        <br>
+        <br>
+        <autocomplete></autocomplete>
+          <div class="clearfix"></div>
+
+          <div class="clearfix"></div>
+          <userfilter class="float-left"></userfilter>
+          <pagination class="float-right"></pagination>
+          <div class="clearfix"></div>
+          <products></products>
+          <pagination></pagination>
+        </section>
+      </div>
+    </section>
+  </section>
+
+  <footer class="bg-gray">
+    <section id="copyright" class="grid-footer container grid-960">
+      <p>
+        <a href="/docs" target="_blank">Documents</a> | <a href="https://github.com/sajov/feathers-solr" target="_blank">GitHub Repo</a> | Version <span class="version"></span>
+      </p>
+    </section>
+  </footer>
     <script src="//unpkg.com/feathers-client@^2.0.0/dist/feathers.js"></script>
     <script src="//unpkg.com/socket.io-client@1.7.3/dist/socket.io.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/riot@3.6/riot+compiler.min.js"></script>
     <script type="riot/tag" src="/tags/autocomplete.tag"></script>
+    <script type="riot/tag" src="/tags/navigation.tag"></script>
+    <script type="riot/tag" src="/tags/filter.tag"></script>
+    <script type="riot/tag" src="/tags/userfilter.tag"></script>
+    <script type="riot/tag" src="/tags/pagination.tag"></script>
+    <script type="riot/tag" src="/tags/products.tag"></script>
     <script>
+
         window.socket = io();
         window.client = feathers()
-                .configure(feathers.hooks())
-                .configure(feathers.socketio(socket));
+            .configure(feathers.hooks())
+            .configure(feathers.socketio(socket));
 
-        riot.mount('autocomplete');
+
+        var Catalog = function() {
+
+            riot.observable(this)
+
+            this.rest = window.client.service('solr');
+
+            this.catalog = {data: []};
+            this.category = {};
+            this.filterQuery = {};
+            this.query = {
+                $skip: 0,
+                $limit: 50,
+                doc_type:'product',
+                $select: 'image,name,price,special_price,categories',
+                $facet: {
+                    'Categories': {type:'terms',field:'categories', sort:{index:'asc'}, limit:1000,domain:{excludeTags:'CAT'} },
+                    'activity': {type:'terms',field:'activity', sort:{index:'asc'}, limit:1000 },
+                    'gender': {type:'terms',field:'gender', sort:{index:'asc'}, limit:1000 },
+                    'material': {type:'terms',field:'material', sort:{index:'asc'}, limit:1000 },
+                    'color': {type:'terms',field:'color', sort:{index:'asc'}, limit:1000 },
+                    'size': {type:'terms',field:'size', sort:{index:'asc'}, limit:1000 },
+                    'erin_recommends': {type:'terms',field:'erin_recommends', sort:{index:'asc'}, limit:1000 },
+                    'features_bags': {type:'terms',field:'features_bags', sort:{index:'asc'}, limit:1000 },
+                    'sale': {type:'terms',field:'sale', sort:{index:'asc'}, limit:1000 },
+                    'strap_bags': {type:'terms',field:'strap_bags', sort:{index:'asc'}, limit:1000 },
+                    'style_bags': {type:'terms',field:'style_bags', sort:{index:'asc'}, limit:1000 },
+                    'new': {type:'terms',field:'new', sort:{index:'asc'}, limit:1000 },
+                    'performance_fabric': {type:'terms',field:'performance_fabric', sort:{index:'asc'}, limit:1000 },
+                    'category_gear': {type:'terms',field:'category_gear', sort:{index:'asc'}, limit:1000 },
+                    'format': {type:'terms',field:'format', sort:{index:'asc'}, limit:1000 },
+                    'eco_collection': {type:'terms',field:'eco_collection', sort:{index:'asc'}, limit:1000 },
+                    'price_type': {type:'terms',field:'price_type', sort:{index:'asc'}, limit:1000 },
+                    'climate': {type:'terms',field:'climate', sort:{index:'asc'}, limit:1000 },
+                    'pattern': {type:'terms',field:'pattern', sort:{index:'asc'}, limit:1000 },
+                    'style_general': {type:'terms',field:'style_general', sort:{index:'asc'}, limit:1000 },
+                    'style_bottom': {type:'terms',field:'style_bottom', sort:{index:'asc'}, limit:1000 }
+                },
+                $params: {
+                    qf:'name^10 categories^5 _text_'
+                }
+            };
+
+            this.find = function(query){
+
+                this.rest.find({
+                            query: query
+                        })
+                        .then(res => {
+                            this.catalog = res;
+                            // console.log('find query',query, res);
+                            this.trigger('got_data', this.catalog, this.filterQuery);
+                            if(typeof query.categories == 'undefined') {
+                                window.location.hash = '';
+                            }
+                            window.scrollTo(0,0);
+                        })
+                        .catch(err => {
+                            console.log('find err ???', err,query)
+                        })
+            }
+
+            this.on('query', function(type, filterQuery) {
+                var q = {};
+                switch(type) {
+                    // reset all filter // reset $skip // set $search
+                    case 'navigation':
+
+                        if(typeof this.filterQuery.$search == 'string') {
+                            filterQuery['$search'] = this.filterQuery.$search;
+                        }
+                        if(this.filterQuery.categories == filterQuery.categories) {
+                            this.filterQuery = {};
+                        } else {
+                            this.filterQuery = filterQuery;
+                        }
+                        this.filterQuery.$skip = 0;
+                        q = Object.assign({}, this.query, this.filterQuery);
+                        break;
+                    // keep all filter // keep $search // reset $skip
+                    case 'filter':
+                        this.filterQuery = filterQuery;
+                        this.filterQuery.$skip = 0;
+                        q = Object.assign({}, this.query, this.filterQuery);
+                        break;
+                    // keep all filter // keep $search // reset $skip
+                    case 'pagination':
+                        q = Object.assign({}, this.query, this.filterQuery, filterQuery);
+                        break;
+                    // reset all filter // reset $skip // set $search
+                    case 'autocomplete':
+                        this.filterQuery = filterQuery;
+                        this.filterQuery.$skip = 0;
+                        q = Object.assign({}, this.query, this.filterQuery);
+                        var search = q.$search;
+                        var wildcard = q.$search.split(' ').pop();
+                        if(search.length < 3 || wildcard.length > 2) {
+                            q.$search = search + ' ' + wildcard + '*';
+                        }
+                        break;
+                }
+
+                this.find(q);
+            });
+
+
+
+            this.find(Object.assign({},this.query,this.filterQuery));
+        }
+
+        riot.catalog = new Catalog();
+
+        riot.mount('*');
+
     </script>
 </body>
-
 </html>
