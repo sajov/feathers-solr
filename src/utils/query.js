@@ -83,11 +83,11 @@ export const Query = {
     },
 
     $in (field, param) {
-        this.query.filter.push(field + ':(' + param.join(' OR ') + ')');
+        this.query.filter.push(field + ':("' + param.join('" OR "') + '")');
     },
 
     $nin (field, param) {
-        this.query.filter.push('!' + field + ':(' + param.join(' OR ') + ')');
+        this.query.filter.push('!' + field + ':("' + param.join('" OR "') + '")');
     },
 
     $lt (field, param) {
@@ -107,7 +107,7 @@ export const Query = {
     },
 
     $ne (field, param) {
-        this.query.filter.push('!' + field + ':' + param);
+        this.query.filter.push('!' + field + ':"' + param + '"');
     },
 
     $or (field, param) {
@@ -125,7 +125,7 @@ export const Query = {
 
         });
 
-        filter.push('(' + this.query.filter.join(' OR ') + ')');
+        filter.push('("' + this.query.filter.join('" OR "') + '")');
         this.query.filter = filter;
     },
 
