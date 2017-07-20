@@ -15,7 +15,8 @@ class Service {
 			host: 'http://localhost:8983/solr',
 			core: '/gettingstarted',
             schema: false,
-			migrate: 'drop',
+			migrate: 'safe',
+            adminKey: false,
 			managedScheme: true,
 			/*commitStrategy softCommit: true, commit: true, commitWithin: 50*/
 			commitStrategy: {
@@ -89,7 +90,7 @@ class Service {
     		  _self.options.schema = fields;
             }
 
-            if ( _self.options.migrate === 'safe' || _self.options.managedScheme === false || _.isObject(_self.options.schema) === false) {
+            if (! _self.options.migrate === 'safe' || _self.options.managedScheme === false || _.isObject(_self.options.schema) === false) {
                 return true;
             }
             debug('feathers-solr migrate start');
@@ -245,7 +246,6 @@ class Service {
      * @return {[type]}      [description]
      */
 	create(data) {
-
 		let _self = this;
 		return new Promise((resolve, reject) => {
 			this.Solr.update(data)
@@ -298,7 +298,6 @@ class Service {
 	 * adapter.patch(id, data, params) -> Promise
      * Using update / overide the doc instead of atomic
      * field update http://yonik.com/solr/atomic-updates/
-     * because
 	 * @param  {[type]} id     [description]
 	 * @param  {[type]} data   [description]
 	 * @param  {[type]} params [description]
@@ -307,7 +306,11 @@ class Service {
 	patch(id, data, params) {
 
         let _self = this;
-        let query =  params.query;
+        let query = {};
+
+        if(_.has(params,'query')) {
+            query =  params.query
+        }
 
         if (id !== null) {
             query = { id: id, $limit: 1 };
