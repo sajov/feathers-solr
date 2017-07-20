@@ -1,69 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="robots" content="index, follow" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="author" content="https://github.com/picturepan2/" />
-  <title>Feathers-Solr on RIOT</title>
-  <link rel="stylesheet" href="/css/spectre-exp.min.css" />
-  <link rel="stylesheet" href="/css/spectre-icons.min.css" />
-  <link rel="stylesheet" href="/css/spectre.min.css" />
-  <link rel="stylesheet" href="/css/docs.css" />
+    <meta charset="UTF-8" />
+    <meta name="robots" content="index, follow" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="author" content="https://github.com/picturepan2/" />
+    <title>Feathers-Solr on RIOT</title>
+    <link rel="stylesheet" href="/css/spectre-exp.min.css" />
+    <link rel="stylesheet" href="/css/spectre-icons.min.css" />
+    <link rel="stylesheet" href="/css/spectre.min.css" />
+    <link rel="stylesheet" href="/css/docs.css" />
 </head>
+
 <body>
 
-  <section class="section section-header bg-gray">
-    <section class="grid-header container grid-1280">
-      <nav class="navbar">
-        <section class="navbar-section">
-          <a href="#sidebar" class="btn btn-lg btn-link btn-action show-sm"><i class="icon icon-menu"></i></a>
-          <a href="index.html" class="navbar-brand mr-10">Feathers-Solr</a>
+    <section class="section section-header bg-gray">
+        <section class="grid-header container grid-1280">
+
+            <nav class="navbar">
+                <section class="navbar-section">
+                    <a href="#sidebar" class="btn btn-lg btn-link btn-action show-sm"><i class="icon icon-menu"></i></a>
+                    <a href="index.html" class="navbar-brand mr-10">Feathers-Solr</a>
+                </section>
+                <section class="navbar-section">
+                    <a href="https://github.com/sajov/feathers-solr" target="_blank" class="btn btn-primary">GitHub</a>
+                </section>
+            </nav>
         </section>
-        <section class="navbar-section">
-          <a href="https://github.com/sajov/feathers-solr" target="_blank" class="btn btn-primary">GitHub</a>
+    </section>
+
+    <section class="container grid-1280">
+        <section class="columns">
+            <div id="sidebar" class="docs-sidebar column col-3 col-sm-12">
+
+                <navigation></navigation>
+
+                <filter></filter>
+
+            </div>
+            <a href="#sidebar-close" id="sidebar-close" class="docs-nav-clear"></a>
+            <div class="docs-content column col-9 col-sm-12">
+                <section id="grid" class="container">
+                    <br><br><br>
+
+                    <autocomplete></autocomplete>
+
+                    <div class="clearfix"></div>
+
+                    <userfilter class="float-left"></userfilter>
+
+                    <pagination class="float-right"></pagination>
+
+                    <div class="clearfix"></div>
+
+                    <products></products>
+
+                    <pagination></pagination>
+
+
+                </section>
+            </div>
+
         </section>
-      </nav>
+
+        <demo-pagination></demo-pagination>
+
     </section>
-  </section>
-
-  <section class="container grid-1280">
-    <section class="columns">
-      <div id="sidebar" class="docs-sidebar column col-3 col-sm-12">
-
-        <navigation></navigation>
-        <filter></filter>
-
-      </div>
-      <a href="#sidebar-close" id="sidebar-close" class="docs-nav-clear"></a>
-
-      <div class="docs-content column col-9 col-sm-12">
-        <section id="grid" class="container">
-        <br>
-        <br>
-        <br>
-        <autocomplete></autocomplete>
-          <div class="clearfix"></div>
-
-          <div class="clearfix"></div>
-          <userfilter class="float-left"></userfilter>
-          <pagination class="float-right"></pagination>
-          <div class="clearfix"></div>
-          <products></products>
-          <pagination></pagination>
+    <footer class="bg-gray">
+        <section id="copyright" class="grid-footer container grid-960">
+            <p>
+                <a href="/docs" target="_blank">Documents</a> | <a href="https://github.com/sajov/feathers-solr" target="_blank">GitHub Repo</a> | Version <span class="">0.1.7</span>
+            </p>
         </section>
-      </div>
-    </section>
-  </section>
+    </footer>
 
-  <footer class="bg-gray">
-    <section id="copyright" class="grid-footer container grid-960">
-      <p>
-        <a href="/docs" target="_blank">Documents</a> | <a href="https://github.com/sajov/feathers-solr" target="_blank">GitHub Repo</a> | Version <span class="version"></span>
-      </p>
-    </section>
-  </footer>
     <script src="//unpkg.com/feathers-client@^2.0.0/dist/feathers.js"></script>
     <script src="//unpkg.com/socket.io-client@1.7.3/dist/socket.io.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/riot@3.6/riot+compiler.min.js"></script>
@@ -73,13 +85,13 @@
     <script type="riot/tag" src="/tags/userfilter.tag"></script>
     <script type="riot/tag" src="/tags/pagination.tag"></script>
     <script type="riot/tag" src="/tags/products.tag"></script>
+    <script type="riot/tag" src="/tags/demo-pagination.tag"></script>
     <script>
 
         window.socket = io();
         window.client = feathers()
             .configure(feathers.hooks())
             .configure(feathers.socketio(socket));
-
 
         var Catalog = function() {
 
@@ -97,10 +109,10 @@
                 $select: 'image,name,price,special_price,categories',
                 $facet: {
                     'Categories': {type:'terms',field:'categories', sort:{index:'asc'}, limit:1000,domain:{excludeTags:'CAT'} },
+                    'color': {type:'terms',field:'color', sort:{index:'asc'}, limit:1000 },
                     'activity': {type:'terms',field:'activity', sort:{index:'asc'}, limit:1000 },
                     'gender': {type:'terms',field:'gender', sort:{index:'asc'}, limit:1000 },
                     'material': {type:'terms',field:'material', sort:{index:'asc'}, limit:1000 },
-                    'color': {type:'terms',field:'color', sort:{index:'asc'}, limit:1000 },
                     'size': {type:'terms',field:'size', sort:{index:'asc'}, limit:1000 },
                     'erin_recommends': {type:'terms',field:'erin_recommends', sort:{index:'asc'}, limit:1000 },
                     'features_bags': {type:'terms',field:'features_bags', sort:{index:'asc'}, limit:1000 },
@@ -125,12 +137,16 @@
 
             this.find = function(query){
 
+                console.clear();
+                console.time('response time');
                 this.rest.find({
                             query: query
                         })
                         .then(res => {
                             this.catalog = res;
-                            // console.log('find query',query, res);
+                            console.timeEnd('response time');
+                            console.info('solr query time', res.QTime);
+                            console.info('query', query, 'res', res);
                             this.trigger('got_data', this.catalog, this.filterQuery);
                             if(typeof query.categories == 'undefined') {
                                 window.location.hash = '';
@@ -145,9 +161,7 @@
             this.on('query', function(type, filterQuery) {
                 var q = {};
                 switch(type) {
-                    // reset all filter // reset $skip // set $search
                     case 'navigation':
-
                         if(typeof this.filterQuery.$search == 'string') {
                             filterQuery['$search'] = this.filterQuery.$search;
                         }
@@ -159,17 +173,14 @@
                         this.filterQuery.$skip = 0;
                         q = Object.assign({}, this.query, this.filterQuery);
                         break;
-                    // keep all filter // keep $search // reset $skip
                     case 'filter':
                         this.filterQuery = filterQuery;
                         this.filterQuery.$skip = 0;
                         q = Object.assign({}, this.query, this.filterQuery);
                         break;
-                    // keep all filter // keep $search // reset $skip
                     case 'pagination':
                         q = Object.assign({}, this.query, this.filterQuery, filterQuery);
                         break;
-                    // reset all filter // reset $skip // set $search
                     case 'autocomplete':
                         this.filterQuery = filterQuery;
                         this.filterQuery.$skip = 0;
@@ -185,7 +196,9 @@
                 this.find(q);
             });
 
-
+            if(window.location.hash != "") {
+                this.filterQuery = {'categories':'"' + window.location.hash.replace('#','') + '"'}
+            }
 
             this.find(Object.assign({},this.query,this.filterQuery));
         }
