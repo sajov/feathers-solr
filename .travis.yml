@@ -11,7 +11,7 @@ before_script:
   - java -version
   - bin/./install-solr.sh
   - npm install -g istanbul
-  - npm install -g mocha
+  - npm install --save-dev mocha chai
   - npm install -g coveralls
   - npm install
 script:
