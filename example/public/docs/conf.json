@@ -9,7 +9,7 @@
         "copyright": "MIT",
         "includeDate": true,
         "navType": "inline",
-        "theme": "cyborg",
+        "theme": "flatly",
         "linenums": true,
         "collapseSymbols": true,
         "inverseNav": true,

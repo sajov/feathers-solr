@@ -35,11 +35,12 @@
     "watch": "babel --watch -d lib/ src/",
     "jshint": "jshint src/. test/. --config",
     "mocha": "mocha --recursive test/ --compilers js:babel-core/register",
-    "test": "npm run compile && npm run jshint && npm run mocha",
+    "test0": "npm run compile && npm run jshint && npm run mocha",
     "test1": "npm run compile && npm run jshint && mocha --recursive test/adapter.test.js --compilers js:babel-core/register",
     "test2": "npm run compile && npm run jshint && mocha --recursive test/adapter.test.js --compilers js:babel-core/register",
     "test3": "npm run compile && npm run jshint && mocha --recursive test/client/configApi.test.js --compilers js:babel-core/register",
     "test4": "npm run compile && npm run jshint && mocha --recursive test/client/schemaApi.test.js --compilers js:babel-core/register",
+    "test5": "npm run compile && npm run jshint && mocha --recursive test/query.test.js --compilers js:babel-core/register",
     "start": "npm run compile && node example/app",
     "test-cov": "node_modules/.bin/istanbul cover node_modules/mocha/bin/_mocha -- --compilers js:babel-core/register --colors test/*",
     "travis": "node_modules/.bin/istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --compilers js:babel-core/register --colors --reporter spec test/"
