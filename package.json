@@ -35,7 +35,7 @@
     "watch": "babel --watch -d lib/ src/",
     "jshint": "jshint src/. test/. --config",
     "mocha": "mocha --recursive test/ --compilers js:babel-core/register",
-    "test0": "npm run compile && npm run jshint && npm run mocha",
+    "test": "npm run compile && npm run jshint && npm run mocha",
     "test1": "npm run compile && npm run jshint && mocha --recursive test/adapter.test.js --compilers js:babel-core/register",
     "test2": "npm run compile && npm run jshint && mocha --recursive test/adapter.test.js --compilers js:babel-core/register",
     "test3": "npm run compile && npm run jshint && mocha --recursive test/client/configApi.test.js --compilers js:babel-core/register",
