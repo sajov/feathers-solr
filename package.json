@@ -23,7 +23,7 @@
     "url": "https://github.com/sajov/feathers-solr/issues"
   },
   "engines": {
-    "node": ">= 0.12.0"
+    "node": ">= 4.6.0"
   },
   "scripts": {
     "prepublish": "npm run compile",
