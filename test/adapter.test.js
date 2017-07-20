@@ -4,15 +4,15 @@ import plugin from '../src';
 let Adapter = new plugin.Service({
     paginate: {
     default: 10,
-    max: 4
+    max: 100
     }
   });
 
-describe('Adapter', () => {
+describe('Adapter Test OLD', () => {
 
   describe('Remove', () => {
     it('should return status "OK"', done => {
-      Adapter.remove()
+      Adapter.remove(null,{model:'DocAdapter'})
         .then(function(res){
           // console.log('res',res);
           expect(res.responseHeader.status).to.be.equal(0);
@@ -32,9 +32,10 @@ describe('Adapter', () => {
     });
 
     it('find ALL should return Array', done => {
-      Adapter.find({})
+      Adapter.find({query:{model:'DocAdapter'}})
         .then(function(res){
           response = res;
+          // console.log('res',res);
           expect(response.data).to.be.instanceof(Array);
 
           done();
@@ -47,7 +48,7 @@ describe('Adapter', () => {
 
 
     it('find ALL should return empty Array', done => {
-      // console.log('response',response);
+
       expect(response.data).to.have.lengthOf(0);
       done();
     });
@@ -59,18 +60,21 @@ describe('Adapter', () => {
       Adapter.create([
             {
               'id': 'adapter1',
+              'model': 'DocAdapter',
               'name': 'Doc adapter1',
               'country': 'germany',
               'age_i': 23
             },
             {
               'id': 'adapter2',
+              'model': 'DocAdapter',
               'name': 'Doc adapter2',
               'country': 'uk',
               'age_i': 48
             },
             {
               'id': 'adapter3',
+              'model': 'DocAdapter',
               'name': 'Doc adapter3',
               'country': 'es',
               'age_i': 24
@@ -96,7 +100,7 @@ describe('Adapter', () => {
     // });
 
     it('find ALL should return Array', done => {
-      Adapter.find({})
+      Adapter.find({query:{model:'DocAdapter'}})
         .then(function(res){
           response = res;
           expect(response.data).to.be.instanceof(Array);
@@ -116,7 +120,7 @@ describe('Adapter', () => {
     });
 
     it('find by id should return Array', done => {
-      Adapter.find({query:{id:'adapter1','age_i':23}})
+      Adapter.find({query:{model:'DocAdapter',id:'adapter1','age_i':23}})
         .then(function(res){
           response = res;
 

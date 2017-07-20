@@ -33,25 +33,20 @@ export const Query = {
     },
 
     filter (field, param) {
-
-        if (typeof param === 'string') {
-
-            this.query.filter.push(field + ':' + param);
-
-        } else if (Array.isArray(param)) {
-
-            if (Array.isArray(param)) {
-                param = '(' + param.join(' OR ') + ')';
-            }
-            this.query.filter.push(field + ':' + param);
-
-        } else {
-
+        if (_.isObject(param)) {
             Object.keys(param).forEach(function(f) {
                 if (f[0] === '$' && typeof Query[f] !== 'undefined') {
                     Query[f](field, param[f]);
                 }
             });
+
+        } else if (Array.isArray(param)) {
+            if (Array.isArray(param)) {
+                param = '(' + param.join(' OR ') + ')';
+            }
+            this.query.filter.push(field + ':' + param);
+        } else {
+            this.query.filter.push(field + ':' + param);
         }
     },
 
@@ -72,7 +67,7 @@ export const Query = {
         let order = [];
 
         Object.keys(param).forEach(name => {
-            order.push(name + (param[name] === '1' ? ' asc' : ' desc'));
+            order.push(name + (parseInt(param[name]) === 1 ? ' asc' : ' desc'));
         });
 
         this.query.sort = order.join(' ');
@@ -111,10 +106,8 @@ export const Query = {
     },
 
     $or (field, param) {
-
         let filter = this.query.filter;
         this.query.filter = [];
-
         Object.keys(param).forEach(function(item, index) {
 
           if (item[0] === '$' && typeof Query[item] !== 'undefined') {
@@ -125,7 +118,7 @@ export const Query = {
 
         });
 
-        filter.push('("' + this.query.filter.join('" OR "') + '")');
+        filter.push('(' + this.query.filter.join(' OR ') + ')');
         this.query.filter = filter;
     },
 
@@ -167,18 +160,20 @@ export function querySuggest(params, opt) {
 }
 
 export function queryDelete(id, params) {
-  if (id !== null) {
-    // if (Array.isArray(id)) {
-    //     id = id;
-    // }
-    return { delete: { id: id } };
-  }
 
-  // if (params) {
-  //   //TODO' implement array
-  //   let pairs = _.pairs(params.query);
-  //   return { delete: { query: (pairs[0] || '*') + ':' + (pairs[1] || '*') } };
-  // }
+  if (id !== null) {
+
+    return { delete: { id: id } };
+
+  } else if(_.isObject(params)) {
+
+    let crit = [];
+
+    Object.keys(params).forEach(function(name){
+        crit.push(name+':'+params[name]);
+    })
+      return { delete: { query: crit.join(',') } };
+  }
 
   return { delete: { query: '*' } };
 }
