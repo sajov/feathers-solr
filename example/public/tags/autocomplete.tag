@@ -88,7 +88,11 @@
             this.active=-1
 
             window.location.hash = '';
-            riot.catalog.trigger('query','autocomplete',{$search: e.target.value});
+            var query = {};
+            if(e.target.value != ""){
+                query = {$search: e.target.value};
+            }
+            riot.catalog.trigger('query','autocomplete',query);
             // riot.catalog.trigger('filter',{$search:e.target.value + ' ' + e.target.value.split(' ').pop()+'*'});
 
         }
