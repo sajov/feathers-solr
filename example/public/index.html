@@ -145,8 +145,9 @@
                         .then(res => {
                             this.catalog = res;
                             console.timeEnd('response time');
-                            console.info('solr query time', res.QTime);
-                            console.info('query', query, 'res', res);
+                            console.info('Req', query);
+                            console.info('Res', res);
+                            console.info('Solr query time:', res.QTime + 'ms');
                             this.trigger('got_data', this.catalog, this.filterQuery);
                             if(typeof query.categories == 'undefined') {
                                 window.location.hash = '';
@@ -180,15 +181,18 @@
                         break;
                     case 'pagination':
                         q = Object.assign({}, this.query, this.filterQuery, filterQuery);
+                        delete q.$facet;
                         break;
                     case 'autocomplete':
                         this.filterQuery = filterQuery;
                         this.filterQuery.$skip = 0;
                         q = Object.assign({}, this.query, this.filterQuery);
-                        var search = q.$search;
-                        var wildcard = q.$search.split(' ').pop();
-                        if(search.length < 3 || wildcard.length > 2) {
-                            q.$search = search + ' ' + wildcard + '*';
+                        if(typeof q.$search == 'string') {
+                            var search = q.$search;
+                            var wildcard = q.$search.split(' ').pop();
+                            if(search.length < 3 || wildcard.length > 2) {
+                                q.$search = search + ' ' + wildcard + '*';
+                            }
                         }
                         break;
                 }

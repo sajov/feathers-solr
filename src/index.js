@@ -111,17 +111,17 @@ class Service {
                                     })
                                     .catch(function(err){
                                         debug('Service.define addField ERROR:',err);
-                                        return reject(new errors.BadRequest());
+                                        return reject(new errors.BadRequest(err));
                                     });
                             })
                             .catch(err => {
                                 debug('Service.define removeField ERROR:',err);
-                                return reject(new errors.BadRequest());
+                                return reject(new errors.BadRequest(err));
                             });
                     })
                     .catch(err => {
                         debug('Service.define remove ERROR:',err);
-                        return reject(new errors.BadRequest());
+                        return reject(new errors.BadRequest(err));
                     });
 
             } else {
@@ -133,7 +133,7 @@ class Service {
                     })
                     .catch(function(err){
                         debug('Service.define addField ERROR:',err);
-                        return reject(new errors.BadRequest());
+                        return reject(new errors.BadRequest(err));
                     });
             }
 
@@ -155,7 +155,7 @@ class Service {
                 })
                 .catch(function(err){
                     debug('Service.find ERROR:',err);
-                    return reject(new errors.BadRequest());
+                    return reject(new errors.BadRequest(err));
                 });
         });
 	}
@@ -188,7 +188,7 @@ class Service {
                 })
                 .catch(function(err) {
                     debug('Service.find ERROR:',err);
-                    return reject(new errors.BadRequest());
+                    return reject(new errors.BadRequest(err));
                 });
         });
     }
@@ -208,7 +208,7 @@ class Service {
                 })
                 .catch(function(err) {
                     debug('Service.find ERROR:',err);
-                    return reject(new errors.BadRequest());
+                    return reject(new errors.BadRequest(err));
                 });
         });
     }
@@ -254,12 +254,12 @@ class Service {
 						resolve(data);
 					} else {
                         console.log('res', res);
-						return reject(new errors.BadRequest());
+						return reject(new errors.BadRequest(res));
 					}
 				})
 				.catch(function(err) {
                     console.log('err', err);
-					return reject(new errors.BadRequest());
+					return reject(new errors.BadRequest(err));
 				});
 		});
 	}

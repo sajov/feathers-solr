@@ -42,6 +42,9 @@
         var self = this;
 
         riot.catalog.on('got_data', (data, filterQuery) =>{
+            if(typeof data == 'undefined' || typeof data.facet == 'undefined') {
+                return;
+            }
             self.data = data;
             delete self.data.facet.Categories;
             delete self.data.facet.count;
