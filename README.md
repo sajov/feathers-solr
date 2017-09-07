@@ -104,7 +104,7 @@ Here's an example of a Feathers server that uses `feathers-solr`.
         },
         paginate: {
             default: 10,
-            max: 4
+            max: 100
     });
 
     const app = feathers()
