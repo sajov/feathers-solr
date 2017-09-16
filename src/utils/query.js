@@ -22,13 +22,17 @@ export const Query = {
 
     parseQuery (query) {
 
-        Object.keys(query).forEach(function(item, index) {
-          if (item[0] === '$' && typeof Query[item] !== 'undefined') {
-            Query[item](item,query[item]);
-          } else {
-            Query.filter(item,query[item]);
-          }
+        Object.keys(query).forEach(function (item, index) {
+            if (item[0] === '$') {
+                if(typeof Query[item] !== 'undefined') {
+                    Query[item](item, query[item]);
+                }
+                delete query[index];
+            } else {
+                Query.filter(item, query[item]);
+            }
         });
+
 
     },
 

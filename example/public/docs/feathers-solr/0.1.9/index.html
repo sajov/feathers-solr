@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width">
+	<title>Feathers-Solr Index</title>
+
+	<!--[if lt IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+	<link type="text/css" rel="stylesheet" href="styles/sunlight.dark.css">
+
+	<link type="text/css" rel="stylesheet" href="styles/site.flatly.css">
+
+</head>
+
+<body>
+
+<div class="navbar navbar-default navbar-fixed-top navbar-inverse">
+<div class="container">
+	<div class="navbar-header">
+		<a class="navbar-brand" href="index.html">Feathers-Solr</a>
+		<button class="navbar-toggle" type="button" data-toggle="collapse" data-target="#topNavigation">
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+			<span class="icon-bar"></span>
+        </button>
+	</div>
+	<div class="navbar-collapse collapse" id="topNavigation">
+		<ul class="nav navbar-nav">
+			
+			<li class="dropdown">
+				<a href="modules.list.html" class="dropdown-toggle" data-toggle="dropdown">Modules<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="module-Solr%252520Adapter.html">Solr Adapter</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="classes.list.html" class="dropdown-toggle" data-toggle="dropdown">Classes<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="CollectionsApi.html">CollectionsApi</a></li><li><a href="ConfigSets.html">ConfigSets</a></li><li><a href="ManagedResources.html">ManagedResources</a></li><li><a href="module.html#.exports">module.exports</a></li><li><a href="RequestParameters.html">RequestParameters</a></li>
+				</ul>
+			</li>
+			
+			<li class="dropdown">
+				<a href="global.html" class="dropdown-toggle" data-toggle="dropdown">Global<b class="caret"></b></a>
+				<ul class="dropdown-menu inline">
+					<li><a href="global.html#Constructor">Constructor</a></li><li><a href="global.html#Name">Name</a></li><li><a href="global.html#Reqrequestmethod">Req request method</a></li><li><a href="global.html#someMethod">someMethod</a></li><li><a href="global.html#Suggest">Suggest</a></li><li><a href="global.html#update">update</a></li>
+				</ul>
+			</li>
+			
+		</ul>
+        
+            <div class="col-sm-3 col-md-3">
+                <form class="navbar-form" role="search">
+                    <div class="input-group">
+                        <input type="text" class="form-control" placeholder="Search" name="q" id="search-input">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" id="search-submit"><i class="glyphicon glyphicon-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        
+	</div>
+
+</div>
+</div>
+
+
+<div class="container" id="toc-content">
+<div class="row">
+
+	
+	<div class="col-md-8">
+	
+		<div id="main">
+			
+
+	
+	
+
+
+
+    <h3>feathers-solr 0.1.9</h3>
+
+
+
+
+
+
+
+
+
+	
+	
+
+
+
+
+
+    <section class="readme-section">
+        <article><h1>feathers-solr</h1><p><a href="https://travis-ci.org/sajov/feathers-solr"><img src="https://travis-ci.org/sajov/feathers-solr.png?branch=master" alt="Build Status"></a><br><a href="https://coveralls.io/github/sajov/feathers-solr?branch=master"><img src="https://coveralls.io/repos/github/sajov/feathers-solr/badge.svg?branch=master" alt="Coverage Status"></a><br><a href="https://david-dm.org/jsdoc2md/feathers-solr"><img src="https://david-dm.org/sajov/feathers-solr.svg" alt="Dependency Status"></a></p>
+<blockquote>
+<p>Solr Adapter for Feathersjs</p>
+</blockquote>
+<h2>Online Demo</h2><p><a href="http://feathers-solr.sajo-media.de/">feather-solr</a><br>This demonstrate ease of a single query</p>
+<h2>Installation</h2><pre class="prettyprint source"><code>npm install feathers-solr --save</code></pre><h2>Documentation</h2><p>Please refer to the <a href="http://docs.feathersjs.com/databases/readme.html">Feathers database adapter documentation</a> for more details or directly at:</p>
+<ul>
+<li><a href="https://docs.feathersjs.com/api/databases/common.html#service-methods">Service methods</a> - How to use a database adapter</li>
+<li><a href="https://docs.feathersjs.com/api/databases/common.html#pagination">Pagination and Sorting</a> - How to use pagination and sorting for the database adapter</li>
+<li><a href="https://docs.feathersjs.com/api/databases/querying.html">Querying</a> - The common adapter querying mechanism</li>
+<li><a href="https://docs.feathersjs.com/api/databases/common.html#extending-adapters">Extending</a> - How to extend a database adapter</li>
+</ul>
+<h2>Getting Started</h2><h3>Install Solr</h3><pre class="prettyprint source"><code> bin/solr start -e schemaless</code></pre><p>Use feathers-solr/bin/install-solr.sh for a kickstart installation.</p>
+<h2>Options</h2><table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>host</td>
+<td>http://localhost:8983/solr</td>
+<td></td>
+</tr>
+<tr>
+<td>core</td>
+<td>/gettingstarted</td>
+<td></td>
+</tr>
+<tr>
+<td>schema</td>
+<td>false</td>
+<td>{title: {type:&quot;string&quot;}}</td>
+</tr>
+<tr>
+<td>migrate</td>
+<td>alter</td>
+<td><em>safe</em>, <em>alter</em> and  <em>drop</em> (delete all data and reset schema)</td>
+</tr>
+<tr>
+<td>commitStrategy</td>
+<td>{softCommit: true, commitWithin: 50000, overwrite: true}</td>
+</tr>
+</tbody>
+</table>
+<h2>Managed Schema</h2><p><a href="https://lucene.apache.org/solr/guide/6_6/schemaless-mode.html">Schemaless Mode</a> is recommended.<br>Use <a href="https://cwiki.apache.org/confluence/display/solr/Solr+Field+Types">Solr Field Types</a> and <a href="https://cwiki.apache.org/confluence/display/solr/Field+Type+Definitions+and+Properties">Field Type Definitions and Properties</a> to define Model properties</p>
+<pre class="prettyprint source lang-javascript"><code>{
+    title: {
+        type: &quot;text_general&quot;, // For more flexible searching. Default type is 'string'
+        stored: true, // default, keep value visible in results
+        indexed: true, // default, make it searchable
+        multiValued: false, // default, true becomes an array field
+    }
+}</code></pre><p>See your current schema definition</p>
+<pre class="prettyprint source"><code> http://localhost:8983/solr/gettingstarted/schema/</code></pre><h2>Complete Example</h2><p>Here's an example of a Feathers server that uses <code>feathers-solr</code>.</p>
+<pre class="prettyprint source lang-javascript"><code>
+    const feathers = require('feathers');
+    const rest = require('feathers-rest');
+    const hooks = require('feathers-hooks');
+    const bodyParser = require('body-parser');
+    const errorHandler = require('feathers-errors/handler');
+    const solr = require('feathers-solr');
+
+    const Service = feathersSolr({
+        host: 'http://localhost:8983/solr',
+        core: '/gettingstarted',
+        schema:{
+                name: 'text_general',
+                company: 'text_general',
+                email: 'text_general',
+                age:  'int',
+                gender: 'string',
+                color: {
+                    type: 'string',
+                    multiValued: true,
+                },
+                address: {
+                    type: 'string',
+                    default: 'Düsseldorf'
+                }
+        },
+        paginate: {
+            default: 10,
+            max: 4
+    });
+
+    const app = feathers()
+      .configure(rest())
+      .configure(hooks())
+      .use(bodyParser.json())
+      .use(bodyParser.urlencoded({ extended: true }))
+      .use('/solr', Service())
+      .use(errorHandler());
+
+
+    app.listen(3030);
+
+    console.log('Feathers app started on 127.0.0.1:3030');</code></pre><h3>Run Demo App</h3><pre class="prettyprint source"><code> node /example/app.js</code></pre><h2>Support all Feathers Queries</h2><p>See <a href="https://docs.feathersjs.com/api/databases/querying.html">Feathers querying</a> for more detail</p>
+<h2>Supported Solr Queries</h2><h3>$search</h3><p>Simple query</p>
+<pre class="prettyprint source lang-javascript"><code>query: {
+  $search: &quot;John&quot;
+}</code></pre><p>'$search' will try to match against Solr default search field '<em>text</em>' <a href="https://cwiki.apache.org/confluence/display/solr/Schemaless+Mode">Schemaless Mode</a></p>
+<p>More complex query with a default Solr configuration. </p>
+<pre class="prettyprint source lang-javascript"><code>query: {
+
+  $search: &quot;John !Doe +age:[80 TO *]&quot;, // Search in default field _text_. See Solr copy field `copy:* to _text_`
+  // $params: {
+  //   qf: &quot;name^10 friends&quot; define explicit fields to query and boost
+  // }
+  // or $search: &quot;name:John^10 AND !name:Doe AND age:[80 TO *]&quot;, 
+  // or $search: &quot;joh*&quot;, 
+  // or $search: '&quot;john doe&quot;', 
+  // or $search: '&quot;john doe&quot;', 
+  // or $search: 'jon', 
+
+}</code></pre><h3>$params</h3><p>Add all kind of Solr query params!<br>Combine huge Solr Features like <em>facets</em>, <em>stats</em>, <em>ranges</em>, <em>grouping</em> and more with the default response.<br>This example will group the result.</p>
+<pre class="prettyprint source lang-javascript"><code>query: {
+    $params: {
+        group : true,
+        &quot;group.field&quot; : &quot;country&quot;,
+        &quot;group.format&quot; : &quot;simple&quot;,
+    }
+}</code></pre><p>Feathers Rest query</p>
+<pre class="prettyprint source"><code>http://localhost:3030/solr?$params[group]=true&$params[group.field]=gender&$params[group.field]=age&$params[group.limit]=1&$params[group.format]=grouped&$select=id,age,gender</code></pre><p>Feathers Result</p>
+<pre class="prettyprint source lang-javascript"><code>{
+  &quot;QTime&quot;: 0,
+  &quot;total&quot;: 0,
+  &quot;limit&quot;: 10,
+  &quot;skip&quot;: 0,
+  &quot;data&quot;: {
+    &quot;gender&quot;: {
+      &quot;matches&quot;: 50,
+      &quot;groups&quot;: [
+        {
+          &quot;groupValue&quot;: &quot;male&quot;,
+          &quot;doclist&quot;: {
+            &quot;numFound&quot;: 24,
+            &quot;start&quot;: 0,
+            &quot;docs&quot;: [
+              {
+                &quot;id&quot;: &quot;59501959f2786e0207a8b29f&quot;,
+                &quot;age&quot;: &quot;45&quot;,
+                &quot;gender&quot;: &quot;male&quot;
+              }
+            ]
+          }
+        },
+        {
+          &quot;groupValue&quot;: &quot;female&quot;,
+          &quot;doclist&quot;: {
+            &quot;numFound&quot;: 26,
+            &quot;start&quot;: 0,
+            &quot;docs&quot;: [
+              {
+                &quot;id&quot;: &quot;595019590a8632fecd292592&quot;,
+                &quot;age&quot;: &quot;51&quot;,
+                &quot;gender&quot;: &quot;female&quot;
+              }
+            ]
+          }
+        }
+      ]
+    },
+    &quot;age&quot;: {
+      &quot;matches&quot;: 50,
+      &quot;groups&quot;: [
+        {
+          &quot;groupValue&quot;: &quot;45&quot;,
+          &quot;doclist&quot;: {
+            &quot;numFound&quot;: 3,
+            &quot;start&quot;: 0,
+            &quot;docs&quot;: [
+              {
+                &quot;id&quot;: &quot;59501959f2786e0207a8b29f&quot;,
+                &quot;age&quot;: &quot;45&quot;,
+                &quot;gender&quot;: &quot;male&quot;
+              }
+            ]
+          }
+        },
+        {
+          &quot;groupValue&quot;: &quot;51&quot;,
+          &quot;doclist&quot;: {
+            &quot;numFound&quot;: 2,
+            &quot;start&quot;: 0,
+            &quot;docs&quot;: [
+              {
+                &quot;id&quot;: &quot;595019590a8632fecd292592&quot;,
+                &quot;age&quot;: &quot;51&quot;,
+                &quot;gender&quot;: &quot;female&quot;
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}</code></pre><h3>$facet Functions and Analytics</h3><p>See <a href="http://yonik.com/solr-facet-functions/">Solr Facet Functions and Analytics</a></p>
+<table>
+<thead>
+<tr>
+<th>Aggregation</th>
+<th>Example</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>sum</td>
+<td>sum(sales)</td>
+<td>summation of numeric values</td>
+</tr>
+<tr>
+<td>avg</td>
+<td>avg(popularity)</td>
+<td>average of numeric values</td>
+</tr>
+<tr>
+<td>sumsq</td>
+<td>sumsq(rent)</td>
+<td>sum of squares</td>
+</tr>
+<tr>
+<td>min</td>
+<td>min(salary)</td>
+<td>minimum value</td>
+</tr>
+<tr>
+<td>max</td>
+<td>max(mul(price,popularity))</td>
+<td>maximum value</td>
+</tr>
+<tr>
+<td>unique</td>
+<td>unique(state)</td>
+<td>number of unique values (count distinct)</td>
+</tr>
+<tr>
+<td>hll</td>
+<td>hll(state)</td>
+<td>number of unique values using the HyperLogLog algorithm</td>
+</tr>
+<tr>
+<td>percentile</td>
+<td>percentile(salary,50,75,99,99.9)</td>
+<td>calculates percentiles</td>
+</tr>
+</tbody>
+</table>
+<pre class="prettyprint source lang-javascript"><code>query: {
+    $facet: {
+        age_avg : &quot;avg(age)&quot;,
+        age_sum : &quot;sum(age)&quot;
+    }
+}</code></pre><h3>$facet Ranges</h3><p>Add a facet type range</p>
+<pre class="prettyprint source lang-javascript"><code>query: {
+    $facet: {
+        age_ranges: {
+            type: &quot;range&quot;,
+            field: &quot;age&quot;,
+            start: 0,
+            end: 100,
+            gap: 25
+        }
+    }
+}</code></pre><p>Feathers Rest query</p>
+<pre class="prettyprint source"><code>http://localhost:3030/solr?&$facet[age_ranges][type]=range&$facet[age_ranges][field]=age&$facet[age_ranges][start]=0&$facet[age_ranges][end]=100&$facet[age_ranges][gap]=25&$facet[age_avg]=avg(age)&$facet[age_sum]=sum(age)</code></pre><p>Feathers Result</p>
+<pre class="prettyprint source lang-javascript"><code>{
+    QTime: 0,
+    total: 50,
+    limit: 10,
+    skip: 0,
+    data: [...],
+    facet: {
+        age_avg: 29.44,
+        age_sum: 1472,
+        count: 54,
+        age_ranges: {
+            buckets: [{
+                val: 0,
+                count: 4
+            }, {
+                val: 25,
+                count: 17
+            }, {
+                val: 50,
+                count: 15
+            }, {
+                val: 75,
+                count: 14
+            }]
+        }
+    }
+}</code></pre><p>See more query variants <a href="http://yonik.com/json-facet-api/">JSON Facet API</a>,<a href="http://yonik.com/solr-facet-functions/">Solr Facet Functions and Analytics</a>, <a href="http://yonik.com/solr-subfacets/">Solr Subfacets</a>, <a href="http://yonik.com/multi-select-faceting/">Multi-Select Faceting</a></p>
+<h3>$suggest</h3><p>A custom response object for autocompleter suggestions.<br>See example <em>app.js</em> for creating a custom searchcomponent and requesthandler including a spellcheck component</p>
+<pre class="prettyprint source"><code>query: {
+    $suggest: 'Handmake',
+    $params: {} // to plain solr parameter
+}</code></pre><p>Feathers Rest query</p>
+<pre class="prettyprint source"><code>http://localhost:3030/solr?&$suggest=Handmake</code></pre><p>Feathers Result<br>This is a plain solr response</p>
+<pre class="prettyprint source lang-javascript"><code>{
+    {
+        &quot;responseHeader&quot;: {
+            &quot;status&quot;: 0,
+            &quot;QTime&quot;: 1
+        },
+        &quot;spellcheck&quot;: {
+            &quot;suggestions&quot;: [
+                &quot;handmake&quot;, {
+                    &quot;numFound&quot;: 1,
+                    &quot;startOffset&quot;: 0,
+                    &quot;endOffset&quot;: 8,
+                    &quot;origFreq&quot;: 0,
+                    &quot;suggestion&quot;: [{
+                        &quot;word&quot;: &quot;handmade&quot;,
+                        &quot;freq&quot;: 1
+                    }]
+                }
+            ],
+            &quot;correctlySpelled&quot;: false,
+            &quot;collations&quot;: [
+                &quot;collation&quot;,
+                &quot;handmade&quot;
+            ]
+        },
+        &quot;suggest&quot;: {
+            &quot;suggest&quot;: {
+                &quot;Handmake&quot;: {
+                    &quot;numFound&quot;: 1,
+                    &quot;suggestions&quot;: [{
+                        &quot;term&quot;: &quot;Handmade Wooden Keyboard&quot;,
+                        &quot;weight&quot;: 0,
+                        &quot;payload&quot;: &quot;&quot;
+                    }]
+                }
+            }
+        }
+    }
+}</code></pre><h3>$spellcheck</h3><p>This feature add a spellcheck component to the default find result</p>
+<pre class="prettyprint source"><code>query: {
+    $search: &quot;Handmake&quot;,
+    $spellcheck:1,
+    color: &quot;sky blue&quot;,
+    $limit: 10,
+
+}</code></pre><p>Feathers Rest query</p>
+<pre class="prettyprint source"><code>http://localhost:3030/solr?$search=Handmake&color=Handmke&color=&quot;sky blue&quot;&$limit=10&$spellcheck</code></pre><p>Feathers Result </p>
+<pre class="prettyprint source lang-javascript"><code>{
+    &quot;QTime&quot;: 0,
+    &quot;total&quot;: 6,
+    &quot;limit&quot;: 10,
+    &quot;skip&quot;: 0,
+    &quot;data&quot;: [...],
+    &quot;spellcheck&quot;: {
+            &quot;suggestions&quot;: [
+                &quot;handmake&quot;, {
+                    &quot;numFound&quot;: 1,
+                    &quot;startOffset&quot;: 0,
+                    &quot;endOffset&quot;: 8,
+                    &quot;origFreq&quot;: 0,
+                    &quot;suggestion&quot;: [{
+                        &quot;word&quot;: &quot;handmade&quot;,
+                        &quot;freq&quot;: 1
+                    }]
+                }
+            ],
+            &quot;correctlySpelled&quot;: false,
+            &quot;collations&quot;: [
+                &quot;collation&quot;,
+                &quot;handmade&quot;
+            ]
+        },</code></pre><h2>Additional Client Methods</h2><table>
+<thead>
+<tr>
+<th>Solr Api's</th>
+<th>Returns a Promise</th>
+<th>./client/requestHandler/</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><del><a href="https://cwiki.apache.org/confluence/display/solr/Blob+Store+API">Solr BolbStore API</a></del></td>
+<td></td>
+<td>BlobStoreApi.js</td>
+</tr>
+<tr>
+<td><a href="https://cwiki.apache.org/confluence/display/solr/Collections+API">Solr Collections API</a></td>
+<td>Adapter.client().collections.method</td>
+<td>CollectionsApi.js</td>
+</tr>
+<tr>
+<td><del><a href="https://cwiki.apache.org/confluence/display/solr/Config+API#ConfigAPI-CreatingandUpdatingRequestHandlers">Config API</a></del></td>
+<td></td>
+<td>ConfigApi.js</td>
+</tr>
+<tr>
+<td><a href="https://cwiki.apache.org/confluence/display/solr/ConfigSets+API">Solr ConfigSets API</a></td>
+<td>Adapter.client().configSets.method</td>
+<td>ConfigSetsApi.js</td>
+</tr>
+<tr>
+<td><a href="https://cwiki.apache.org/confluence/display/solr/CoreAdmin+API">CoreAdmin API</a></td>
+<td>Adapter.client().coreAdmin.method</td>
+<td>CoreAdminApi.js</td>
+</tr>
+<tr>
+<td><a href="https://cwiki.apache.org/confluence/display/solr/JSON+Request+API">JSON Request API</a></td>
+<td>Used by Adapter .find() .get()</td>
+<td>JsonRequestApi.js</td>
+</tr>
+<tr>
+<td><a href="https://cwiki.apache.org/confluence/display/solr/Managed+Resources">Solr Managed Resources</a></td>
+<td>Adapter.client().resources.method</td>
+<td>ManagedResources.js</td>
+</tr>
+<tr>
+<td><del><a href="https://cwiki.apache.org/confluence/display/solr/Parallel+SQL+Interface">Parallel SQL Interface</a></del></td>
+<td></td>
+<td>ParalellSQL.js</td>
+</tr>
+<tr>
+<td>Ping</td>
+<td>Adapter.client().ping()</td>
+<td>Ping.js</td>
+</tr>
+<tr>
+<td><del><a href="https://cwiki.apache.org/confluence/display/solr/RealTime+Get">RealTime Get</a></del></td>
+<td></td>
+<td>RealTime.js</td>
+</tr>
+<tr>
+<td><del><a href="ReplicationHandlers">ReplicationHandlers</a></del></td>
+<td></td>
+<td>ReplicationHandlers.js</td>
+</tr>
+<tr>
+<td><a href="https://cwiki.apache.org/confluence/display/solr/Request+Parameters+API">Request Parameters API</a></td>
+<td>Adapter.client().requestParameters.method</td>
+<td>RequestParametersAPI.js</td>
+</tr>
+<tr>
+<td><a href="https://cwiki.apache.org/confluence/display/solr/Managed+Resources">Schema API</a></td>
+<td>Adapter.client().schema.method</td>
+<td>SchemaApi.js</td>
+</tr>
+<tr>
+<td><a href="">SearchHandlers</a></td>
+<td>Adapter.client().search()</td>
+<td>SearchHandlers.js</td>
+</tr>
+<tr>
+<td><del><a href="https://cwiki.apache.org/confluence/display/solr/RequestHandlers+and+SearchComponents+in+SolrConfig">ShardHandlers</a></del></td>
+<td></td>
+<td>ShardHandlers.js</td>
+</tr>
+<tr>
+<td><a href="https://cwiki.apache.org/confluence/display/solr/Uploading+Data+with+Index+Handlers#UploadingDatawithIndexHandlers-UpdateRequestHandlerConfiguration">Update</a></td>
+<td>Used by Adapter .create(), .update() and  .patch()</td>
+<td>UpdateRequestHandlers.js</td>
+</tr>
+</tbody>
+</table>
+<p>Not all Solr API's implemented at the moment</p>
+<h2>TODO</h2><ul>
+<li>Write more Tests</li>
+<li>Write more Docs</li>
+<li>Implement $suggest and $spellcheck</li>
+<li>Add demo autocompleter with suggestions.</li>
+<li>Add demo search page with facet navigation, filter(ranges, sliders), pagination and result listing by just one query.</li>
+</ul>
+<h2>Changelog</h2><p><strong>0.1.5</strong></p>
+<ul>
+<li><p>Add $suggest feature<br><strong>0.1.4</strong><br><strong>0.1.3</strong></p>
+</li>
+<li><p>Initial release</p>
+</li>
+</ul>
+<h2>License</h2><p>Copyright (c) 2015</p>
+<p>Licensed under the <a href="LICENSE">MIT license</a>.</p></article>
+    </section>
+
+
+
+
+
+
+
+		</div>
+	</div>
+
+	<div class="clearfix"></div>
+
+	
+		<div class="col-md-3">
+			<div id="toc" class="col-md-3 hidden-xs hidden-sm hidden-md"></div>
+		</div>
+	
+
+</div>
+</div>
+
+
+    <div class="modal fade" id="searchResults">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title">Search results</h4>
+          </div>
+          <div class="modal-body"></div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div>
+
+
+<footer>
+
+	@sajov
+
+
+	<span class="copyright">
+	MIT
+	</span>
+
+<span class="jsdoc-message">
+	Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a>
+	
+		on Fri Jul 21st 2017
+	
+	using the <a href="https://github.com/docstrap/docstrap">DocStrap template</a>.
+</span>
+</footer>
+
+<script src="scripts/docstrap.lib.js"></script>
+<script src="scripts/toc.js"></script>
+
+    <script type="text/javascript" src="scripts/fulltext-search-ui.js"></script>
+
+
+<script>
+$( function () {
+	$( "[id*='$']" ).each( function () {
+		var $this = $( this );
+
+		$this.attr( "id", $this.attr( "id" ).replace( "$", "__" ) );
+	} );
+
+	$( ".tutorial-section pre, .readme-section pre, pre.prettyprint.source" ).each( function () {
+		var $this = $( this );
+
+		var example = $this.find( "code" );
+		exampleText = example.html();
+		var lang = /{@lang (.*?)}/.exec( exampleText );
+		if ( lang && lang[1] ) {
+			exampleText = exampleText.replace( lang[0], "" );
+			example.html( exampleText );
+			lang = lang[1];
+		} else {
+			var langClassMatch = example.parent()[0].className.match(/lang\-(\S+)/);
+			lang = langClassMatch ? langClassMatch[1] : "javascript";
+		}
+
+		if ( lang ) {
+
+			$this
+			.addClass( "sunlight-highlight-" + lang )
+			.addClass( "linenums" )
+			.html( example.html() );
+
+		}
+	} );
+
+	Sunlight.highlightAll( {
+		lineNumbers : true,
+		showMenu : true,
+		enableDoclinks : true
+	} );
+
+	$.catchAnchorLinks( {
+        navbarOffset: 10
+	} );
+	$( "#toc" ).toc( {
+		anchorName  : function ( i, heading, prefix ) {
+			return $( heading ).attr( "id" ) || ( prefix + i );
+		},
+		selectors   : "#toc-content h1,#toc-content h2,#toc-content h3,#toc-content h4",
+		showAndHide : false,
+		smoothScrolling: true
+	} );
+
+	$( "#main span[id^='toc']" ).addClass( "toc-shim" );
+	$( '.dropdown-toggle' ).dropdown();
+
+    $( "table" ).each( function () {
+      var $this = $( this );
+      $this.addClass('table');
+    } );
+
+} );
+</script>
+
+
+
+<!--Navigation and Symbol Display-->
+
+<script>
+	$( function () {
+		$( '#main' ).localScroll( {
+			offset : { top : 60 } //offset by the height of your header (give or take a few px, see what works for you)
+		} );
+		$( "dt.name" ).each( function () {
+			var $this = $( this ).find("h4");
+			var icon = $( "<i/>" ).addClass( "icon-plus-sign" ).addClass( "pull-right" ).addClass( "icon-white" );
+			var dt = $(this);
+			var children = dt.next( "dd" );
+
+			dt.prepend( icon ).css( {cursor : "pointer"} );
+			dt.addClass( "member-collapsed" ).addClass( "member" );
+
+
+			children.hide();
+
+			dt.children().on( "click", function () {
+				children = dt.next( "dd" );
+				children.slideToggle( "fast", function () {
+
+					if ( children.is( ":visible" ) ) {
+						icon.addClass( "icon-minus-sign" ).removeClass( "icon-plus-sign" ).removeClass( "icon-white" );
+						dt.addClass( "member-open" ).animate( "member-collapsed" );
+					} else {
+						icon.addClass( "icon-plus-sign" ).removeClass( "icon-minus-sign" ).addClass( "icon-white" );
+						dt.addClass( "member-collapsed" ).removeClass( "member-open" );
+					}
+				} );
+			} );
+
+		} );
+	} );
+</script>
+
+
+<!--Google Analytics-->
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            SearcherDisplay.init();
+        });
+    </script>
+
+
+</body>
+</html>
