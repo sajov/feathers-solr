@@ -104,7 +104,7 @@ Here's an example of a Feathers server that uses `feathers-solr`.
         },
         paginate: {
             default: 10,
-            max: 4
+            max: 100
     });
 
     const app = feathers()
@@ -159,8 +159,7 @@ query: {
   // or $search: "name:John^10 AND !name:Doe AND age:[80 TO *]", 
   // or $search: "joh*", 
   // or $search: '"john doe"', 
-  // or $search: '"john doe"', 
-  // or $search: 'jon', 
+  // or $search: 'jon~', 
   
 }
 ```
