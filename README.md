@@ -6,6 +6,10 @@
 
 > Solr Adapter for Feathersjs
 
+## Online Demo
+[feather-solr](http://feathers-solr.sajo-media.de/)
+This demonstrate ease of a single query
+
 ## Installation
 
 ```
@@ -100,7 +104,7 @@ Here's an example of a Feathers server that uses `feathers-solr`.
         },
         paginate: {
             default: 10,
-            max: 4
+            max: 100
     });
 
     const app = feathers()
@@ -155,8 +159,7 @@ query: {
   // or $search: "name:John^10 AND !name:Doe AND age:[80 TO *]", 
   // or $search: "joh*", 
   // or $search: '"john doe"', 
-  // or $search: '"john doe"', 
-  // or $search: 'jon', 
+  // or $search: 'jon~', 
   
 }
 ```
@@ -493,6 +496,9 @@ Not all Solr API's implemented at the moment
 
 ## Changelog
 
+__0.1.5__
+- Add $suggest feature
+__0.1.4__
 __0.1.3__
 
 - Initial release
