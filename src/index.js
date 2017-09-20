@@ -218,12 +218,12 @@ class Service {
      * @param  {[type]} id [description]
      * @return {[type]}    [description]
      */
-	get(id) {
+	get(id, params) {
 		let _self = this;
-		debug('Service.get(id)',id);
-		// console.log(queryJson({query:{id: id}}),'get ????');
+		debug('Service.get(id)',id, params);
+        params.query[_self.options.idfield || 'id'] = id;
 		return new Promise((resolve, reject) => {
-			this.Solr.json(queryJson({ query: { id: id } }))
+			this.Solr.json(queryJson(params, _self.options))
 				.then(function(res) {
 					let docs = responseGet(res);
 					// console.log('docs',docs);
