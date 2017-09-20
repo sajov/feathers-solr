@@ -82,11 +82,17 @@ export const Query = {
     },
 
     $in (field, param) {
-        this.query.filter.push(field + ':("' + param.join('" OR "') + '")');
+        if (Array.isArray(param)) {
+            param = param.join('" OR "');
+        }
+        this.query.filter.push(field + ':("' + param + '")');
     },
 
     $nin (field, param) {
-        this.query.filter.push('!' + field + ':("' + param.join('" OR "') + '")');
+        if (Array.isArray(param)) {
+            param = param.join('" OR "');
+        }
+        this.query.filter.push('!' + field + ':("' + param + '")');
     },
 
     $lt (field, param) {
@@ -174,9 +180,10 @@ export function queryDelete(id, params) {
     let crit = [];
 
     Object.keys(params).forEach(function(name){
-        crit.push(name+':'+params[name]);
-    })
-      return { delete: { query: crit.join(',') } };
+        crit.push(name + ':' + params[name]);
+    });
+
+    return { delete: { query: crit.join(',') } };
   }
 
   return { delete: { query: '*' } };
