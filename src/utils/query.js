@@ -174,9 +174,10 @@ export function queryDelete(id, params) {
     let crit = [];
 
     Object.keys(params).forEach(function(name){
-        crit.push(name+':'+params[name]);
-    })
-      return { delete: { query: crit.join(',') } };
+        crit.push(name + ':' + params[name]);
+    });
+
+    return { delete: { query: crit.join(',') } };
   }
 
   return { delete: { query: '*' } };

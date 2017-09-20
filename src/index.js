@@ -90,7 +90,7 @@ class Service {
     		  _self.options.schema = fields;
             }
 
-            if (! _self.options.migrate === 'safe' || _self.options.managedScheme === false || _.isObject(_self.options.schema) === false) {
+            if (_self.options.migrate === 'safe' || _self.options.managedScheme === false || _.isObject(_self.options.schema) === false) {
                 return true;
             }
             debug('feathers-solr migrate start');
@@ -220,13 +220,19 @@ class Service {
      */
 	get(id, params) {
 		let _self = this;
-		debug('Service.get(id)',id, params);
+
+        if (typeof params === 'undefined') {
+            params = {query:{}};
+        }
+
+        params = Object.assign({}, params, {$limit:1,$skip:0});
         params.query[_self.options.idfield || 'id'] = id;
+
 		return new Promise((resolve, reject) => {
+
 			this.Solr.json(queryJson(params, _self.options))
 				.then(function(res) {
 					let docs = responseGet(res);
-					// console.log('docs',docs);
 					if (typeof docs !== 'undefined') {
 						return resolve(docs);
 					} else {
@@ -308,8 +314,8 @@ class Service {
         let _self = this;
         let query = {};
 
-        if(_.has(params,'query')) {
-            query =  params.query
+        if (_.has(params,'query')) {
+            query =  params.query;
         }
 
         if (id !== null) {
@@ -370,7 +376,7 @@ class Service {
 	remove(id, params) {
 		let _self = this;
 		return new Promise((resolve, reject) => {
-			this.Solr.delete(queryDelete(id || null, params || {}))
+			this.Solr.delete(queryDelete(id || null, params || null))
 				.then(function(res) {
 					resolve(res);
 				})
