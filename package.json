@@ -1,7 +1,7 @@
 {
   "name": "feathers-solr",
   "description": "Solr Adapter for Feathersjs",
-  "version": "0.1.9",
+  "version": "1.0.0",
   "homepage": "https://github.com/sajov/feathers-solr",
   "main": "lib/",
   "keywords": [
@@ -52,6 +52,7 @@
     "lib": "lib"
   },
   "dependencies": {
+    "debug": "^2.6.8",
     "feathers-errors": "^2.9.2",
     "request": "^2.81.0",
     "request-promise": "^4.2.1"

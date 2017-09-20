@@ -71,8 +71,13 @@
     <footer class="bg-gray">
         <section id="copyright" class="grid-footer container grid-960">
             <p>
-                <a href="/docs" target="_blank">Documents</a> | <a href="https://github.com/sajov/feathers-solr" target="_blank">GitHub Repo</a> | Version <span class="">0.1.7</span>
+                <a href="/docs" target="_blank">Documents</a> | <a href="https://github.com/sajov/feathers-solr" target="_blank">GitHub Repo</a> | Version <span class="">1.0.0</span>
             </p>
+            <code>
+                <p>
+                window.client.service('solr').find({query:{price:{$lt:30}}}).then(console.log).catch(console.error)
+        </p>
+            </code>
         </section>
     </footer>
 
@@ -211,6 +216,8 @@
 
         riot.mount('*');
 
+
     </script>
+
 </body>
 </html>
