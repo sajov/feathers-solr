@@ -173,7 +173,7 @@ export function queryDelete(id, params) {
 
   if (id !== null) {
 
-    return { delete: { id: id } };
+    return { delete: id };
 
   } else if(_.isObject(params)) {
 

@@ -17,6 +17,7 @@ class Service {
             schema: false,
 			migrate: 'safe',
             adminKey: false,
+            idfield: 'id',
 			managedScheme: true,
 			/*commitStrategy softCommit: true, commit: true, commitWithin: 50*/
 			commitStrategy: {
@@ -226,7 +227,7 @@ class Service {
         }
 
         params = Object.assign({}, params, {$limit:1,$skip:0});
-        params.query[_self.options.idfield || 'id'] = id;
+        params.query[_self.options.idfield] = id;
 
 		return new Promise((resolve, reject) => {
 
@@ -286,7 +287,7 @@ class Service {
 		}
 
 		let _self = this;
-		data.id = id;
+        data[_self.options.idfield] = id;
 
 		return new Promise((resolve, reject) => {
 			_self.create(data)
@@ -312,14 +313,14 @@ class Service {
 	patch(id, data, params) {
 
         let _self = this;
-        let query = {};
+        let query = {$limit: 1 };
 
         if (_.has(params,'query')) {
             query =  params.query;
         }
 
         if (id !== null) {
-            query = { id: id, $limit: 1 };
+            query[_self.options.idfield] = id;
         } else {
             query.$limit = 100000; // TODO: ?
         }
@@ -364,7 +365,6 @@ class Service {
 					return reject(new errors.BadRequest());
 				});
 		});
-
 	}
 
     /**
@@ -375,8 +375,16 @@ class Service {
      */
 	remove(id, params) {
 		let _self = this;
-		return new Promise((resolve, reject) => {
-			this.Solr.delete(queryDelete(id || null, params || null))
+        let idQuery = {};
+        idQuery[_self.options.idfield] = id;
+
+        if (typeof id === 'undefined') {
+            idQuery = null;
+        }
+
+        return new Promise((resolve, reject) => {
+
+			this.Solr.delete(queryDelete(idQuery, params || null))
 				.then(function(res) {
 					resolve(res);
 				})
