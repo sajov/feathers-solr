@@ -44,6 +44,7 @@ Use feathers-solr/bin/install-solr.sh for a kickstart installation.
 | core             | /gettingstarted                                            |                                                                    |
 | schema           | false                                                      | {title: {type:"string"}}                                           |
 | migrate          | alter                                                      | *safe*, *alter* and  *drop* (delete all data and reset schema)     |
+| idfield          | 'id'                                                       | Unique Document identifier                                         |
 | commitStrategy   | {softCommit: true, commitWithin: 50000, overwrite: true}   |                                                                    |
 
 
@@ -495,7 +496,9 @@ Not all Solr API's implemented at the moment
 
 
 ## Changelog
-
+__1.0.1__
+- add option idfield 
+- bugfix $in, $nin if not array
 __0.1.5__
 - Add $suggest feature
 __0.1.4__
