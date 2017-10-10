@@ -295,8 +295,8 @@ class Service {
 					resolve(data);
 				})
 				.catch(function(err) {
-                    console.log('err', err);
-					return reject(new errors.BadRequest());
+                    debug('Service.update ERROR:',err);
+                    return reject(new errors.BadRequest(err));
 				});
 		});
 	}
@@ -352,8 +352,8 @@ class Service {
                                resolve(res);
                             })
                             .catch(function(err) {
-                               console.log('err', err);
-                               return reject(new errors.BadRequest());
+                                debug('Service.patch crate ERROR:',err);
+                                return reject(new errors.BadRequest(err));
                             });
 
                     } else {
@@ -361,8 +361,8 @@ class Service {
                     }
 				})
 				.catch(function(err) {
-					console.log('err', err);
-					return reject(new errors.BadRequest());
+					debug('Service.patch find ERROR:',err);
+                    return reject(new errors.BadRequest(err));
 				});
 		});
 	}
@@ -389,7 +389,8 @@ class Service {
 					resolve(res);
 				})
 				.catch(function(err) {
-					return reject(new errors.BadRequest());
+					debug('Service.remove ERROR:',err);
+                    return reject(new errors.BadRequest(err));
 				});
 		});
 	}
