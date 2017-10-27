@@ -67,17 +67,17 @@ export const Query = {
     },
 
     $sort (field, param) {
-
         let order = [];
-
         Object.keys(param).forEach(name => {
             order.push(name + (parseInt(param[name]) === 1 ? ' asc' : ' desc'));
         });
-
-        this.query.sort = order.join(' ');
+        this.query.sort = order.join(',');
     },
 
     $select (field, param) {
+        if (Array.isArray(param)) {
+            param = param.join(',');
+        }
         this.query.fields = param;
     },
 
