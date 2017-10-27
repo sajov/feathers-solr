@@ -1,5 +1,3 @@
-if (!global._babelPolyfill) { require('babel-polyfill'); }
-
 import { _, queryJson, querySuggest, responseFind, responseGet, queryDelete, describeSchemaFields, parseSchemaFields,  deleteSchemaFields, addFields} from './utils';
 import errors from 'feathers-errors';
 import Solr from './client/solr';
