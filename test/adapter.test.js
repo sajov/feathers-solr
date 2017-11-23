@@ -146,6 +146,27 @@ describe('Adapter', () => {
         });
     });
 
+    it('find by $or', done => {
+      Adapter.find({query:{
+        $or:[
+        {'age_i':23},
+        {'id':'adapter3'},
+        {id:{'$ne':'adapter3'}},
+        {id:{'$nin':['adapter1','adapter3','adapter2']}},
+        {'age_i':{$in:[23,25,23,48]}}]}})
+        .then(function(res){
+          response = res;
+          expect(response.data).to.be.instanceof(Array);
+
+          done();
+        })
+        .catch(function (err) {
+          console.log('err',err);
+          done();
+        });
+    });
+
+
   });
 
   describe('Update', () => {
