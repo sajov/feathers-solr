@@ -112,24 +112,44 @@ export const Query = {
     },
 
     $ne (field, param) {
+        if (Array.isArray(param)) {
+            param = param.join('" OR "');
+        }
         this.query.filter.push('!' + field + ':"' + param + '"');
     },
 
     $or (field, param) {
         let filter = this.query.filter;
-        this.query.filter = [];
-        Object.keys(param).forEach(function(item, index) {
+            this.query.filter = [];
 
-          if (item[0] === '$' && typeof Query[item] !== 'undefined') {
-            Query[item](item,param[item]);
-          } else {
-            Query.filter(item,param[item]);
-          }
+        if (Array.isArray(param)) {
+            param.forEach(function(item, index) {
+                var f = Object.keys(item)[0];
+                if (f[0] === '$' && typeof Query[f] !== 'undefined') {
+                    Query[f](f,item[f]);
+                } else {
+                    Query.filter(f,item[f]);
+                }
+            });
 
-        });
+        } else {
 
-        filter.push('(' + this.query.filter.join(' OR ') + ')');
-        this.query.filter = filter;
+            Object.keys(param).forEach(function(item, index) {
+
+              if (item[0] === '$' && typeof Query[item] !== 'undefined') {
+                Query[item](item,param[item]);
+              } else {
+                Query.filter(item,param[item]);
+              }
+
+            });
+        }
+
+        if(this.query.filter.length > 0) {
+            filter.push('(' + this.query.filter.join(' OR ') + ')');
+            this.query.filter = filter;
+        }
+
     },
 
     $qf (field, params) {
@@ -154,6 +174,7 @@ export function queryJson(params, opt) {
     if (_.has(params, 'query')) {
         Query.parseQuery(params.query);
     }
+
     return Query.query;
 
 }
