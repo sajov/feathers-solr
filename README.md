@@ -4,7 +4,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/sajov/feathers-solr/badge.svg?branch=master)](https://coveralls.io/github/sajov/feathers-solr?branch=master)
 [![dependencies Status](https://david-dm.org/sajov/feathers-solr/status.svg)](https://david-dm.org/sajov/feathers-solr)
 
-> Solr Adapter for Feathersjs. Can also can be used as a solr-client. See [additional-client-methods](https://github.com/sajov/feathers-solr/blob/master/README.md#additional-client-methods)
+> Solr Adapter for Feathersjs. Can also be used as a solr-client. See [additional-client-methods](https://github.com/sajov/feathers-solr/blob/master/README.md#additional-client-methods)
 
 ## Online Demo
 [feather-solr](http://feathers-solr.sajo-media.de/)
