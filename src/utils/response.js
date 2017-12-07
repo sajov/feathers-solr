@@ -31,6 +31,10 @@ export function responseFind(params, opt, res) {
       response.facet = _.get(res, 'facets');
   }
 
+  if (_.has(res, 'spellcheck')) {
+      response.spellcheck = _.get(res, 'spellcheck');
+  }
+
   return response;
 }
 
