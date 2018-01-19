@@ -23,7 +23,7 @@
 export default (request, opts, params) => {
 
     let options = {
-        method: 'POST',
+        method: params ? 'POST' : 'GET',
         uri: opts.coreUrl + '/config',
         json: true,
         body: params
