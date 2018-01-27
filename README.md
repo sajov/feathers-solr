@@ -86,7 +86,7 @@ Here's an example of a Feathers server that uses `feathers-solr`.
     const errorHandler = require('feathers-errors/handler');
     const solr = require('feathers-solr');
 
-    const Service = feathersSolr({
+    const Service = new solr.Service({
         host: 'http://localhost:8983/solr',
         core: '/gettingstarted',
         schema:{
