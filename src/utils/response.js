@@ -35,6 +35,10 @@ export function responseFind(params, opt, res) {
       response.spellcheck = _.get(res, 'spellcheck');
   }
 
+  if (_.has(res, 'moreLikeThis')) {
+      response.moreLikeThis = _.get(res, 'moreLikeThis');
+  }
+
   return response;
 }
 
