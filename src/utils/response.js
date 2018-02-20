@@ -43,10 +43,6 @@ export function responseFind(params, opt, res) {
     response.moreLikeThis = _.get(res, 'moreLikeThis');
   }
 
-  if (_.has(res, 'moreLikeThis')) {
-      response.moreLikeThis = _.get(res, 'moreLikeThis');
-  }
-
   return response;
 }
 
