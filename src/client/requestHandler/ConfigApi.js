@@ -29,6 +29,11 @@ export default (request, opts, params) => {
         body: params
     };
 
+    if(params) {
+      options.body = params
+      options.method = 'POST'
+    }
+
     return request(options);
 };
 

@@ -373,14 +373,14 @@ class Service {
      */
 	remove(id, params) {
 		let _self = this;
-        let idQuery = {};
-        idQuery[_self.options.idfield] = id;
+    let idQuery = {};
+    idQuery[_self.options.idfield] = id;
 
-        if (typeof id === 'undefined') {
-            idQuery = null;
-        }
+    if (typeof id === 'undefined') {
+        idQuery = null;
+    }
 
-        return new Promise((resolve, reject) => {
+    return new Promise((resolve, reject) => {
 
 			this.Solr.delete(queryDelete(idQuery, params || null))
 				.then(function(res) {
@@ -390,7 +390,7 @@ class Service {
 					debug('Service.remove ERROR:',err);
                     return reject(new errors.BadRequest(err));
 				});
-		});
+    });
 	}
 
     /**
