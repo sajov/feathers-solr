@@ -28,11 +28,19 @@ export function responseFind(params, opt, res) {
   }
 
   if (_.has(res, 'facets')) {
-      response.facet = _.get(res, 'facets');
+    response.facet = _.get(res, 'facets');
+  }
+
+  if (_.has(res, 'highlighting')) {
+    response.highlighting = _.get(res, 'highlighting');
   }
 
   if (_.has(res, 'spellcheck')) {
-      response.spellcheck = _.get(res, 'spellcheck');
+    response.spellcheck = _.get(res, 'spellcheck');
+  }
+
+  if (_.has(res, 'moreLikeThis')) {
+    response.moreLikeThis = _.get(res, 'moreLikeThis');
   }
 
   if (_.has(res, 'moreLikeThis')) {
