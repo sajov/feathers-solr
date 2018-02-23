@@ -192,20 +192,25 @@ export function querySuggest(params, opt) {
 
 export function queryDelete(id, params) {
 
-  if (id !== null) {
+    if (id) {
 
-    return { delete: id };
+        if(id == '*' || id == '*:*') {
+            return { delete: { query: '*:*' } };
+        }
 
-  } else if(_.isObject(params)) {
+        return { delete: id };
 
-    let crit = [];
+    } else if(_.isObject(params)) {
 
-    Object.keys(params).forEach(function(name){
-        crit.push(name + ':' + params[name]);
-    });
+        let crit = [];
 
-    return { delete: { query: crit.join(',') } };
-  }
+        Object.keys(params).forEach(function(name){
+            crit.push(name + ':' + params[name]);
+        });
 
-  return { delete: { query: '*' } };
+        return { delete: { query: crit.join(',') } };
+    }
+
+    return { delete: { query: '*:*' } };
+
 }

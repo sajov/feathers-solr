@@ -367,31 +367,33 @@ class Service {
 
     /**
      * Remove Data
+     * - .remove('*')              =    {"delete": {"query": "*:*"},"commit": {}}
+     * - .remove('*:*')            =    {"delete": {"query": "*:*"},"commit": {}}
+     * - .remove('987987FGHJSD')                 =    {"delete": "262","commit": {}}
+     * - .remove(['987987FGHJSD','987987FGHJSD'])  =    {"delete": ["262"],"commit": {}}
+     * - .remove(null,{'*':'*'}) =    {"delete": {"query": "*:*"},"commit": {}}
+     * - .remove(null,{id:257})    =    {"delete": {"query": "id:257"},"commit": {}}
+     * - .remove(null,{id:*})      =    {"delete": {"query": "id:*"},"commit": {}}
+     * - .remove(null,{other:*})   =    {"delete": {"query": "other:257"},"commit": {}}
      * @param  {[type]} id     [description]
      * @param  {[type]} params [description]
      * @return {[type]}        [description]
      */
 	remove(id, params) {
 		let _self = this;
-    let idQuery = {};
-    idQuery[_self.options.idfield] = id;
 
-    if (typeof id === 'undefined') {
-        idQuery = null;
-    }
+        return new Promise((resolve, reject) => {
 
-    return new Promise((resolve, reject) => {
-
-			this.Solr.delete(queryDelete(idQuery, params || null))
-				.then(function(res) {
-					resolve(res);
-				})
-				.catch(function(err) {
-					debug('Service.remove ERROR:',err);
-                    return reject(new errors.BadRequest(err));
-				});
-    });
-	}
+    			this.Solr.delete(queryDelete(id, params || null))
+    				.then(function(res) {
+    					resolve(res);
+    				})
+    				.catch(function(err) {
+    					debug('Service.remove ERROR:',err);
+                        return reject(new errors.BadRequest(err));
+    				});
+        });
+    	}
 
     /**
      * Get Solr Client and use additional functions
