@@ -220,11 +220,7 @@ class Service {
 	get(id, params) {
 		let _self = this;
 
-        if (typeof params === 'undefined') {
-            params = {query:{}};
-        }
-
-        params = Object.assign({}, params, {$limit:1,$skip:0});
+        params = Object.assign({query:{}}, params, {$limit:1,$skip:0});
         params.query[_self.options.idfield] = id;
 
 		return new Promise((resolve, reject) => {
