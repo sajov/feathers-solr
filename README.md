@@ -47,6 +47,7 @@ Use feathers-solr/bin/install-solr.sh for a kickstart installation.
 | migrate          | alter                                                      | *safe*, *alter* and  *drop* (delete all data and reset schema)     |
 | idfield          | 'id'                                                       | Unique Document identifier                                         |
 | commitStrategy   | {softCommit: true, commitWithin: 50000, overwrite: true}   |                                                                    |
+| paginate         | {default: 10, max: 100}                                    |                                                                    |
 
 
 ## Managed Schema
