@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/sajov/feathers-solr.png?branch=master)](https://travis-ci.org/sajov/feathers-solr)
 [![Coverage Status](https://coveralls.io/repos/github/sajov/feathers-solr/badge.svg?branch=master)](https://coveralls.io/github/sajov/feathers-solr?branch=master)
 [![dependencies Status](https://david-dm.org/sajov/feathers-solr/status.svg)](https://david-dm.org/sajov/feathers-solr)
-
+[![Known Vulnerabilities](https://snyk.io/test/npm/feathers-solr/badge.svg)](https://snyk.io/test/npm/feathers-solr)
 > Solr Adapter for Feathersjs. Can also used as a Solr-client. See [additional-client-methods](https://github.com/sajov/feathers-solr/blob/master/README.md#additional-client-methods)
 > Require >= Solr 5.x
 
