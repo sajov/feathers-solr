@@ -498,13 +498,17 @@ Not all Solr API's implemented at the moment
 
 
 ## Changelog
-__1.0.1__
-- add option idfield 
-- bugfix $in, $nin if not array
+__0.1.6__
+- Bugfix Patch Multivalued Fields
+- Cleanups
 __0.1.5__
 - Add $suggest feature
 __0.1.4__
 __0.1.3__
+__1.0.1__
+- add option idfield 
+- bugfix $in, $nin if not array
+
 
 - Initial release
 

@@ -24,7 +24,7 @@ export function responseFind(params, opt, res) {
     };
 
   } else {
-      response = _.get(res, 'response.docs') || [];
+    response = _.get(res, 'response.docs') || [];
   }
 
   if (_.has(res, 'facets')) {

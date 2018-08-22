@@ -233,6 +233,88 @@ describe('Adapter', () => {
 
   });
 
+  describe('Patch', () => {
+    var response;
+    it('patch {id:adapter1,patch_s:patched}', done => {
+      Adapter.patch('adapter1',{'patch_s':'patched'})
+        .then(function(res){
+          response = res;
+          expect(response).to.be.instanceof(Object);
+          expect(response.patch_s).to.be.equal('patched');
+
+          done();
+        })
+        .catch(function (err) {
+          console.log('err',err);
+          done();
+        });
+    });
+
+    it('patch response shoul include patched', () => {
+      expect(response).to.be.instanceof(Object);
+      expect(response.patch_s).to.be.equal('patched');
+    });
+
+
+    it('patch multivalued {id:adapter1,patch_ss:[patched1,patched2]}', done => {
+      Adapter.patch('adapter1',{'patch_ss':['patched1','patched2']})
+        .then(function(res){
+          response = res;
+          expect(response).to.be.instanceof(Object);
+
+          // expect(response.patch_ss).to.be.equal(['patched1','patched2']);
+
+          done();
+        })
+        .catch(function (err) {
+          console.log('err',err);
+          done();
+        });
+    });
+
+    it('patch response should include patched1, patched2', () => {
+      expect(response).to.be.instanceof(Object);
+      expect(response.patch_ss).to.be.an('array').that.includes('patched1');
+      expect(response.patch_ss).to.be.an('array').that.includes('patched2');
+    });
+
+    it('patch multivalued additional {id:adapter1,patch_ss:[patched3]}', done => {
+      Adapter.patch('adapter1',{'patch_ss':'patched3'})
+        .then(function(res){
+          response = res;
+          expect(response).to.be.instanceof(Object);
+          done();
+        })
+        .catch(function (err) {
+          console.log('err',err);
+          done();
+        });
+    });
+
+    it('patch multivalued additional {id:adapter1,patch_ss:[patched3]}', done => {
+      Adapter.patch('adapter1',{'patch_ss':['patched4','patched5']})
+        .then(function(res){
+          response = res;
+          expect(response).to.be.instanceof(Object);
+          done();
+        })
+        .catch(function (err) {
+          console.log('err',err);
+          done();
+        });
+    });
+
+    it('patch response should include patched1, patched2, patched3, patched4, patched5', () => {
+      expect(response).to.be.instanceof(Object);
+      expect(response.patch_ss).to.be.an('array').that.includes('patched1');
+      expect(response.patch_ss).to.be.an('array').that.includes('patched2');
+      expect(response.patch_ss).to.be.an('array').that.includes('patched3');
+      expect(response.patch_ss).to.be.an('array').that.includes('patched4');
+      expect(response.patch_ss).to.be.an('array').that.includes('patched5');
+      expect(response.patch_ss).to.have.lengthOf(5);
+    });
+  });
+
   describe('Get', () => {
     var response;
     it('get {id:adapter1} should not be Array', done => {
