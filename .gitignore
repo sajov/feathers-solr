@@ -31,3 +31,6 @@ node_modules
 
 # The compiled/babelified modules
 # lib/
+example/data/mage
+example/public/img
+example/public/docs

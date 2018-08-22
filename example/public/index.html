@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="robots" content="index, follow" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="author" content="https://github.com/picturepan2/" />
+    <title>Feathers-Solr on RIOT</title>
+    <link rel="stylesheet" href="/css/spectre-exp.min.css" />
+    <link rel="stylesheet" href="/css/spectre-icons.min.css" />
+    <link rel="stylesheet" href="/css/spectre.min.css" />
+    <link rel="stylesheet" href="/css/docs.css" />
+</head>
+
+<body>
+
+    <section class="section section-header bg-gray">
+        <section class="grid-header container grid-1280">
+
+            <nav class="navbar">
+                <section class="navbar-section">
+                    <a href="#sidebar" class="btn btn-lg btn-link btn-action show-sm"><i class="icon icon-menu"></i></a>
+                    <a href="index.html" class="navbar-brand mr-10">Feathers-Solr</a>
+                </section>
+                <section class="navbar-section">
+                    <a href="https://github.com/sajov/feathers-solr" target="_blank" class="btn btn-primary">GitHub</a>
+                </section>
+            </nav>
+        </section>
+    </section>
+
+    <section class="container grid-1280">
+        <section class="columns">
+            <div id="sidebar" class="docs-sidebar column col-3 col-sm-12">
+
+                <navigation></navigation>
+
+                <filter></filter>
+
+            </div>
+            <a href="#sidebar-close" id="sidebar-close" class="docs-nav-clear"></a>
+            <div class="docs-content column col-9 col-sm-12">
+                <section id="grid" class="container">
+                    <br><br><br>
+
+                    <autocomplete></autocomplete>
+
+                    <div class="clearfix"></div>
+
+                    <userfilter class="float-left"></userfilter>
+
+                    <pagination class="float-right"></pagination>
+
+                    <div class="clearfix"></div>
+
+                    <products></products>
+
+                    <pagination></pagination>
+
+
+                </section>
+            </div>
+
+        </section>
+
+        <demo-pagination></demo-pagination>
+
+    </section>
+    <footer class="bg-gray">
+        <section id="copyright" class="grid-footer container grid-960">
+            <p>
+                <a href="/docs" target="_blank">Documents</a> | <a href="https://github.com/sajov/feathers-solr" target="_blank">GitHub Repo</a> | Version <span class="">1.0.0</span>
+            </p>
+            <code>
+                <p>
+                window.client.service('solr').find({query:{price:{$lt:30}}}).then(console.log).catch(console.error)
+        </p>
+            </code>
+        </section>
+    </footer>
+
+    <script src="//unpkg.com/feathers-client@^2.0.0/dist/feathers.js"></script>
+    <script src="//unpkg.com/socket.io-client@1.7.3/dist/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/riot@3.6/riot+compiler.min.js"></script>
+    <script type="riot/tag" src="/tags/autocomplete.tag"></script>
+    <script type="riot/tag" src="/tags/navigation.tag"></script>
+    <script type="riot/tag" src="/tags/filter.tag"></script>
+    <script type="riot/tag" src="/tags/userfilter.tag"></script>
+    <script type="riot/tag" src="/tags/pagination.tag"></script>
+    <script type="riot/tag" src="/tags/products.tag"></script>
+    <script type="riot/tag" src="/tags/demo-pagination.tag"></script>
+    <script>
+
+        window.socket = io();
+        window.client = feathers()
+            .configure(feathers.hooks())
+            .configure(feathers.socketio(socket));
+
+        var Catalog = function() {
+
+            riot.observable(this)
+
+            this.rest = window.client.service('solr');
+
+            this.catalog = {data: []};
+            this.category = {};
+            this.filterQuery = {};
+            this.query = {
+                $skip: 0,
+                $limit: 50,
+                doc_type:'product',
+                $select: 'image,name,price,special_price,categories',
+                $facet: {
+                    'Categories': {type:'terms',field:'categories', sort:{index:'asc'}, limit:1000,domain:{excludeTags:'CAT'} },
+                    'color': {type:'terms',field:'color', sort:{index:'asc'}, limit:1000 },
+                    'activity': {type:'terms',field:'activity', sort:{index:'asc'}, limit:1000 },
+                    'gender': {type:'terms',field:'gender', sort:{index:'asc'}, limit:1000 },
+                    'material': {type:'terms',field:'material', sort:{index:'asc'}, limit:1000 },
+                    'size': {type:'terms',field:'size', sort:{index:'asc'}, limit:1000 },
+                    'erin_recommends': {type:'terms',field:'erin_recommends', sort:{index:'asc'}, limit:1000 },
+                    'features_bags': {type:'terms',field:'features_bags', sort:{index:'asc'}, limit:1000 },
+                    'sale': {type:'terms',field:'sale', sort:{index:'asc'}, limit:1000 },
+                    'strap_bags': {type:'terms',field:'strap_bags', sort:{index:'asc'}, limit:1000 },
+                    'style_bags': {type:'terms',field:'style_bags', sort:{index:'asc'}, limit:1000 },
+                    'new': {type:'terms',field:'new', sort:{index:'asc'}, limit:1000 },
+                    'performance_fabric': {type:'terms',field:'performance_fabric', sort:{index:'asc'}, limit:1000 },
+                    'category_gear': {type:'terms',field:'category_gear', sort:{index:'asc'}, limit:1000 },
+                    'format': {type:'terms',field:'format', sort:{index:'asc'}, limit:1000 },
+                    'eco_collection': {type:'terms',field:'eco_collection', sort:{index:'asc'}, limit:1000 },
+                    'price_type': {type:'terms',field:'price_type', sort:{index:'asc'}, limit:1000 },
+                    'climate': {type:'terms',field:'climate', sort:{index:'asc'}, limit:1000 },
+                    'pattern': {type:'terms',field:'pattern', sort:{index:'asc'}, limit:1000 },
+                    'style_general': {type:'terms',field:'style_general', sort:{index:'asc'}, limit:1000 },
+                    'style_bottom': {type:'terms',field:'style_bottom', sort:{index:'asc'}, limit:1000 }
+                },
+                $params: {
+                    qf:'name^10 categories^5 _text_'
+                }
+            };
+
+            this.find = function(query){
+
+                console.clear();
+                console.time('response time');
+                this.rest.find({
+                            query: query
+                        })
+                        .then(res => {
+                            this.catalog = res;
+                            console.timeEnd('response time');
+                            console.info('Req', query);
+                            console.info('Res', res);
+                            console.info('Solr query time:', res.QTime + 'ms');
+                            this.trigger('got_data', this.catalog, this.filterQuery);
+                            if(typeof query.categories == 'undefined') {
+                                window.location.hash = '';
+                            }
+                            window.scrollTo(0,0);
+                        })
+                        .catch(err => {
+                            console.log('find err ???', err,query)
+                        })
+            }
+
+            this.on('query', function(type, filterQuery) {
+                var q = {};
+                switch(type) {
+                    case 'navigation':
+                        if(typeof this.filterQuery.$search == 'string') {
+                            filterQuery['$search'] = this.filterQuery.$search;
+                        }
+                        if(this.filterQuery.categories == filterQuery.categories) {
+                            this.filterQuery = {};
+                        } else {
+                            this.filterQuery = filterQuery;
+                        }
+                        this.filterQuery.$skip = 0;
+                        q = Object.assign({}, this.query, this.filterQuery);
+                        break;
+                    case 'filter':
+                        this.filterQuery = filterQuery;
+                        this.filterQuery.$skip = 0;
+                        q = Object.assign({}, this.query, this.filterQuery);
+                        break;
+                    case 'pagination':
+                        q = Object.assign({}, this.query, this.filterQuery, filterQuery);
+                        delete q.$facet;
+                        break;
+                    case 'autocomplete':
+                        this.filterQuery = filterQuery;
+                        this.filterQuery.$skip = 0;
+                        q = Object.assign({}, this.query, this.filterQuery);
+                        if(typeof q.$search == 'string') {
+                            var search = q.$search;
+                            var wildcard = q.$search.split(' ').pop();
+                            if(search.length < 3 || wildcard.length > 2) {
+                                q.$search = search + ' ' + wildcard + '*';
+                            }
+                        }
+                        break;
+                }
+
+                this.find(q);
+            });
+
+            if(window.location.hash != "") {
+                this.filterQuery = {'categories':'"' + window.location.hash.replace('#','') + '"'}
+            }
+
+            this.find(Object.assign({},this.query,this.filterQuery));
+        }
+
+        riot.catalog = new Catalog();
+
+        riot.mount('*');
+
+
+    </script>
+
+</body>
+</html>
