@@ -4,5 +4,6 @@
 .babelrc
 .idea/
 src/
+example/
 test/
 !lib/
