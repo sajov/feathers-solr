@@ -22,19 +22,19 @@
 
 export default (request, opts, params) => {
 
-    let options = {
-        method: params ? 'POST' : 'GET',
-        uri: opts.coreUrl + '/config',
-        json: true,
-        body: params
-    };
+  let options = {
+    method: params ? 'POST' : 'GET',
+    uri: opts.coreUrl + '/config',
+    json: true,
+    body: params
+  };
 
-    if(params) {
-      options.body = params
-      options.method = 'POST'
-    }
+  if (params) {
+    options.body = params;
+    options.method = 'POST';
+  }
 
-    return request(options);
+  return request(options);
 };
 
 
