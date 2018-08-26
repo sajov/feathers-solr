@@ -10,6 +10,21 @@ let Adapter = new plugin.Service({
 
 describe('Adapter', () => {
 
+  describe('Status', () => {
+    it('should return status "OK"', done => {
+      Adapter.status()
+        .then(function(res) {
+          console.log('res',res);
+          expect(res.responseHeader.status).to.be.equal(0);
+          done();
+        })
+        .catch(function(err) {
+          // console.log('err',err);
+          done();
+        });
+    });
+  });
+
   describe('Remove', () => {
     it('should return status "OK"', done => {
       Adapter.remove()
