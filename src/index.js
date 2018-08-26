@@ -51,7 +51,7 @@ class Service {
     return new Promise((resolve, reject) => {
       this.Solr.coreAdmin().status()
         .then(function(res) {
-          resolve(res)
+          resolve(res);
         })
         .catch(function(err) {
           return reject(new errors.BadRequest(err));
