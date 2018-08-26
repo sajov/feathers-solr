@@ -9,6 +9,8 @@ let response;
 
 describe('Schema Api', () => {
 
+
+
   describe('Get', () => {
 
     it('name example-data-driven-schema', done => {
@@ -209,7 +211,9 @@ describe('Schema Api', () => {
     });
   });
 
-
+  //   describe('Has options solrSchema', () => {
+  //   console.log('????',Adapter.options);
+  // });
 
 
 
