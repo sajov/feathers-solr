@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import plugin from '../../src';
+import plugin from '../src';
 var request = require('request-promise');
 let Adapter = new plugin.Service();
 let Client = Adapter.client();
