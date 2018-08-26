@@ -31,7 +31,11 @@ export default class Schema {
     return this.request(Object.assign({}, this.options, opts));
   }
 
-  schema() {
+  /**
+   * @method Get
+   * @return {object} Get the full Schema
+   */
+  get() {
     return this._req({ method: 'GET' });
   }
 

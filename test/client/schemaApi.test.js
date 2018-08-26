@@ -165,7 +165,7 @@ describe('Schema Api', () => {
     var SolrSchema = {};
     it('get SolrSchema', done => {
 
-      Promise.all([SchemaApi.schema()]).then(res => {
+      Promise.all([SchemaApi.get()]).then(res => {
           // responses.map(response => write(response))
           expect(res[0]).to.have.property('schema');
           expect(res[0].responseHeader.status).to.be.equal(0);
@@ -211,25 +211,7 @@ describe('Schema Api', () => {
 
 
 
-  describe('Full Solr Schema', () => {
-    var SolrSchema = {};
-    it('get SolrSchema', done => {
 
-      Promise.all([SchemaApi.schema()]).then(res => {
-          // responses.map(response => write(response))
-          expect(res[0]).to.have.property('schema');
-          expect(res[0].responseHeader.status).to.be.equal(0);
-          expect(res[0]).to.not.have.property('errorMessages');
-          SolrSchema = res[0].schema;
-          done();
-        })
-        .catch(err => {
-          console.log('err', err);
-          done();
-        });
-
-    });
-  });
 
   // describe('FieldTypes', () => {
   // }
