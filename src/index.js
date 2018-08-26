@@ -48,15 +48,15 @@ class Service {
    * @return {[type]} [description]
    */
   status() {
-    let coreAdmin = this.Solr.coreAdmin();
-    coreAdmin.status()
-      .then(function(res) {
-        console.log('core status', res);
-      })
-      .catch(function(err) {
-        console.error(err);
-        // return reject(new errors.BadRequest());
-      });
+    return new Promise((resolve, reject) => {
+      this.Solr.coreAdmin().status()
+        .then(function(res) {
+          resolve(res);
+        })
+        .catch(function(err) {
+          return reject(new errors.BadRequest(err));
+        });
+    });
   }
 
   /**

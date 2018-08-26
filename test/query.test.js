@@ -2,17 +2,11 @@
 // import plugin from '../src';
 
 // let Adapter = new plugin.Service({
-//     paginate: {
-//         default: 10,
-//         max: 100
-//     },
-//     schema: false,
-//     migrate: 'safe',
-//     adminKey: false,
-//     managedScheme: true
-
+//   paginate: {
+//     default: 10,
+//     max: 4
+//   }
 // });
-
 // describe('Adapter', () => {
 
 //     it('Adapter Ping', done => {
@@ -326,7 +320,7 @@
 
 //         describe('$skip', () => {
 //             it('should $skip 3', done => {
-//                 Adapter.find({query:{modelfield:'query_tests',$sort:{name:1}, $limit:1, $skip:3}})
+//                 Adapter.find({query:{modelfield:'query_tests', $limit:1, $skip:3}})
 //                     .then(function(res) {
 //                         expect(res.limit).to.be.equal(1);
 //                         expect(res.skip).to.be.equal(3);
@@ -342,7 +336,7 @@
 
 //         describe('$sort', () => {
 //             it('should Documents sorted: asc', done => {
-//                 Adapter.find({query:{modelfield:'query_tests',$limit:1, $sort:{name:-1}}})
+//                 Adapter.find({query:{modelfield:'query_tests',$limit:1}})
 //                     .then(function(res) {
 //                         // console.log('res',res);
 //                         expect(res.limit).to.be.equal(1);
@@ -356,7 +350,7 @@
 //             });
 
 //             it('should Documents sorted: desc', done => {
-//                 Adapter.find({query:{modelfield:'query_tests',$limit:1, $sort:{name:1}}})
+//                 Adapter.find({query:{modelfield:'query_tests',$limit:1}})
 //                     .then(function(res) {
 //                         // console.log('res',res);
 //                         expect(res.limit).to.be.equal(1);
@@ -372,7 +366,7 @@
 
 //         describe('$select', () => {
 //             it('should return Documents with field name', done => {
-//                 Adapter.find({query:{modelfield:'query_tests',$limit:1, $sort:{name:1},$select:'name'}})
+//                 Adapter.find({query:{modelfield:'query_tests',$limit:1, $select:'name'}})
 //                     .then(function(res) {
 //                         expect(Object.keys(res.data[0]).length).to.be.equal(1);
 //                         expect(Object.keys(res.data[0])[0]).to.be.equal('name');
@@ -384,7 +378,7 @@
 //                     });
 //             });
 //             it('should return Documents with field name,testintfield', done => {
-//                 Adapter.find({query:{modelfield:'query_tests',$limit:1, $sort:{name:1},$select:'name,testintfield'}})
+//                 Adapter.find({query:{modelfield:'query_tests',$limit:1, $select:'name,testintfield'}})
 //                     .then(function(res) {
 //                         // console.log('res',res);
 //                         expect(Object.keys(res.data[0]).length).to.be.equal(2);
@@ -400,7 +394,7 @@
 
 //         describe('$in', () => {
 //             it('should return docs $in', done => {
-//                 Adapter.find({query:{name:{$in:['Maxwell Gilbert','Marsha Burns']},$select:'name',$sort:{name:1}}})
+//                 Adapter.find({query:{name:{$in:['Maxwell Gilbert','Marsha Burns']},$select:'name'}})
 //                     .then(function(res) {
 //                         // console.log('res',res);
 //                         expect(res.data[0].name).to.be.equal('Marsha Burns');
@@ -417,7 +411,7 @@
 
 //         describe('$nin', () => {
 //             it('should return docs $nin', done => {
-//                 Adapter.find({query:{name:{$in:['Maxwell Gilbert','Marsha Burns'], $nin:['Marsha Burns']},$select:'name',$sort:{name:1}}})
+//                 Adapter.find({query:{name:{$in:['Maxwell Gilbert','Marsha Burns'], $nin:['Marsha Burns']},$select:'name'}})
 //                     .then(function(res) {
 //                         // console.log('res',res);
 //                         expect(res.data[0].name).to.be.equal('Maxwell Gilbert');
@@ -433,7 +427,7 @@
 
 //         describe('$lt', () => {
 //             it('should return $lt 20', done => {
-//                 Adapter.find({query:{modelfield:'query_tests',testintfield:{$lt:2},$select:'testintfield',$sort:{testintfield:1}}})
+//                 Adapter.find({query:{modelfield:'query_tests',testintfield:{$lt:2},$select:'testintfield'}})
 //                     .then(function(res) {
 //                         expect(res.total).to.be.equal(1);
 //                         expect(res.data.length).to.be.equal(1);
@@ -449,7 +443,7 @@
 
 //         describe('$lte', () => {
 //             it('should return status: OK', done => {
-//                  Adapter.find({query:{modelfield:'query_tests',testintfield:{$lte:2},$select:'testintfield',$sort:{testintfield:1}}})
+//                  Adapter.find({query:{modelfield:'query_tests',testintfield:{$lte:2},$select:'testintfield'}})
 //                     .then(function(res) {
 //                         expect(res.total).to.be.equal(2);
 //                         expect(res.data.length).to.be.equal(2);
@@ -466,7 +460,7 @@
 
 //         describe('$gt', () => {
 //             it('should return status: OK', done => {
-//                 Adapter.find({query:{modelfield:'query_tests', testintfield:{$gt:5},$select:'testintfield',$sort:{testintfield:1}}})
+//                 Adapter.find({query:{modelfield:'query_tests', testintfield:{$gt:5},$select:'testintfield'}})
 //                     .then(function(res) {
 //                         expect(res.total).to.be.equal(5);
 //                         expect(res.data.length).to.be.equal(5);
@@ -483,7 +477,7 @@
 
 //         describe('$gte', () => {
 //             it('should return status: OK', done => {
-//                 Adapter.find({query:{modelfield:'query_tests', testintfield:{$gte:5},$select:'testintfield',$sort:{testintfield:1}}})
+//                 Adapter.find({query:{modelfield:'query_tests', testintfield:{$gte:5},$select:'testintfield'}})
 //                     .then(function(res) {
 //                         expect(res.total).to.be.equal(6);
 //                         expect(res.data.length).to.be.equal(6);
@@ -500,7 +494,7 @@
 
 //         describe('$ne', () => {
 //             it('should return status: OK', done => {
-//                 Adapter.find({query:{modelfield:'query_tests', testintfield:{$nin:[1,2,3]},$select:'testintfield',$sort:{testintfield:1}}})
+//                 Adapter.find({query:{modelfield:'query_tests', testintfield:{$nin:[1,2,3]},$select:'testintfield'}})
 //                     .then(function(res) {
 //                         // console.log('res',res);
 //                         expect(res.total).to.be.equal(7);
@@ -518,7 +512,7 @@
 
 //         describe('$or', () => {
 //             it('should return status: OK', done => {
-//                  Adapter.find({query:{modelfield:'query_tests', $or:{testintfield:1, name:'tester_3'},$select:'testintfield',$sort:{testintfield:1}}})
+//                  Adapter.find({query:{modelfield:'query_tests', $or:{testintfield:1, name:'tester_3'},$select:'testintfield'}})
 //                     .then(function(res) {
 //                         expect(res.total).to.be.equal(2);
 //                         expect(res.data.length).to.be.equal(2);

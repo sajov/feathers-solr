@@ -14,10 +14,7 @@ describe('Utils', () => {
       expect(_.isEmpty({status:{test1:1}})).to.be.equal(false);
     });
     it('new Object should be true', () => {
-      expect(_.isEmpty(new Object())).to.be.equal(true);
-    });
-    it('new Array should be true', () => {
-      expect(_.isEmpty(new Array())).to.be.equal(true);
+      expect(_.isEmpty(new Object({}))).to.be.equal(true);
     });
     it('empty Object should be true', () => {
       expect(_.isEmpty({})).to.be.equal(true);
@@ -41,13 +38,13 @@ describe('Utils', () => {
       expect(_.isPlainObject({status:1})).to.be.equal(true);
     });
     it('new Object return true', () => {
-      expect(_.isPlainObject(new Object())).to.be.equal(true);
+      expect(_.isPlainObject(new Object({}))).to.be.equal(true);
     });
     it('Array return false', () => {
       expect(_.isPlainObject([{status:1}])).to.be.equal(false);
     });
     it('new Array return false', () => {
-      expect(_.isPlainObject(new Array())).to.be.equal(false);
+      expect(_.isPlainObject(new Array([]))).to.be.equal(false);
     });
     it('new Date return false', () => {
       expect(_.isPlainObject(new Date())).to.be.equal(false);
