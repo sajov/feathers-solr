@@ -35,7 +35,6 @@ class Service {
     const _self = this;
     describe(this)
       .then(res => {
-        console.log('!!!!',_self.options);
         debug('feathers-solr service define done');
       })
       .catch(err => {
