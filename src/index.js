@@ -1,4 +1,4 @@
-import { _, queryJson, querySuggest, responseFind, responseGet, queryDelete, describeSchemaFields, parseSchemaFields, deleteSchemaFields, addFields } from './utils';
+import { _, queryJson, querySuggest, responseFind, responseGet, queryDelete, describe, define } from './utils';
 import errors from 'feathers-errors';
 import Solr from './client/solr';
 import makeDebug from 'debug';
@@ -31,30 +31,14 @@ class Service {
       managedScheme: this.options.managedScheme,
       commitStrategy: this.options.commitStrategy
     });
-
-    debug('Initializing feathers-solr Service');
-
-    let _self = this;
-
-    // TODO: refactor describe, define
-    _self.describe()
+    debug('feathers-solr service initialized');
+    const _self = this;
+    describe(this)
       .then(res => {
-        _self.options._schema = parseSchemaFields(res.fields);
-        _self.define()
-          .then(res => {
-            debug('feather-solr Service started', _self.options.commitStrategy || {
-              softCommit: true,
-              commitWithin: 50000,
-              overwrite: true
-            }, res);
-
-          })
-          .catch(err => {
-            debug('Service.define ERROR', err);
-          });
+        debug('feathers-solr service define done');
       })
       .catch(err => {
-        debug('Service.describe ERROR', err);
+        debug('Service.define addField ERROR:', err);
       });
 
   }
@@ -73,91 +57,6 @@ class Service {
         console.error(err);
         // return reject(new errors.BadRequest());
       });
-  }
-
-  /**
-   * [define description]
-   * @param  {[type]} fields [description]
-   * @return {[type]}        [description]
-   */
-  define(fields) {
-    let schemaApi = this.Solr.schema();
-    let _self = this;
-
-    return new Promise((resolve, reject) => {
-
-      if (_.isObject(fields)) {
-        _self.options.schema = fields;
-      }
-
-      if (_self.options.migrate === 'safe' || _self.options.managedScheme === false || _.isObject(_self.options.schema) === false) {
-        return true;
-      }
-      debug('feathers-solr migrate start');
-
-      if (_self.options.migrate === 'drop') {
-
-        this.remove()
-          .then(res => {
-            debug('feathers-solr migrate drop data');
-
-            schemaApi.deleteField(deleteSchemaFields(_self.options.schema)) ///
-              .then(res => {
-                debug('feathers-solr migrate reset schema', res);
-                schemaApi.addField(describeSchemaFields(_self.options.schema))
-                  .then(function(res) {
-                    debug('feathers-solr migrate define schema', res.errors);
-                    resolve(res);
-                  })
-                  .catch(function(err) {
-                    debug('Service.define addField ERROR:', err);
-                    return reject(new errors.BadRequest(err));
-                  });
-              })
-              .catch(err => {
-                debug('Service.define removeField ERROR:', err);
-                return reject(new errors.BadRequest(err));
-              });
-          })
-          .catch(err => {
-            debug('Service.define remove ERROR:', err);
-            return reject(new errors.BadRequest(err));
-          });
-
-      } else {
-        /* define fields */
-        schemaApi.addField(describeSchemaFields(_self.options.schema))
-          .then(function(res) {
-            debug('feathers-solr migrate define schema');
-            resolve(res);
-          })
-          .catch(function(err) {
-            debug('Service.define addField ERROR:', err);
-            return reject(new errors.BadRequest(err));
-          });
-      }
-
-    });
-  }
-
-  /**
-   * [describe description]
-   * @return {[type]} [description]
-   */
-  describe() {
-    let _self = this;
-    let schemaApi = _self.Solr.schema();
-    return new Promise((resolve, reject) => {
-      schemaApi.fields()
-        .then(function(res) {
-          debug('feathers-solr describe');
-          resolve(res);
-        })
-        .catch(function(err) {
-          debug('Service.find ERROR:', err);
-          return reject(new errors.BadRequest(err));
-        });
-    });
   }
 
   /**
@@ -248,7 +147,7 @@ class Service {
    * @return {[type]}      [description]
    */
   create(data) {
-    let _self = this;
+
     return new Promise((resolve, reject) => {
       this.Solr.update(data)
         .then(function(res) {
@@ -277,7 +176,7 @@ class Service {
 
     if (id === null || Array.isArray(data)) {
       return Promise.reject(new errors.BadRequest(
-        `You can not replace multiple instances. Did you mean 'patch'?`
+        'You can not replace multiple instances. Did you mean \'patch\'?'
       ));
     }
 
@@ -286,15 +185,25 @@ class Service {
 
     return new Promise((resolve, reject) => {
       _self.create(data)
-        .then(function(res) {
+        .then(() => {
           resolve(data);
         })
-        .catch(function(err) {
+        .catch((err) => {
           debug('Service.update ERROR:', err);
           return reject(new errors.BadRequest(err));
         });
     });
   }
+
+  /**
+   * adapter.patch(id, data, params) -> Promise
+   * Using update / overide the doc instead of atomic
+   * field update http://yonik.com/solr/atomic-updates/
+   * @param  {[type]} id     [description]
+   * @param  {[type]} data   [description]
+   * @param  {[type]} params [description]
+   * @return {[type]}        [description]
+   */
 
   /**
    * adapter.patch(id, data, params) -> Promise
@@ -330,7 +239,7 @@ class Service {
 
           if (response.data.length > 0) {
 
-            response.data.forEach((doc, index, ref) => {
+            response.data.forEach((doc, index) => {
               Object.keys(data).forEach(key => {
                 if (Array.isArray(response.data[index][key])) {
                   if (Array.isArray(data[key])) {
@@ -384,7 +293,6 @@ class Service {
    * @return {[type]}        [description]
    */
   remove(id, params) {
-    let _self = this;
 
     return new Promise((resolve, reject) => {
 

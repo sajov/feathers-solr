@@ -26,6 +26,7 @@ export function isEqual(target, sources) {
   }
   for (var i = 0; i < targetProps.length; i++) {
     var propName = targetProps[i];
+    // TODO nested
     if (target[propName] !== sources[propName]) {
       return false;
     }
@@ -33,7 +34,7 @@ export function isEqual(target, sources) {
   return true;
 }
 
-export function mergeDeep(target, sources) {
+export function mergeDeep(target, ...sources) {
   if (!sources.length) {
     return target;
   }

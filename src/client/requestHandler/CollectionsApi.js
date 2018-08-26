@@ -2,7 +2,6 @@
  * Solr Collections API
  * https://cwiki.apache.org/confluence/display/solr/Collections+API
  */
-
 export class CollectionsApi {
 
     constructor(request, opts) {
