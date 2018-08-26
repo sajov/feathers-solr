@@ -9,12 +9,25 @@ let Adapter = new plugin.Service({
 });
 
 describe('Adapter', () => {
-
   describe('Status', () => {
+    it('Adapter Ping', done => {
+        Adapter.client().ping()
+            .then(function(res) {
+                expect(res.responseHeader.status).to.be.equal(0);
+                expect(res.status).to.be.equal('OK');
+                done();
+            })
+            .catch(function(err) {
+                done(err);
+            });
+    });
+  });
+
+describe('Status', () => {
     it('should return status "OK"', done => {
       Adapter.status()
         .then(function(res) {
-          console.log('res',res);
+          // console.log('res',res);
           expect(res.responseHeader.status).to.be.equal(0);
           done();
         })
