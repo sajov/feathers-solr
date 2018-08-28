@@ -214,3 +214,39 @@ export function queryDelete(id, params) {
   return { delete: { query: '*:*' } };
 
 }
+
+/**
+ * Atomic Field Update http://yonik.com/solr/atomic-updates/
+ * set – set or replace a particular value, or remove the value if null is specified as the new value
+ * add – adds an additional value to a list
+ * remove – removes a value (or a list of values) from a list
+ * removeregex – removes from a list that match the given Java regular expression
+ * inc – increments a numeric value by a specific amount (use a negative value to decrement)
+ * { patch_s: {set: 'patched'}} => validate actions
+ * { patch_s: 'patched' } => { patch_s: {set: 'patched'}}
+ */
+export function queryUpdate(data, schema) {
+
+  const actions = ['set','add','remove','removeregex','inc'];
+
+  Object.keys(data).forEach(field => {
+
+    let value = data[field];
+
+      /* solr syntax { patch_s: {set: 'patched'}} */
+    if(_.isObject(value)) {
+      if(actions.indexOf(Object.keys(value)[0]) === -1) {
+       data[field] = {add: value};
+      }
+    } else if(Array.isArray(value)) {
+      /* simple syntax { patch_s: 'patched' } => { patch_s: {set: 'patched'}} */
+      data[field] = {add: value};
+    } else {
+      /* simple syntax { patch_s: 'patched' } => { patch_s: {set: 'patched'}} */
+      data[field] = value === "" ? {remove: value} : {set: value};
+    }
+
+  });
+
+  return data;
+}
