@@ -26,9 +26,8 @@ describe('Core Admin Api', () => {
         });
     });
 
-
     it('core name should be gettingstarted', done => {
-        expect(response.status.gettingstarted.name).be.equal('gettingstarted');
+        expect(response.status.gettingstarted_shard1_replica_n1.name).be.equal('gettingstarted_shard1_replica_n1');
         done();
     });
 

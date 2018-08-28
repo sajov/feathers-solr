@@ -1,9 +1,9 @@
 /**
  * Solr ConfigSets API
- * https://cwiki.apache.org/confluence/display/solr/ConfigSets+API
+ * https://lucene.apache.org/solr/guide/6_6/configsets-api.html
  */
 
-export class ConfigSets {
+export default class ConfigSets {
 
     constructor(request, opts) {
 
@@ -19,8 +19,11 @@ export class ConfigSets {
     /* CREATE */
     create(params) {
 
-        this.options.qs = Object.assing({
-            action: 'STATUS',
+        this.options.qs = Object.assign({
+            action: 'CREATE',
+            name:'myConfigSet',
+            baseConfigSet:'_default',
+            configSetProp:{immutable:false},
         }, params);
 
         return this.request(this.options);
@@ -30,8 +33,8 @@ export class ConfigSets {
     /* DELETE */
     delete(params) {
 
-        this.options.qs = Object.assing({
-            action: 'STATUS',
+        this.options.qs = Object.assign({
+            action: 'DELETE',
         }, params);
 
         return this.request(this.options);
@@ -41,8 +44,8 @@ export class ConfigSets {
     /* LIST */
     list(params) {
 
-        this.options.qs = Object.assing({
-            action: 'STATUS',
+        this.options.qs = Object.assign({
+            action: 'LIST',
         }, params);
 
         return this.request(this.options);

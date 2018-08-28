@@ -2,7 +2,7 @@
  * Solr Collections API
  * https://cwiki.apache.org/confluence/display/solr/Collections+API
  */
-export class CollectionsApi {
+export default class CollectionsApi {
 
     constructor(request, opts) {
 
@@ -17,7 +17,7 @@ export class CollectionsApi {
 
     /* CREATE : create a collection  */
     create(params) {
-        this.options.qs = Object.assing({
+        this.options.qs = Object.assign({
             action: 'CREATE',
         }, params);
 
@@ -25,7 +25,7 @@ export class CollectionsApi {
     }
     /* MODIFYCOLLECTION : Modify certain attributes of a collection  */
     modifycollection(params) {
-        this.options.qs = Object.assing({
+        this.options.qs = Object.assign({
             action: 'MODIFYCOLLECTION',
         }, params);
 
@@ -33,7 +33,7 @@ export class CollectionsApi {
     }
     /* RELOAD : reload a collection */
     reload(params) {
-        this.options.qs = Object.assing({
+        this.options.qs = Object.assign({
             action: 'RELOAD',
         }, params);
 
@@ -41,7 +41,7 @@ export class CollectionsApi {
     }
     /* SPLITSHARD : split a shard into two new shards */
     splitshard(params) {
-        this.options.qs = Object.assing({
+        this.options.qs = Object.assign({
             action: 'SPLITSHARD',
         }, params);
 
@@ -49,7 +49,7 @@ export class CollectionsApi {
     }
     /* CREATESHARD : create a new shard */
     createshard(params) {
-        this.options.qs = Object.assing({
+        this.options.qs = Object.assign({
             action: 'CREATESHARD',
         }, params);
 
@@ -57,7 +57,7 @@ export class CollectionsApi {
     }
     /* DELETESHARD : delete an inactive shard */
     deleteshard(params) {
-        this.options.qs = Object.assing({
+        this.options.qs = Object.assign({
             action: 'DELETESHARD',
         }, params);
 
@@ -65,7 +65,7 @@ export class CollectionsApi {
     }
     /* CREATEALIAS : create or modify an alias for a collection */
     createalias(params) {
-        this.options.qs = Object.assing({
+        this.options.qs = Object.assign({
             action: 'CREATEALIAS',
         }, params);
 
@@ -73,7 +73,7 @@ export class CollectionsApi {
     }
     /* DELETEALIAS : delete an alias for a collection */
     deletealias(params) {
-        this.options.qs = Object.assing({
+        this.options.qs = Object.assign({
             action: 'DELETEALIAS',
         }, params);
 
@@ -81,7 +81,7 @@ export class CollectionsApi {
     }
     /* DELETE : delete a collection */
     delete(params) {
-        this.options.qs = Object.assing({
+        this.options.qs = Object.assign({
             action: 'DELETE',
         }, params);
 
@@ -89,7 +89,7 @@ export class CollectionsApi {
     }
     /* DELETEREPLICA : delete a replica of a shard */
     deletereplica(params) {
-        this.options.qs = Object.assing({
+        this.options.qs = Object.assign({
             action: 'DELETEREPLICA',
         }, params);
 
@@ -97,7 +97,7 @@ export class CollectionsApi {
     }
     /* ADDREPLICA : add a replica of a shard */
     addreplica(params) {
-        this.options.qs = Object.assing({
+        this.options.qs = Object.assign({
             action: 'ADDREPLICA',
         }, params);
 
@@ -105,7 +105,7 @@ export class CollectionsApi {
     }
     /* CLUSTERPROP : Add/edit/delete a cluster-wide property  */
     clusterprop(params) {
-        this.options.qs = Object.assing({
+        this.options.qs = Object.assign({
             action: 'CLUSTERPROP',
         }, params);
 
@@ -113,7 +113,7 @@ export class CollectionsApi {
     }
     /* MIGRATE : Migrate documents to another collection  */
     migrate(params) {
-        this.options.qs = Object.assing({
+        this.options.qs = Object.assign({
             action: 'MIGRATE',
         }, params);
 
@@ -121,7 +121,7 @@ export class CollectionsApi {
     }
     /* ADDROLE : Add a specific role to a node in the cluster  */
     addrole(params) {
-        this.options.qs = Object.assing({
+        this.options.qs = Object.assign({
             action: 'ADDROLE',
         }, params);
 
@@ -129,7 +129,7 @@ export class CollectionsApi {
     }
     /* REMOVEROLE : Remove an assigned role  */
     removerole(params) {
-        this.options.qs = Object.assing({
+        this.options.qs = Object.assign({
             action: 'REMOVEROLE',
         }, params);
 
@@ -137,7 +137,7 @@ export class CollectionsApi {
     }
     /* OVERSEERSTATUS : Get status and statistics of the overseer  */
     overseerstatus(params) {
-        this.options.qs = Object.assing({
+        this.options.qs = Object.assign({
             action: 'OVERSEERSTATUS',
         }, params);
 
@@ -145,7 +145,7 @@ export class CollectionsApi {
     }
     /* CLUSTERSTATUS : Get cluster status  */
     clusterstatus(params) {
-        this.options.qs = Object.assing({
+        this.options.qs = Object.assign({
             action: 'CLUSTERSTATUS',
         }, params);
 
@@ -153,7 +153,7 @@ export class CollectionsApi {
     }
     /* REQUESTSTATUS : Get the status of a previous asynchronous request */
     requeststatus(params) {
-        this.options.qs = Object.assing({
+        this.options.qs = Object.assign({
             action: 'REQUESTSTATUS',
         }, params);
 
@@ -161,7 +161,7 @@ export class CollectionsApi {
     }
     /* DELETESTATUS : Delete the stored response of a previous asynchronous request */
     deletestatus(params) {
-        this.options.qs = Object.assing({
+        this.options.qs = Object.assign({
             action: 'DELETESTATUS',
         }, params);
 
@@ -169,15 +169,15 @@ export class CollectionsApi {
     }
     /* LIST : List all collections  */
     list(params) {
-        this.options.qs = Object.assing({
-            action: ':',
+        this.options.qs = Object.assign({
+            action: 'LIST',
         }, params);
 
         return this.request(this.options);
     }
     /* ADDREPLICAPROP : Add an arbitrary property to a replica specified by collection/shard/replica  */
     addreplicaprop(params) {
-        this.options.qs = Object.assing({
+        this.options.qs = Object.assign({
             action: 'ADDREPLICAPROP',
         }, params);
 
@@ -185,7 +185,7 @@ export class CollectionsApi {
     }
     /* DELETEREPLICAPROP : Delete an arbitrary property from a replica specified by collection/shard/replica  */
     deletereplicaprop(params) {
-        this.options.qs = Object.assing({
+        this.options.qs = Object.assign({
             action: 'DELETEREPLICAPROP',
         }, params);
 
@@ -193,7 +193,7 @@ export class CollectionsApi {
     }
     /* BALANCESHARDUNIQUE : Distribute an arbitrary property, one per shard, across the nodes in a collection */
     balanceshardunique(params) {
-        this.options.qs = Object.assing({
+        this.options.qs = Object.assign({
             action: 'BALANCESHARDUNIQUE',
         }, params);
 
@@ -201,7 +201,7 @@ export class CollectionsApi {
     }
     /* REBALANCELEADERS : Distribute leader role  based on the "preferredLeader" assignments */
     rebalanceleaders(params) {
-        this.options.qs = Object.assing({
+        this.options.qs = Object.assign({
             action: 'REBALANCELEADERS',
         }, params);
 
@@ -209,7 +209,7 @@ export class CollectionsApi {
     }
     /* FORCELEADER : Force a leader election in a shard if leader is lost  */
     forceleader(params) {
-        this.options.qs = Object.assing({
+        this.options.qs = Object.assign({
             action: 'FORCELEADER',
         }, params);
 
@@ -217,7 +217,7 @@ export class CollectionsApi {
     }
     /* MIGRATESTATEFORMAT : Migrate a collection from shared clusterstate.json to per-collection state.json */
     migratestateformat(params) {
-        this.options.qs = Object.assing({
+        this.options.qs = Object.assign({
             action: 'MIGRATESTATEFORMAT',
         }, params);
 

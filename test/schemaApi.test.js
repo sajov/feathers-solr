@@ -1,15 +1,30 @@
 import { expect } from 'chai';
 import plugin from '../src';
-var request = require('request-promise');
-let Adapter = new plugin.Service();
+let request = require('request-promise');
+let Adapter = new plugin.Service({
+      schema: [{
+            name: 'autocomplete',
+            type: 'text_auto',
+            indexed: true,
+            stored: true,
+        }],
+      migrate: 'alter',
+      adminKey: false,
+      idfield: 'id',
+      managedScheme: true,
+      /*commitStrategy softCommit: true, commit: true, commitWithin: 50*/
+      commitStrategy: {
+        softCommit: true,
+        commitWithin: 50000,
+        overwrite: true
+      }
+    });
 let Client = Adapter.client();
 let SchemaApi = Client.schema();
 // let Config = Client.config();
 let response;
 
 describe('Schema Api', () => {
-
-
 
   describe('Get', () => {
 

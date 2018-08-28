@@ -1,4 +1,4 @@
-import { _, queryJson, querySuggest, responseFind, responseGet, queryDelete, describe, define } from './utils';
+import { _, queryJson, querySuggest, responseFind, responseGet, queryDelete, describe } from './utils';
 import errors from 'feathers-errors';
 import Solr from './client/solr';
 import makeDebug from 'debug';
@@ -17,7 +17,7 @@ class Service {
       adminKey: false,
       idfield: 'id',
       managedScheme: true,
-      /*commitStrategy softCommit: true, commit: true, commitWithin: 50*/
+      /*commitStrategy softCommit: true, commit: true, commitWithin: 50000*/
       commitStrategy: {
         softCommit: true,
         commitWithin: 50000,
@@ -31,16 +31,16 @@ class Service {
       managedScheme: this.options.managedScheme,
       commitStrategy: this.options.commitStrategy
     });
+
     debug('feathers-solr service initialized');
-    const _self = this;
+
     describe(this)
       .then(res => {
-        debug('feathers-solr service define done');
+        debug('feathers-solr service define done', res);
       })
       .catch(err => {
         debug('Service.define addField ERROR:', err);
       });
-
   }
 
   /**
