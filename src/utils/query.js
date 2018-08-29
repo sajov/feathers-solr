@@ -244,6 +244,7 @@ export function queryPatch(data, schema) {
     } else {
       /* simple syntax { patch_s: 'patched' } => { patch_s: {set: 'patched'}} */
       data[field] = value === "" ? {remove: value} : {set: value};
+      // data[field] = value === null ? {remove: value} : {set: value};
     }
 
   });

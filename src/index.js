@@ -234,10 +234,16 @@ class Service {
       if (id !== null) {
         patchData[_self.options.idfield] = id;
         createData.push(patchData);
+        _self.create(createData)
+        .then(function(res) {
+          return resolve(createData);
+        })
+        .catch(function(err) {
+          return reject(new errors.BadRequest(err));
+        });
       } else if(_.isObject(query) && !_.isEmpty(query)) {
         query['$limit'] = 1000;
         query['$select'] = [_self.options.idfield];
-        console.log('CREATEDATA query',query);
         _self.Solr
           .json(queryJson({ query: query }, _self.options))
           .then(function(response) {
@@ -246,6 +252,13 @@ class Service {
               response.data.forEach((doc, index) => {
                 patchData[_self.options.idfield] = doc[_self.options.idfield];
                 createData.push(patchData);
+              });
+              _self.create(createData)
+              .then(function(res) {
+                return resolve(createData);
+              })
+              .catch(function(err) {
+                return reject(new errors.BadRequest(err));
               });
             } else {
               return resolve(createData);
@@ -258,14 +271,7 @@ class Service {
       } else {
         return reject(new errors.BadRequest('Missing Params'));
       }
-      /* using create to post atomic update command */
-      _self.create(createData)
-        .then(function(res) {
-          return resolve(createData);
-        })
-        .catch(function(err) {
-          return reject(new errors.BadRequest(err));
-        });
+
     });
   }
 

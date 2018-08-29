@@ -268,7 +268,7 @@ describe('Status', () => {
     it('patch simple {id:adapter1,patch_s:patched}', done => {
       Adapter.patch('adapter1', { 'patch_s': 'patched' })
         .then(function(res) {
-          response = res;
+          response = res[0];
           expect(response).to.be.instanceof(Object);
           expect(response.patch_s).to.deep.equal({ set: 'patched' });
           done();
@@ -296,7 +296,7 @@ describe('Status', () => {
     it('delete multivalued by regex {id:adapter1,patch_ss:{"removeregex":".*"}}', done => {
       Adapter.patch('adapter1', { 'patch_ss': {"removeregex":".*"} })
         .then(function(res) {
-          response = res;
+          response = res[0];
           expect(response).to.be.instanceof(Object);
           done();
         })
@@ -309,7 +309,7 @@ describe('Status', () => {
     it('patch simple multivalued {id:adapter1,patch_ss:[patched1,patched2]}', done => {
       Adapter.patch('adapter1', { 'patch_ss': ['patched1', 'patched2'] })
         .then(function(res) {
-          response = res;
+          response = res[0];
           expect(response).to.be.instanceof(Object);
           done();
         })
