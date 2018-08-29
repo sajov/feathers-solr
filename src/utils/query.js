@@ -225,7 +225,7 @@ export function queryDelete(id, params) {
  * { patch_s: {set: 'patched'}} => validate actions
  * { patch_s: 'patched' } => { patch_s: {set: 'patched'}}
  */
-export function queryUpdate(data, schema) {
+export function queryPatch(data, schema) {
 
   const actions = ['set','add','remove','removeregex','inc'];
 

@@ -1,4 +1,4 @@
-import { _, queryJson, querySuggest, responseFind, responseGet, queryDelete, describe, queryUpdate } from './utils';
+import { _, queryJson, querySuggest, responseFind, responseGet, queryDelete, describe, queryPatch } from './utils';
 import errors from 'feathers-errors';
 import Solr from './client/solr';
 import makeDebug from 'debug';
@@ -215,105 +215,58 @@ class Service {
    * inc – increments a numeric value by a specific amount (use a negative value to decrement)
    * @param  {mixed}  id     ID Optional for single update
    * @param  {object} data   Patch Data
-   * @param  {mixed}  params Query Optional for Multiple Updates
+   * @param  {mixed}  query Query Optional for Multiple Updates
    * @return {object}        Status
    */
-  patch(id, data, params) {
+  patch(id, data, query) {
 
     let _self = this;
 
     return new Promise((resolve, reject) => {
 
-      if(!_.isObject(params) || _.isEmpty(params)) {
-        // return reject(new errors.BadRequest('Missing Params'));
+      if(id === null && (!_.isObject(query) || _.isEmpty(query))) {
+        return reject(new errors.BadRequest('Missing Params'));
       }
 
-      let updateData = queryUpdate(data);
+      let patchData = queryPatch(data);
+      let createData = [];
 
       if (id !== null) {
-        updateData[_self.options.idfield] = id;
-        _self.create([updateData])
-          .then(function(res) {
-            return resolve(updateData);
+        patchData[_self.options.idfield] = id;
+        createData.push(patchData);
+      } else if(_.isObject(query) && !_.isEmpty(query)) {
+        query['$limit'] = 1000;
+        query['$select'] = [_self.options.idfield];
+        console.log('CREATEDATA query',query);
+        _self.Solr
+          .json(queryJson({ query: query }, _self.options))
+          .then(function(response) {
+            response = responseFind(query, _self.options, response);
+            if (response.data.length > 0) {
+              response.data.forEach((doc, index) => {
+                patchData[_self.options.idfield] = doc[_self.options.idfield];
+                createData.push(patchData);
+              });
+            } else {
+              return resolve(createData);
+            }
           })
           .catch(function(err) {
+            debug('Service.patch find ERROR:', err);
             return reject(new errors.BadRequest(err));
           });
-
-      } else if(_.isObject(params) && !_.isEmpty(params)) {
-        return resolve(updateData);
-        query.$limit = 100000; // TODO: ?
-        let query = { $limit: 1 };
-        query[_self.options.idfield] = id;
-
       } else {
-        return resolve(updateData);
-        // return reject(new errors.BadRequest('Missing Params'));
+        return reject(new errors.BadRequest('Missing Params'));
       }
-  });
-
-    // ###########
-
-    // let _self = this;
-    // let query = { $limit: 1 };
-
-    // if (_.has(params, 'query')) {
-    //   query = params.query;
-    // }
-
-    // if (id !== null) {
-    //   query[_self.options.idfield] = id;
-    // } else {
-    //   query.$limit = 100000; // TODO: ?
-    // }
-
-    // return new Promise((resolve, reject) => {
-
-    //   _self.Solr
-    //     .json(queryJson({ query: query }, _self.options))
-    //     .then(function(response) {
-
-    //       response = responseFind(params, _self.options, response);
-
-    //       if (response.data.length > 0) {
-
-    //         response.data.forEach((doc, index) => {
-    //           Object.keys(data).forEach(key => {
-    //             if (Array.isArray(response.data[index][key])) {
-    //               if (Array.isArray(data[key])) {
-    //                 response.data[index][key] = response.data[index][key].concat(data[key]);
-    //               } else {
-    //                 response.data[index][key].push(data[key]);
-    //               }
-    //             } else {
-    //               response.data[index][key] = data[key];
-    //             }
-    //           });
-    //           delete response.data[index]._version_;
-    //         });
-
-
-    //         _self.create(response.data)
-    //           .then(function(res) {
-    //             if (id !== null && res.length === 1) {
-    //               res = res[0];
-    //             }
-    //             resolve(res);
-    //           })
-    //           .catch(function(err) {
-    //             debug('Service.patch crate ERROR:', err);
-    //             return reject(new errors.BadRequest(err));
-    //           });
-
-    //       } else {
-    //         resolve();
-    //       }
-    //     })
-    //     .catch(function(err) {
-    //       debug('Service.patch find ERROR:', err);
-    //       return reject(new errors.BadRequest(err));
-    //     });
-    // });
+      /* using create to post atomic update command */
+      _self.create(createData)
+        .then(function(res) {
+          return resolve(createData);
+        })
+        .catch(function(err) {
+          return reject(new errors.BadRequest(err));
+        });
+    });
   }
 
   /**
