@@ -82,7 +82,8 @@ describe('Status', () => {
 
   });
 
-  describe('Create', () => {
+  describe('Create', function () {
+    this.timeout(5000);
     it('create should return status "OK"', done => {
       Adapter.create([{
             'id': 'adapter1',
