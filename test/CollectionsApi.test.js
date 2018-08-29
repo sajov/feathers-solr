@@ -77,7 +77,7 @@ describe('CollectionsApi', function() {
     });
 
     it('not contains collections `sajov`', function(done) {
-      function(done) {
+      this.timeout(10000);
       Adapter.client().collections().list()
             .then(function(res) {
                 expect(res.responseHeader.status).to.be.equal(0);
