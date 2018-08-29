@@ -25,11 +25,10 @@ describe('Core Admin Api', () => {
             done();
         });
     });
-
-    it('core name should be gettingstarted', done => {
-        expect(response.status.gettingstarted_shard1_replica_n1.name).be.equal('gettingstarted_shard1_replica_n1');
-        done();
-    });
+    // it('core name should be gettingstarted', done => {
+    //     expect(response.status.gettingstarted_shard1_replica_n1.name).be.equal('gettingstarted_shard1_replica_n1');
+    //     done();
+    // });
 
   });
 

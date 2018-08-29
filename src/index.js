@@ -242,8 +242,8 @@ class Service {
           return reject(new errors.BadRequest(err));
         });
       } else if(_.isObject(query) && !_.isEmpty(query)) {
-        query['$limit'] = 1000;
-        query['$select'] = [_self.options.idfield];
+        query.$limit = 1000;
+        query.$select = [_self.options.idfield];
         _self.Solr
           .json(queryJson({ query: query }, _self.options))
           .then(function(response) {
