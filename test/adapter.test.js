@@ -294,7 +294,7 @@ describe('Status', () => {
     });
 
     it('delete multivalued by regex {id:adapter1,patch_ss:{"removeregex":".*"}}', done => {
-      Adapter.patch('adapter1', { 'patch_ss': {"removeregex":".*"} })
+      Adapter.patch('adapter1', { 'patch_ss': {'removeregex':'.*'} })
         .then(function(res) {
           response = res[0];
           expect(response).to.be.instanceof(Object);
@@ -411,7 +411,7 @@ describe('Status', () => {
     });
 
     it('patch using `removeregex`', done => {
-        Adapter.patch('adapter1', { 'patch_regegex_ss': {"removeregex":"test.*"} })
+        Adapter.patch('adapter1', { 'patch_regegex_ss': {'removeregex':'test.*'} })
         .then(function(res) {
           response = res;
           expect(response).to.be.instanceof(Object);
@@ -456,7 +456,7 @@ describe('Status', () => {
           expect(response).to.be.instanceof(Object);
           expect(response.patch_is).to.be.an('array').to.be.deep.equal([1,2,3,4,5]);
           expect(response.patch_ss).to.be.an('array').to.be.deep.equal(['patched1','patched2','patched3','patched4','patched5']);
-          expect(response.patch_regegex_ss).to.be.an('array').to.be.deep.equal(["fine"]);
+          expect(response.patch_regegex_ss).to.be.an('array').to.be.deep.equal(['fine']);
           expect(response.patch_i).to.be.equal(99);
           done();
         })
