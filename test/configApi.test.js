@@ -7,11 +7,11 @@ let Client = Adapter.client();
 let response;
 
 describe('Config Api', function () {
-    this.timeout(500);
+    this.timeout(10000);
     describe('Search Component', function () {
 
         it('Add search component',function (done) {
-            this.timeout(500);
+            this.timeout(10000);
             Client.config({
                     'add-searchcomponent': {
                         'name': 'suggest',
@@ -43,7 +43,7 @@ describe('Config Api', function () {
         });
 
         it('Add request handler', function (done)  {
-            this.timeout(500);
+            this.timeout(10000);
             Client.config({
               'add-requesthandler' : {
                   'startup':'lazy',
@@ -80,7 +80,7 @@ describe('Config Api', function () {
         });
 
         it('Delete search component', function (done)  {
-            this.timeout(500);
+            this.timeout(10000);
             Client.config({
                     'delete-searchcomponent': 'suggest'
                 })
@@ -100,7 +100,7 @@ describe('Config Api', function () {
         });
 
         it('Delete request handler', function (done)  {
-            this.timeout(500);
+            this.timeout(10000);
             Client.config({
                     'delete-requesthandler': '/suggest'
                 })
