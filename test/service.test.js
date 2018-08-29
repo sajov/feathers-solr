@@ -25,8 +25,10 @@ describe('Service', () => {
         });
     });
 
-    describe('Update', () => {
-        it('should return status "OK"', done => {
+    describe('Update', function() {
+        this.timeout(5000);
+        it('should return status "OK"', function(done) {
+            this.timeout(5000);
             Service.create(demodata)
                 .then(function(res) {
                     expect(res.data).to.be.instanceof(Array);
@@ -38,13 +40,15 @@ describe('Service', () => {
         });
     });
 
-    describe('Find', () => {
+    describe('Find', function() {
+        this.timeout(5000);
         var response;
         before(function(done) {
             done();
         });
 
-        it('find ALL should return Array', done => {
+        it('find ALL should return Array', function(done) {
+          this.timeout(5000);
             Service.find({})
                 .then(function(res) {
                     response = res;
