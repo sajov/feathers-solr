@@ -169,7 +169,6 @@ class Service {
    * adapter.update(id, data, params) -> Promise
    * @param  {[type]} id     [description]
    * @param  {[type]} data   [description]
-   * @param  {[type]} params [description]
    * @return {[type]}        [description]
    */
   update(id, data) {
@@ -219,18 +218,14 @@ class Service {
    * @return {object}        Status
    */
   patch(id, data, query) {
-
     let _self = this;
-
     return new Promise((resolve, reject) => {
 
       if(id === null && (!_.isObject(query) || _.isEmpty(query))) {
         return reject(new errors.BadRequest('Missing Params'));
       }
-
       let patchData = queryPatch(data);
       let createData = [];
-
       if (id !== null) {
         patchData[_self.options.idfield] = id;
         createData.push(patchData);
@@ -242,7 +237,6 @@ class Service {
           return reject(new errors.BadRequest(err));
         });
       } else if(_.isObject(query) && !_.isEmpty(query)) {
-        query.$limit = 1000;
         query.$select = [_self.options.idfield];
         _self.Solr
           .json(queryJson({ query: query }, _self.options))
@@ -250,8 +244,9 @@ class Service {
             response = responseFind(query, _self.options, response);
             if (response.data.length > 0) {
               response.data.forEach((doc, index) => {
-                patchData[_self.options.idfield] = doc[_self.options.idfield];
-                createData.push(patchData);
+                let ref = {};
+                ref[_self.options.idfield] = doc[_self.options.idfield];
+                createData.push(Object.assign({}, patchData, ref));
               });
               _self.create(createData)
               .then(function(res) {
