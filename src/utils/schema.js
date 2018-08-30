@@ -5,6 +5,80 @@ import makeDebug from 'debug';
 
 const debug = makeDebug('feathers-solr');
 
+export function describe(Service) {
+  let schemaApi = Service.Solr.schema();
+  return new Promise((resolve, reject) => {
+    schemaApi.get()
+      .then(function(res) {
+        Service.options.solrSchema = res;
+        debug('feathers-solr describe');
+        define(Service);
+        resolve(res);
+      })
+      .catch(function(err) {
+        debug('Service.find ERROR:', err);
+        return reject(new errors.BadRequest(err));
+      });
+  });
+}
+
+export function define(Service) {
+  let schemaApi = Service.options.solrSchema;
+  let fields = schemaApi.fields;
+  return new Promise((resolve, reject) => {
+    if (_.isObject(fields)) {
+      Service.options.schema = fields;
+    }
+
+    if (Service.options.migrate === 'safe' || Service.options.managedScheme === false || _.isObject(Service.options.schema) === false) {
+      return true;
+    }
+    debug('feathers-solr migrate start');
+
+    if (Service.options.migrate === 'drop') {
+
+      Service.remove()
+        .then(() => {
+          debug('feathers-solr migrate drop data');
+
+          schemaApi.deleteField(deleteSchemaFields(Service.options.schema)) ///
+            .then(res => {
+              debug('feathers-solr migrate reset schema', res);
+              schemaApi.addField(describeSchemaFields(Service.options.schema))
+                .then(function(res) {
+                  debug('feathers-solr migrate define schema', res.errors);
+                  resolve(res);
+                })
+                .catch(function(err) {
+                  debug('Service.define addField ERROR:', err);
+                  return reject(new errors.BadRequest(err));
+                });
+            })
+            .catch(err => {
+              debug('Service.define removeField ERROR:', err);
+              return reject(new errors.BadRequest(err));
+            });
+        })
+        .catch(err => {
+          debug('Service.define remove ERROR:', err);
+          return reject(new errors.BadRequest(err));
+        });
+
+    } else {
+      /* define fields */
+      schemaApi.addField(describeSchemaFields(Service.options.schema))
+        .then(function(res) {
+          debug('feathers-solr migrate define schema');
+          resolve(res);
+        })
+        .catch(function(err) {
+          debug('Service.define addField ERROR:', err);
+          return reject(new errors.BadRequest(err));
+        });
+    }
+
+  });
+}
 
 export function describeSchemaFields(fields) {
 
@@ -75,78 +149,3 @@ export function deleteSchemaFields(fields) {
   return fieldsToDelete;
 }
 
-
-export function describe(Service) {
-    let schemaApi = Service.Solr.schema();
-    return new Promise((resolve, reject) => {
-      schemaApi.get()
-        .then(function(res) {
-          Service.options.solrSchema = res;
-          debug('feathers-solr describe');
-          define(Service);
-          resolve(res);
-        })
-        .catch(function(err) {
-          debug('Service.find ERROR:', err);
-          return reject(new errors.BadRequest(err));
-        });
-    });
-}
-
-export function define(Service) {
-    let schemaApi = Service.Solr.schema();
-    let fields = Service.options.solrSchema.field;
-    return new Promise((resolve, reject) => {
-      if (_.isObject(fields)) {
-        Service.options.schema = fields;
-      }
-
-      if (Service.options.migrate === 'safe' || Service.options.managedScheme === false || _.isObject(Service.options.schema) === false) {
-        return true;
-      }
-      debug('feathers-solr migrate start');
-
-      if (Service.options.migrate === 'drop') {
-
-        this.remove()
-          .then(() => {
-            debug('feathers-solr migrate drop data');
-
-            schemaApi.deleteField(deleteSchemaFields(Service.options.schema)) ///
-              .then(res => {
-                debug('feathers-solr migrate reset schema', res);
-                schemaApi.addField(describeSchemaFields(Service.options.schema))
-                  .then(function(res) {
-                    debug('feathers-solr migrate define schema', res.errors);
-                    resolve(res);
-                  })
-                  .catch(function(err) {
-                    debug('Service.define addField ERROR:', err);
-                    return reject(new errors.BadRequest(err));
-                  });
-              })
-              .catch(err => {
-                debug('Service.define removeField ERROR:', err);
-                return reject(new errors.BadRequest(err));
-              });
-          })
-          .catch(err => {
-            debug('Service.define remove ERROR:', err);
-            return reject(new errors.BadRequest(err));
-          });
-
-      } else {
-        /* define fields */
-        schemaApi.addField(describeSchemaFields(Service.options.schema))
-          .then(function(res) {
-            debug('feathers-solr migrate define schema');
-            resolve(res);
-          })
-          .catch(function(err) {
-            debug('Service.define addField ERROR:', err);
-            return reject(new errors.BadRequest(err));
-          });
-      }
-
-    });
-}

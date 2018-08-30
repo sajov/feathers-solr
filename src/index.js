@@ -1,4 +1,4 @@
-import { _, queryJson, querySuggest, responseFind, responseGet, queryDelete, describe, define } from './utils';
+import { _, queryJson, querySuggest, responseFind, responseGet, queryDelete, describe, queryPatch } from './utils';
 import errors from 'feathers-errors';
 import Solr from './client/solr';
 import makeDebug from 'debug';
@@ -17,7 +17,7 @@ class Service {
       adminKey: false,
       idfield: 'id',
       managedScheme: true,
-      /*commitStrategy softCommit: true, commit: true, commitWithin: 50*/
+      /*commitStrategy softCommit: true, commit: true, commitWithin: 50000*/
       commitStrategy: {
         softCommit: true,
         commitWithin: 50000,
@@ -31,16 +31,16 @@ class Service {
       managedScheme: this.options.managedScheme,
       commitStrategy: this.options.commitStrategy
     });
+
     debug('feathers-solr service initialized');
-    const _self = this;
+
     describe(this)
       .then(res => {
-        debug('feathers-solr service define done');
+        debug('feathers-solr service define done', res);
       })
       .catch(err => {
         debug('Service.define addField ERROR:', err);
       });
-
   }
 
   /**
@@ -169,7 +169,6 @@ class Service {
    * adapter.update(id, data, params) -> Promise
    * @param  {[type]} id     [description]
    * @param  {[type]} data   [description]
-   * @param  {[type]} params [description]
    * @return {[type]}        [description]
    */
   update(id, data) {
@@ -207,74 +206,67 @@ class Service {
 
   /**
    * adapter.patch(id, data, params) -> Promise
-   * Using update / overide the doc instead of atomic
-   * field update http://yonik.com/solr/atomic-updates/
-   * @param  {[type]} id     [description]
-   * @param  {[type]} data   [description]
-   * @param  {[type]} params [description]
-   * @return {[type]}        [description]
+   * Atomic Field Update http://yonik.com/solr/atomic-updates/
+   * set – set or replace a particular value, or remove the value if null is specified as the new value
+   * add – adds an additional value to a list
+   * remove – removes a value (or a list of values) from a list
+   * removeregex – removes from a list that match the given Java regular expression
+   * inc – increments a numeric value by a specific amount (use a negative value to decrement)
+   * @param  {mixed}  id     ID Optional for single update
+   * @param  {object} data   Patch Data
+   * @param  {mixed}  query Query Optional for Multiple Updates
+   * @return {object}        Status
    */
-  patch(id, data, params) {
-
+  patch(id, data, query) {
     let _self = this;
-    let query = { $limit: 1 };
-
-    if (_.has(params, 'query')) {
-      query = params.query;
-    }
-
-    if (id !== null) {
-      query[_self.options.idfield] = id;
-    } else {
-      query.$limit = 100000; // TODO: ?
-    }
-
     return new Promise((resolve, reject) => {
 
-      _self.Solr
-        .json(queryJson({ query: query }, _self.options))
-        .then(function(response) {
-
-          response = responseFind(params, _self.options, response);
-
-          if (response.data.length > 0) {
-
-            response.data.forEach((doc, index) => {
-              Object.keys(data).forEach(key => {
-                if (Array.isArray(response.data[index][key])) {
-                  if (Array.isArray(data[key])) {
-                    response.data[index][key] = response.data[index][key].concat(data[key]);
-                  } else {
-                    response.data[index][key].push(data[key]);
-                  }
-                } else {
-                  response.data[index][key] = data[key];
-                }
-              });
-              delete response.data[index]._version_;
-            });
-
-
-            _self.create(response.data)
-              .then(function(res) {
-                if (id !== null && res.length === 1) {
-                  res = res[0];
-                }
-                resolve(res);
-              })
-              .catch(function(err) {
-                debug('Service.patch crate ERROR:', err);
-                return reject(new errors.BadRequest(err));
-              });
-
-          } else {
-            resolve();
-          }
+      if(id === null && (!_.isObject(query) || _.isEmpty(query))) {
+        return reject(new errors.BadRequest('Missing Params'));
+      }
+      let patchData = queryPatch(data);
+      let createData = [];
+      if (id !== null) {
+        patchData[_self.options.idfield] = id;
+        createData.push(patchData);
+        _self.create(createData)
+        .then(function(res) {
+          return resolve(createData);
         })
         .catch(function(err) {
-          debug('Service.patch find ERROR:', err);
           return reject(new errors.BadRequest(err));
         });
+      } else if(_.isObject(query) && !_.isEmpty(query)) {
+        query.$select = [_self.options.idfield];
+        _self.Solr
+          .json(queryJson({ query: query }, _self.options))
+          .then(function(response) {
+            response = responseFind(query, _self.options, response);
+            if (response.data.length > 0) {
+              response.data.forEach((doc, index) => {
+                let ref = {};
+                ref[_self.options.idfield] = doc[_self.options.idfield];
+                createData.push(Object.assign({}, patchData, ref));
+              });
+              _self.create(createData)
+              .then(function(res) {
+                return resolve(createData);
+              })
+              .catch(function(err) {
+                return reject(new errors.BadRequest(err));
+              });
+            } else {
+              return resolve(createData);
+            }
+          })
+          .catch(function(err) {
+            debug('Service.patch find ERROR:', err);
+            return reject(new errors.BadRequest(err));
+          });
+      } else {
+        return reject(new errors.BadRequest('Missing Params'));
+      }
+
     });
   }
 

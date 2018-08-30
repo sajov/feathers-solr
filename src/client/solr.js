@@ -70,7 +70,7 @@ export default class Solr {
     }
 
     configSets(params) {
-        return new CollectionsApi(this.req, this.opts, params);
+        return new ConfigSetsApi(this.req, this.opts, params);
     }
 
     commit(data) {

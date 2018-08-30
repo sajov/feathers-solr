@@ -6,11 +6,12 @@ let Client = Adapter.client();
 // let Config = Client.config();
 let response;
 
-describe('Config Ap', () => {
+describe('Config Api', function () {
+    this.timeout(10000);
+    describe('Search Component', function () {
 
-    describe('Search Component', () => {
-
-        it('Add search component', done => {
+        it('Add search component',function (done) {
+            this.timeout(10000);
             Client.config({
                     'add-searchcomponent': {
                         'name': 'suggest',
@@ -41,7 +42,8 @@ describe('Config Ap', () => {
                 });
         });
 
-        it('Add request handler', done => {
+        it('Add request handler', function (done)  {
+            this.timeout(10000);
             Client.config({
               'add-requesthandler' : {
                   'startup':'lazy',
@@ -77,7 +79,8 @@ describe('Config Ap', () => {
             });
         });
 
-        it('Delete search component', done => {
+        it('Delete search component', function (done)  {
+            this.timeout(10000);
             Client.config({
                     'delete-searchcomponent': 'suggest'
                 })
@@ -96,7 +99,8 @@ describe('Config Ap', () => {
                 });
         });
 
-        it('Delete request handler', done => {
+        it('Delete request handler', function (done)  {
+            this.timeout(10000);
             Client.config({
                     'delete-requesthandler': '/suggest'
                 })

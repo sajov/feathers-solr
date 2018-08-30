@@ -82,7 +82,8 @@ describe('Status', () => {
 
   });
 
-  describe('Create', () => {
+  describe('Create', function () {
+    this.timeout(5000);
     it('create should return status "OK"', done => {
       Adapter.create([{
             'id': 'adapter1',
@@ -263,15 +264,29 @@ describe('Status', () => {
 
   });
 
-  describe('Patch', () => {
+  describe('Patch', function() {
+    this.timeout(10000);
     var response;
-    it('patch {id:adapter1,patch_s:patched}', done => {
+    it('patch simple {id:adapter1,patch_s:patched}', done => {
       Adapter.patch('adapter1', { 'patch_s': 'patched' })
+        .then(function(res) {
+          response = res[0];
+          expect(response).to.be.instanceof(Object);
+          expect(response.patch_s).to.deep.equal({ set: 'patched' });
+          done();
+        })
+        .catch(function(err) {
+          console.log('err', err);
+          done();
+        });
+    });
+
+    it('get patched response should include patched', done => {
+      Adapter.get('adapter1')
         .then(function(res) {
           response = res;
           expect(response).to.be.instanceof(Object);
           expect(response.patch_s).to.be.equal('patched');
-
           done();
         })
         .catch(function(err) {
@@ -280,20 +295,24 @@ describe('Status', () => {
         });
     });
 
-    it('patch response shoul include patched', () => {
-      expect(response).to.be.instanceof(Object);
-      expect(response.patch_s).to.be.equal('patched');
+    it('delete multivalued by regex {id:adapter1,patch_ss:{"removeregex":".*"}}', done => {
+      Adapter.patch('adapter1', { 'patch_ss': {'removeregex':'.*'} })
+        .then(function(res) {
+          response = res[0];
+          expect(response).to.be.instanceof(Object);
+          done();
+        })
+        .catch(function(err) {
+          console.log('err', err);
+          done();
+        });
     });
 
-
-    it('patch multivalued {id:adapter1,patch_ss:[patched1,patched2]}', done => {
+    it('patch simple multivalued {id:adapter1,patch_ss:[patched1,patched2]}', done => {
       Adapter.patch('adapter1', { 'patch_ss': ['patched1', 'patched2'] })
         .then(function(res) {
-          response = res;
+          response = res[0];
           expect(response).to.be.instanceof(Object);
-
-          // expect(response.patch_ss).to.be.equal(['patched1','patched2']);
-
           done();
         })
         .catch(function(err) {
@@ -302,14 +321,24 @@ describe('Status', () => {
         });
     });
 
-    it('patch response should include patched1, patched2', () => {
-      expect(response).to.be.instanceof(Object);
-      expect(response.patch_ss).to.be.an('array').that.includes('patched1');
-      expect(response.patch_ss).to.be.an('array').that.includes('patched2');
+    it('patched response should include patched1, patched2', done => {
+       Adapter.get('adapter1')
+        .then(function(res) {
+          response = res;
+          expect(response).to.be.instanceof(Object);
+          expect(response.patch_ss).to.be.an('array').that.includes('patched1');
+          expect(response.patch_ss).to.be.an('array').that.includes('patched2');
+          done();
+        })
+        .catch(function(err) {
+          console.log('err', err);
+          done();
+        });
+
     });
 
-    it('patch multivalued additional {id:adapter1,patch_ss:[patched3]}', done => {
-      Adapter.patch('adapter1', { 'patch_ss': 'patched3' })
+    it('patch multivalued using `add` {id:adapter1,patch_ss:[patched3]}', done => {
+      Adapter.patch('adapter1', { 'patch_ss': {add:['patched3','patched4', 'patched5']} })
         .then(function(res) {
           response = res;
           expect(response).to.be.instanceof(Object);
@@ -321,8 +350,31 @@ describe('Status', () => {
         });
     });
 
-    it('patch multivalued additional {id:adapter1,patch_ss:[patched3]}', done => {
-      Adapter.patch('adapter1', { 'patch_ss': ['patched4', 'patched5'] })
+
+
+    it('patched response should include patched1, patched2, patched3, patched4, patched5', done => {
+       Adapter.get('adapter1')
+        .then(function(res) {
+          response = res;
+          expect(response).to.be.instanceof(Object);
+          expect(response.patch_ss).to.be.an('array').that.includes('patched1');
+          expect(response.patch_ss).to.be.an('array').that.includes('patched2');
+          expect(response.patch_ss).to.be.an('array').that.includes('patched3');
+          expect(response.patch_ss).to.be.an('array').that.includes('patched4');
+          expect(response.patch_ss).to.be.an('array').that.includes('patched5');
+          expect(response.patch_ss).to.have.lengthOf(5);
+          done();
+        })
+        .catch(function(err) {
+          console.log('err', err);
+          done();
+        });
+
+    });
+
+
+    it('patch using `set`', done => {
+      Adapter.patch('adapter1', { 'patch_i': {set:1}, 'patch_is': {set:1}, patch_regegex_ss: {set:['test1','test2','fine']} })
         .then(function(res) {
           response = res;
           expect(response).to.be.instanceof(Object);
@@ -334,15 +386,150 @@ describe('Status', () => {
         });
     });
 
-    it('patch response should include patched1, patched2, patched3, patched4, patched5', () => {
-      expect(response).to.be.instanceof(Object);
-      expect(response.patch_ss).to.be.an('array').that.includes('patched1');
-      expect(response.patch_ss).to.be.an('array').that.includes('patched2');
-      expect(response.patch_ss).to.be.an('array').that.includes('patched3');
-      expect(response.patch_ss).to.be.an('array').that.includes('patched4');
-      expect(response.patch_ss).to.be.an('array').that.includes('patched5');
-      expect(response.patch_ss).to.have.lengthOf(5);
+    it('patch using `add`', done => {
+      Adapter.patch('adapter1', { 'patch_is': {add:[2,3,4,5,6]} })
+        .then(function(res) {
+          response = res;
+          expect(response).to.be.instanceof(Object);
+          done();
+        })
+        .catch(function(err) {
+          console.log('err', err);
+          done();
+        });
     });
+
+    it('patch using `remove`', done => {
+        Adapter.patch('adapter1', { 'patch_is': {remove:6} })
+        .then(function(res) {
+          response = res;
+          expect(response).to.be.instanceof(Object);
+          done();
+        })
+        .catch(function(err) {
+          console.log('err', err);
+          done();
+        });
+    });
+
+    it('patch using `removeregex`', done => {
+        Adapter.patch('adapter1', { 'patch_regegex_ss': {'removeregex':'test.*'} })
+        .then(function(res) {
+          response = res;
+          expect(response).to.be.instanceof(Object);
+          done();
+        })
+        .catch(function(err) {
+          console.log('err', err);
+          done();
+        });
+    });
+
+    it('patch using `inc`', done => {
+      Adapter.patch('adapter1', { 'patch_i': {inc:99} })
+        .then(function(res) {
+          response = res;
+          expect(response).to.be.instanceof(Object);
+          done();
+        })
+        .catch(function(err) {
+          console.log('err', err);
+          done();
+        });
+    });
+
+    it('patch using `inc` to decrement', done => {
+      Adapter.patch('adapter1', { 'patch_i': {inc:-1} })
+        .then(function(res) {
+          response = res;
+          expect(response).to.be.instanceof(Object);
+          done();
+        })
+        .catch(function(err) {
+          console.log('err', err);
+          done();
+        });
+    });
+
+    it('patched response should include patched1, patched2, patched3, patched4, patched5', done => {
+       Adapter.get('adapter1')
+        .then(function(res) {
+          response = res;
+          expect(response).to.be.instanceof(Object);
+          expect(response.patch_is).to.be.an('array').to.be.deep.equal([1,2,3,4,5]);
+          expect(response.patch_ss).to.be.an('array').to.be.deep.equal(['patched1','patched2','patched3','patched4','patched5']);
+          expect(response.patch_regegex_ss).to.be.an('array').to.be.deep.equal(['fine']);
+          expect(response.patch_i).to.be.equal(99);
+          done();
+        })
+        .catch(function(err) {
+          console.log('err', err);
+          done();
+        });
+
+    });
+
+
+   it('patch multiple by query', done => {
+      Adapter.patch(null, { 'patch_i': {set:1}, 'patch_is': {set:1}, patch_regegex_ss: {set:['test1','test2','fine']} }, {id:'adapter1'})
+        .then(function(res) {
+          response = res;
+          expect(response).to.be.instanceof(Object);
+          done();
+        })
+        .catch(function(err) {
+          console.log('err', err);
+          done();
+        });
+    });
+
+     it('patched multiple response', done => {
+       Adapter.get('adapter1')
+        .then(function(res) {
+          response = res;
+          expect(response).to.be.instanceof(Object);
+          // expect(response.patch_is).to.be.an('array').to.be.deep.equal([1]);
+          expect(response.patch_regegex_ss).to.be.an('array').to.be.deep.equal(['test1','test2','fine']);
+          expect(response.patch_i).to.be.equal(1);
+          done();
+        })
+        .catch(function(err) {
+          console.log('err', err);
+          done();
+        });
+
+    });
+
+    it('patch all by query', done => {
+      Adapter.patch(null, { 'patch_all_i': {set:1},'patch_all_is': {set:2}, patch_all_regegex_ss: {set:['fine']} }, {id:'*',$limit:1000})
+        .then(function(res) {
+          response = res;
+          expect(response).to.be.instanceof(Object);
+          done();
+        })
+        .catch(function(err) {
+          console.log('err', err);
+          done();
+        });
+    });
+
+     it('patched all response', done => {
+       Adapter.find({})
+        .then(function(res) {
+          response = res;
+          expect(response).to.be.instanceof(Object);
+          expect(response.data[0].patch_all_i).to.be.equal(1);
+          expect(response.data[1].patch_all_i).to.be.equal(1);
+          expect(response.data[2].patch_all_i).to.be.equal(1);
+          done();
+        })
+        .catch(function(err) {
+          console.log('err', err);
+          done();
+        });
+
+    });
+
   });
 
   describe('Get', () => {

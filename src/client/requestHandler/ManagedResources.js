@@ -1,6 +1,6 @@
 /**
  * Solr Managed Resources
- * https://cwiki.apache.org/confluence/display/solr/Managed+Resources
+ * https://lucene.apache.org/solr/guide/6_6/managed-resources.html
  */
 
 export class ManagedResources {

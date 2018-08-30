@@ -2,7 +2,7 @@
 
 import * as _ from './tools';
 import { describe, define } from './schema';
-import { queryJson, querySuggest, queryDelete } from './query';
+import { queryJson, querySuggest, queryDelete, queryPatch } from './query';
 import { responseFind, responseGet } from './response';
 
 export {
@@ -12,6 +12,7 @@ export {
   queryJson,
   querySuggest,
   queryDelete,
+  queryPatch,
   responseFind,
   responseGet
 };
