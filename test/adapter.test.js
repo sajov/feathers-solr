@@ -264,7 +264,8 @@ describe('Status', () => {
 
   });
 
-  describe('Patch', () => {
+  describe('Patch', function() {
+    this.timeout(10000);
     var response;
     it('patch simple {id:adapter1,patch_s:patched}', done => {
       Adapter.patch('adapter1', { 'patch_s': 'patched' })
@@ -470,7 +471,7 @@ describe('Status', () => {
 
 
    it('patch multiple by query', done => {
-      Adapter.patch(null, { 'patch_i': {set:1}, 'patch_is': {set:1}, patch_regegex_ss: {set:['test1','test2','fine']} }, {id:'adapter1'})
+      Adapter.patch(null, { 'patch_i': {set:1}, 'patch_is': {set:1}, patch_regegex_ss: {set:['test1','test2','fine']} }, {query:{id:'adapter1'}})
         .then(function(res) {
           response = res;
           expect(response).to.be.instanceof(Object);
@@ -482,7 +483,7 @@ describe('Status', () => {
         });
     });
 
-     it('patched multple response', done => {
+     it('patched multiple response', done => {
        Adapter.get('adapter1')
         .then(function(res) {
           response = res;
@@ -498,6 +499,37 @@ describe('Status', () => {
         });
 
     });
+
+    it('patch all by query', done => {
+      Adapter.patch(null, { 'patch_all_i': {set:1},'patch_all_is': {set:2}, patch_all_regegex_ss: {set:['fine']} }, {query:{id:'*',$limit:1000}})
+        .then(function(res) {
+          response = res;
+          expect(response).to.be.instanceof(Object);
+          done();
+        })
+        .catch(function(err) {
+          console.log('err', err);
+          done();
+        });
+    });
+
+     it('patched all response', done => {
+       Adapter.find({})
+        .then(function(res) {
+          response = res;
+          expect(response).to.be.instanceof(Object);
+          expect(response.data[0].patch_all_i).to.be.equal(1);
+          expect(response.data[1].patch_all_i).to.be.equal(1);
+          expect(response.data[2].patch_all_i).to.be.equal(1);
+          done();
+        })
+        .catch(function(err) {
+          console.log('err', err);
+          done();
+        });
+
+    });
+
   });
 
   describe('Get', () => {

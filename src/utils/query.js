@@ -12,7 +12,7 @@ export const Query = {
     this.query = {
       query: '*:*', // TODO:  score
       filter: [],
-      sort: '',
+      // sort: '',
       fields: _.get(opt, 'query.$select') || '*,score', // TODO:  score
       limit: _.get(opt, 'paginate.default') || _.get(opt, 'paginate.max') || 10,
       offset: 0,
