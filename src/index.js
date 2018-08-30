@@ -217,11 +217,12 @@ class Service {
    * @param  {mixed}  query Query Optional for Multiple Updates
    * @return {object}        Status
    */
-  patch(id, data, query) {
+  patch(id, data, params) {
     let _self = this;
+
     return new Promise((resolve, reject) => {
 
-      if(id === null && (!_.isObject(query) || _.isEmpty(query))) {
+      if(id === null && (!_.isObject(params) || _.isEmpty(params))) {
         return reject(new errors.BadRequest('Missing Params'));
       }
       let patchData = queryPatch(data);
@@ -236,7 +237,8 @@ class Service {
         .catch(function(err) {
           return reject(new errors.BadRequest(err));
         });
-      } else if(_.isObject(query) && !_.isEmpty(query)) {
+      } else {
+        let query = params.query || {};
         query.$select = [_self.options.idfield];
         _self.Solr
           .json(queryJson({ query: query }, _self.options))
@@ -263,8 +265,6 @@ class Service {
             debug('Service.patch find ERROR:', err);
             return reject(new errors.BadRequest(err));
           });
-      } else {
-        return reject(new errors.BadRequest('Missing Params'));
       }
 
     });

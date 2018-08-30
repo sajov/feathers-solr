@@ -471,7 +471,7 @@ describe('Status', () => {
 
 
    it('patch multiple by query', done => {
-      Adapter.patch(null, { 'patch_i': {set:1}, 'patch_is': {set:1}, patch_regegex_ss: {set:['test1','test2','fine']} }, {id:'adapter1'})
+      Adapter.patch(null, { 'patch_i': {set:1}, 'patch_is': {set:1}, patch_regegex_ss: {set:['test1','test2','fine']} }, {query:{id:'adapter1'}})
         .then(function(res) {
           response = res;
           expect(response).to.be.instanceof(Object);
@@ -501,7 +501,7 @@ describe('Status', () => {
     });
 
     it('patch all by query', done => {
-      Adapter.patch(null, { 'patch_all_i': {set:1},'patch_all_is': {set:2}, patch_all_regegex_ss: {set:['fine']} }, {id:'*',$limit:1000})
+      Adapter.patch(null, { 'patch_all_i': {set:1},'patch_all_is': {set:2}, patch_all_regegex_ss: {set:['fine']} }, {query:{id:'*',$limit:1000}})
         .then(function(res) {
           response = res;
           expect(response).to.be.instanceof(Object);
