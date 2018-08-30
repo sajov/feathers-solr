@@ -463,29 +463,47 @@ Feathers Result
         },
 ```
 
+### Adapter.patch
 
+Support simple usage [Feathers Docs](https://docs.feathersjs.com/api/services.html#patchid-data-params) 
+
+```
+data: {views: 1};
+Adapter.patch(id, data, params);
+```
+
+Support also advanced Solr Atomic Field Update [Solr Docs](https://lucene.apache.org/solr/guide/6_6/updating-parts-of-documents.html) 
+
+```
+data: {views: {inc:1}}; // inc, set, add, remove, removeregex
+Adapter.patch(id, data, params);
+```
+ 
+
+
+| ------
 
 ## Additional Client Methods
 
 
 | Solr Api's                                                                                                                                                     | Returns a Promise                                  | ./client/requestHandler/  |
 | -------------------------------------------------------------------------------------------------------------------------------------------------------------  | -------------------------------------------------- | ------------------------- |
-| ~~[Solr BolbStore API](https://cwiki.apache.org/confluence/display/solr/Blob+Store+API)~~                                                                      |                                                    | BlobStoreApi.js           |
-| [Solr Collections API](https://cwiki.apache.org/confluence/display/solr/Collections+API)                                                                       | Adapter.client().collections.method                | CollectionsApi.js         |
-| ~~[Config API](https://cwiki.apache.org/confluence/display/solr/Config+API#ConfigAPI-CreatingandUpdatingRequestHandlers)~~                                     |                                                    | ConfigApi.js              |
-| [Solr ConfigSets API](https://cwiki.apache.org/confluence/display/solr/ConfigSets+API)                                                                         | Adapter.client().configSets.method                 | ConfigSetsApi.js          |
-| [CoreAdmin API](https://cwiki.apache.org/confluence/display/solr/CoreAdmin+API)                                                                                | Adapter.client().coreAdmin.method                  | CoreAdminApi.js           |
-| [JSON Request API](https://cwiki.apache.org/confluence/display/solr/JSON+Request+API)                                                                          | Used by Adapter .find() .get()                     | JsonRequestApi.js         |
-| [Solr Managed Resources](https://cwiki.apache.org/confluence/display/solr/Managed+Resources)                                                                   | Adapter.client().resources.method                  | ManagedResources.js       |
-| ~~[Parallel SQL Interface](https://cwiki.apache.org/confluence/display/solr/Parallel+SQL+Interface)~~                                                          |                                                    | ParalellSQL.js            |
 | Ping                                                                                                                                                           | Adapter.client().ping()                            | Ping.js                   |
-| ~~[RealTime Get](https://cwiki.apache.org/confluence/display/solr/RealTime+Get)~~                                                                              |                                                    | RealTime.js               |
-| ~~[ReplicationHandlers](ReplicationHandlers)~~                                                                                                                 |                                                    | ReplicationHandlers.js    |
-| [Request Parameters API](https://cwiki.apache.org/confluence/display/solr/Request+Parameters+API)                                                              | Adapter.client().requestParameters.method          | RequestParametersAPI.js   |
-| [Schema API](https://cwiki.apache.org/confluence/display/solr/Managed+Resources)                                                                               | Adapter.client().schema.method                     | SchemaApi.js              |
-| [SearchHandlers]()                                                                                                                                             | Adapter.client().search()                          | SearchHandlers.js         |
-| ~~[ShardHandlers](https://cwiki.apache.org/confluence/display/solr/RequestHandlers+and+SearchComponents+in+SolrConfig)~~                                       |                                                    | ShardHandlers.js          |
+| [JSON Request API](https://cwiki.apache.org/confluence/display/solr/JSON+Request+API)                                                                          | Used by Adapter .find() .get()                     | JsonRequestApi.js         |
 | [Update](https://cwiki.apache.org/confluence/display/solr/Uploading+Data+with+Index+Handlers#UploadingDatawithIndexHandlers-UpdateRequestHandlerConfiguration) | Used by Adapter .create(), .update() and  .patch() | UpdateRequestHandlers.js  |
+| [SearchHandlers]()                                                                                                                                             | Adapter.client().search()                          | SearchHandlers.js         |
+| [Schema API](https://cwiki.apache.org/confluence/display/solr/Managed+Resources)                                                                               | Adapter.client().schema.method                     | SchemaApi.js              |
+| [Config API](https://cwiki.apache.org/confluence/display/solr/Config+API#ConfigAPI-CreatingandUpdatingRequestHandlers)                                         |                                                    | ConfigApi.js              |
+| [CoreAdmin API](https://cwiki.apache.org/confluence/display/solr/CoreAdmin+API)                                                                                | Adapter.client().coreAdmin.method                  | CoreAdminApi.js           |
+| [Solr ConfigSets API](https://cwiki.apache.org/confluence/display/solr/ConfigSets+API)                                                                         | Adapter.client().configSets.method                 | ConfigSetsApi.js          |
+| [Solr Collections API](https://cwiki.apache.org/confluence/display/solr/Collections+API)                                                                       | Adapter.client().collections.method                | CollectionsApi.js         |
+| [Solr Managed Resources](https://cwiki.apache.org/confluence/display/solr/Managed+Resources)                                                                   | Adapter.client().resources.method                  | ManagedResources.js       |
+| [Request Parameters API](https://cwiki.apache.org/confluence/display/solr/Request+Parameters+API)                                                              | Adapter.client().requestParameters.method          | RequestParametersAPI.js   |
+| ~~[Parallel SQL Interface](https://cwiki.apache.org/confluence/display/solr/Parallel+SQL+Interface)~~                                                          |                                                    | ParalellSQL.js            |
+| ~~[ReplicationHandlers](ReplicationHandlers)~~                                                                                                                 |                                                    | ReplicationHandlers.js    |
+| ~~[RealTime Get](https://cwiki.apache.org/confluence/display/solr/RealTime+Get)~~                                                                              |                                                    | RealTime.js               |
+| ~~[ShardHandlers](https://cwiki.apache.org/confluence/display/solr/RequestHandlers+and+SearchComponents+in+SolrConfig)~~                                       |                                                    | ShardHandlers.js          |
+| ~~[Solr BolbStore API](https://cwiki.apache.org/confluence/display/solr/Blob+Store+API)~~                                                                      |                                                    | BlobStoreApi.js           |
 
 Not all Solr API's implemented at the moment
 
@@ -498,19 +516,18 @@ Not all Solr API's implemented at the moment
 
 
 ## Changelog
-__0.1.6__
-- Bugfix Patch Multivalued Fields
-- Cleanups
-__0.1.5__
-- Add $suggest feature
-__0.1.4__
-__0.1.3__
-__1.0.1__
-- add option idfield 
-- bugfix $in, $nin if not array
+
+__1.1.13__
+- refactor describe
+- refactor define
+- add schema tests
+- edit docs
+
+__1.1.12__
+- refactor patch method
 
 
-- Initial release
+...
 
 ## License
 

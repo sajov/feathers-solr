@@ -5,14 +5,14 @@ import makeDebug from 'debug';
 
 const debug = makeDebug('feathers-solr');
 
-export function describe(Service) {
+export function describeSchema(Service) {
+
   let schemaApi = Service.Solr.schema();
+
   return new Promise((resolve, reject) => {
     schemaApi.get()
       .then(function(res) {
         Service.options.solrSchema = res;
-        debug('feathers-solr describe');
-        define(Service);
         resolve(res);
       })
       .catch(function(err) {
@@ -22,18 +22,15 @@ export function describe(Service) {
   });
 }
 
-export function define(Service) {
-  let schemaApi = Service.options.solrSchema;
-  let fields = schemaApi.fields;
+export function defineSchema(Service, schema) {
+
+  let schemaApi = Service.Solr.schema();
+
   return new Promise((resolve, reject) => {
-    if (_.isObject(fields)) {
-      Service.options.schema = fields;
-    }
 
     if (Service.options.migrate === 'safe' || Service.options.managedScheme === false || _.isObject(Service.options.schema) === false) {
-      return true;
+      return reject();
     }
-    debug('feathers-solr migrate start');
 
     if (Service.options.migrate === 'drop') {
 
@@ -66,9 +63,10 @@ export function define(Service) {
 
     } else {
       /* define fields */
+      debug('Schema Mode else:',Service.options.migrate, describeSchemaFields(Service.options.schema));
       schemaApi.addField(describeSchemaFields(Service.options.schema))
         .then(function(res) {
-          debug('feathers-solr migrate define schema');
+          debug('feathers-solr migrate define schema',res);
           resolve(res);
         })
         .catch(function(err) {

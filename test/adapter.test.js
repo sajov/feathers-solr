@@ -24,10 +24,10 @@ describe('Adapter', () => {
   });
 
 describe('Status', () => {
+
     it('should return status "OK"', done => {
       Adapter.status()
         .then(function(res) {
-          // console.log('res',res);
           expect(res.responseHeader.status).to.be.equal(0);
           done();
         })
@@ -38,7 +38,11 @@ describe('Status', () => {
     });
   });
 
+
+
+
   describe('Remove', () => {
+
     it('should return status "OK"', done => {
       Adapter.remove()
         .then(function(res) {
@@ -51,6 +55,47 @@ describe('Status', () => {
           done();
         });
     });
+
+    it('Adapter.remove by ID should return status "OK"', done => {
+      Adapter.remove('03e81b20-5b8c-4b53-8463-294e1a25e990')
+        .then(function(res){
+          // console.log('res',res);
+          expect(res.responseHeader.status).to.be.equal(0);
+          done();
+        })
+        .catch(function (err) {
+          // console.log('err',err);
+          done();
+        });
+    });
+
+    it('Adapter.remove by PARAMS should return status "OK"', done => {
+      Adapter.remove(null,{title: 'test3'})
+        .then(function(res){
+          // console.log('res',res);
+          expect(res.responseHeader.status).to.be.equal(0);
+          done();
+        })
+        .catch(function (err) {
+          // console.log('err',err);
+          done();
+        });
+    });
+
+
+    it('Adapter.remove ALL should return status "OK"', done => {
+      Adapter.remove()
+        .then(function(res){
+          // console.log('res',res);
+          expect(res.responseHeader.status).to.be.equal(0);
+          done();
+        })
+        .catch(function (err) {
+          // console.log('err',err);
+          done();
+        });
+    });
+
   });
 
   describe('Find', () => {
@@ -471,7 +516,7 @@ describe('Status', () => {
 
 
    it('patch multiple by query', done => {
-      Adapter.patch(null, { 'patch_i': {set:1}, 'patch_is': {set:1}, patch_regegex_ss: {set:['test1','test2','fine']} }, {id:'adapter1'})
+      Adapter.patch(null, { 'patch_i': {set:1}, 'patch_is': {set:1}, patch_regegex_ss: {set:['test1','test2','fine']} }, {query:{id:'adapter1'}})
         .then(function(res) {
           response = res;
           expect(response).to.be.instanceof(Object);
@@ -501,7 +546,7 @@ describe('Status', () => {
     });
 
     it('patch all by query', done => {
-      Adapter.patch(null, { 'patch_all_i': {set:1},'patch_all_is': {set:2}, patch_all_regegex_ss: {set:['fine']} }, {id:'*',$limit:1000})
+      Adapter.patch(null, { 'patch_all_i': {set:1},'patch_all_is': {set:2}, patch_all_regegex_ss: {set:['fine']} }, {query:{id:'*',$limit:1000}})
         .then(function(res) {
           response = res;
           expect(response).to.be.instanceof(Object);

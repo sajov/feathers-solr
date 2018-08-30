@@ -110,63 +110,63 @@ export default class Schema {
   }
   /* replace-field: replace an existing field with one that is differently configured. */
   replaceField(params) {
-    this.options.qs = {
+    this.options.body = {
       'replace-field': params
     };
     return this.request(this.options);
   }
   /* add-dynamic-field: add a new dynamic field rule with parameters you provide. */
   addDynamicField(params) {
-    this.options.qs = {
+    this.options.body = {
       'add-dynamic-field': params
     };
     return this.request(this.options);
   }
   /* delete-dynamic-field: delete a dynamic field rule. */
-  deleteFynamicField(params) {
-    this.options.qs = {
+  deleteDynamicField(params) {
+    this.options.body = {
       'delete-dynamic-field': params
     };
     return this.request(this.options);
   }
   /* replace-dynamic-field: replace an existing dynamic field rule with one that is differently configured. */
-  replaceFynamicField(params) {
-    this.options.qs = {
+  replaceDynamicField(params) {
+    this.options.body = {
       'replace-dynamic-field': params
     };
     return this.request(this.options);
   }
   /* add-field-type: add a new field type with parameters you provide. */
   addFieldType(params) {
-    this.options.qs = {
+    this.options.body = {
       'add-field-type': params
     };
     return this.request(this.options);
   }
   /* delete-field-type: delete a field type. */
   deleteFieldType(params) {
-    this.options.qs = {
+    this.options.body = {
       'delete-field-type': params
     };
     return this.request(this.options);
   }
   /* replace-field-type: replace an existing field type with one that is differently configured. */
   replaceFieldType(params) {
-    this.options.qs = {
+    this.options.body = {
       'replace-field-type': params
     };
     return this.request(this.options);
   }
   /* add-copy-field: add a new copy field rule. */
   addCopyField(params) {
-    this.options.qs = {
+    this.options.body = {
       'add-copy-field': params
     };
     return this.request(this.options);
   }
   /* delete-copy-field: delete a copy field rule. */
   deleteCopyField(params) {
-    this.options.qs = {
+    this.options.body = {
       'delete-copy-field': params
     };
     return this.request(this.options);

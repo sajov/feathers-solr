@@ -226,15 +226,234 @@ describe('Schema Api', () => {
     });
   });
 
-  //   describe('Has options solrSchema', () => {
-  //   console.log('????',Adapter.options);
-  // });
+  describe('deleteField `test_to_delete_field`', function() {
+
+      it('describe to update Adapter Options',  function(done) {
+        this.timeout(10000);
+          Adapter.describe()
+              .then(function(res) {
+                  expect(res.responseHeader.status).to.be.equal(0);
+                  // expect(Adapter.options.solrSchema.schema.fields).to.not.include({ name: 'test_to_delete_field',
+                  //   type: 'string',
+                  //   multiValued: false,
+                  //   indexed: true,
+                  //   stored: true });
+                  done();
+              })
+              .catch(function(err) {
+                  console.log('err', err);
+                  done(err);
+              });
+      });
+
+      it('has not Adapter.options.solrSchema.fields test_to_delete_field',  function() {
+        expect(Adapter.options.solrSchema.schema.fields).to.not.include({ name: 'test_to_delete_field'});
+      });
+
+  });
+
+  describe('addField `test_to_delete_field`', function() {
+
+    it('should return Status: OK',  function(done) {
+      this.timeout(10000);
+        Adapter.client().schema().addField({name:'test_to_delete_field', type:'string'})
+        .then(function(res) {
+            expect(res.responseHeader.status).to.be.equal(0);
+            done();
+        })
+        .catch(function(err) {
+            console.log('err', err);
+            done(err);
+        });
+    });
+
+
+    it('describe to update Adapter Options',  function(done) {
+      this.timeout(10000);
+        Adapter.describe()
+            .then(function(res) {
+              expect(res.responseHeader.status).to.be.equal(0);
+                // expect(Adapter.options.solrSchema.schema.fields).to.include({ name: 'test_to_delete_field',
+                //   type: 'string',
+                //   multiValued: false,
+                //   indexed: true,
+                //   stored: true });
+                done();
+            })
+            .catch(function(err) {
+                console.log('err', err);
+                done(err);
+            });
+    });
+
+  });
+
+  describe('replaceField `test_to_delete_field`', function() {
+
+    it('should return Status: OK',  function(done) {
+      this.timeout(10000);
+        Adapter.client().schema().replaceField({name:'test_to_delete_field', type:'pdate'})
+        .then(function(res) {
+            expect(res.responseHeader.status).to.be.equal(0);
+            done();
+        })
+        .catch(function(err) {
+            console.log('err', err);
+            done(err);
+        });
+    });
+
+  });
+
+  describe('deleteField `test_to_delete_field`', function() {
+        it('should return Status: OK',  function(done) {
+          this.timeout(10000);
+            Adapter.client().schema().deleteField([{name:'test_to_delete_field'}])
+            .then(function(res) {
+                expect(res.responseHeader.status).to.be.equal(0);
+                done();
+            })
+            .catch(function(err) {
+                console.log('err', err);
+                done(err);
+            });
+        });
+  });
 
 
 
-  // describe('FieldTypes', () => {
-  // }
-  // describe('dynamicFields', () => {
-  // }
+  describe('addDynamicField `*_test_dynamic_field`', function() {
+
+    it('should return Status: OK',  function(done) {
+      this.timeout(10000);
+        Adapter.client().schema().addDynamicField({name:'*_test_dynamic_field', type:'string'})
+        .then(function(res) {
+            expect(res.responseHeader.status).to.be.equal(0);
+            done();
+        })
+        .catch(function(err) {
+            console.log('err', err);
+            done(err);
+        });
+    });
+
+  });
+
+  describe('replaceDynamicField `*_test_dynamic_field`', function() {
+
+    it('should return Status: OK',  function(done) {
+      this.timeout(10000);
+        Adapter.client().schema().replaceDynamicField({name:'*_test_dynamic_field', type:'pdate'})
+        .then(function(res) {
+            expect(res.responseHeader.status).to.be.equal(0);
+            done();
+        })
+        .catch(function(err) {
+            console.log('err', err);
+            done(err);
+        });
+    });
+
+  });
+
+  describe('deleteDynamicField `*_test_dynamic_field`', function() {
+        it('should return Status: OK',  function(done) {
+          this.timeout(10000);
+            Adapter.client().schema().deleteDynamicField([{name:'*_test_dynamic_field'}])
+            .then(function(res) {
+                expect(res.responseHeader.status).to.be.equal(0);
+                done();
+            })
+            .catch(function(err) {
+                console.log('err', err);
+                done(err);
+            });
+        });
+  });
+
+
+
+  describe('addFieldType `test_field_type`', function() {
+
+    it('should return Status: OK',  function(done) {
+      this.timeout(10000);
+        Adapter.client().schema().addFieldType({name:'test_field_type', class:'solr.TextField'})
+        .then(function(res) {
+            expect(res.responseHeader.status).to.be.equal(0);
+            done();
+        })
+        .catch(function(err) {
+            console.log('err', err);
+            done(err);
+        });
+    });
+
+  });
+
+  describe('replaceFieldType `test_field_type`', function() {
+
+    it('should return Status: OK',  function(done) {
+      this.timeout(10000);
+        Adapter.client().schema().replaceFieldType({name:'test_field_type', class:'solr.BoolField'})
+        .then(function(res) {
+            expect(res.responseHeader.status).to.be.equal(0);
+            done();
+        })
+        .catch(function(err) {
+            console.log('err', err);
+            done(err);
+        });
+    });
+
+  });
+
+  describe('deleteFieldType `test_field_type`', function() {
+        it('should return Status: OK',  function(done) {
+          this.timeout(10000);
+            Adapter.client().schema().deleteFieldType([{name:'test_field_type'}])
+            .then(function(res) {
+                expect(res.responseHeader.status).to.be.equal(0);
+                done();
+            })
+            .catch(function(err) {
+                console.log('err', err);
+                done(err);
+            });
+        });
+  });
+
+
+
+  describe('addCopyField `"source":"name","dest":[ "_text_" ]`', function() {
+
+    it('should return Status: OK',  function(done) {
+      this.timeout(10000);
+        Adapter.client().schema().addCopyField({"source":"name","dest":[ "_text_" ]})
+        .then(function(res) {
+            expect(res.responseHeader.status).to.be.equal(0);
+            done();
+        })
+        .catch(function(err) {
+            console.log('err', err);
+            done(err);
+        });
+    });
+
+  });
+
+  describe('delete `"source":"name","dest":[ "_text_" ]`', function() {
+        it('should return Status: OK',  function(done) {
+          this.timeout(10000);
+            Adapter.client().schema().deleteCopyField({ "source":"name", "dest":"_text_" })
+            .then(function(res) {
+                expect(res.responseHeader.status).to.be.equal(0);
+                done();
+            })
+            .catch(function(err) {
+                console.log('err', err);
+                done(err);
+            });
+        });
+  });
 
 });
