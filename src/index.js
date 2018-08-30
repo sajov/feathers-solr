@@ -1,4 +1,4 @@
-import { _, queryJson, querySuggest, responseFind, responseGet, queryDelete, describe, queryPatch } from './utils';
+import { _, queryJson, querySuggest, responseFind, responseGet, queryDelete, describeSchema, defineSchema, queryPatch } from './utils';
 import errors from 'feathers-errors';
 import Solr from './client/solr';
 import makeDebug from 'debug';
@@ -32,20 +32,45 @@ class Service {
       commitStrategy: this.options.commitStrategy
     });
 
-    debug('feathers-solr service initialized');
-
-    describe(this)
-      .then(res => {
-        debug('feathers-solr service define done', res);
+    this.status()
+    .then(() => {
+      this.describe()
+      .then(() => {
+        this.define().catch(err => {
+          debug('Service.define Error:', err);
+        });
       })
       .catch(err => {
-        debug('Service.define addField ERROR:', err);
+        debug('Service.describe Error:', err);
       });
+    })
+    .catch(err => {
+      debug('Service.status Error:', err);
+    });
+
   }
 
   /**
-   * [status description]
-   * @return {[type]} [description]
+   * Describe Solr Schema
+   * @return {object]} Solr Schema
+   */
+  describe() {
+    return describeSchema(this);
+  }
+
+  /**
+   * Define Sole Schema
+   * @param  {object} params Schema Filds
+   * @return {[type]}
+   */
+  define(schema) {
+    this.options.schema = Object.assign({},this.options.schema, schema);
+    return defineSchema(this);
+  }
+
+  /**
+   * Solr Status
+   * @return {object} Solr Status
    */
   status() {
     return new Promise((resolve, reject) => {
@@ -60,9 +85,9 @@ class Service {
   }
 
   /**
-   * [find description]
-   * @param  {[type]} params [description]
-   * @return {[type]}        [description]
+   * Adapter Find Method
+   * @param  {[type]} params User Query
+   * @return {[type]}        Promise
    */
   find(params) {
     if (!_.has(params.query, '$suggest')) {
@@ -73,9 +98,9 @@ class Service {
   }
 
   /**
-   * [find description]
-   * @param  {[type]} params [description]
-   * @return {[type]}        [description]
+   * Adapter Custom Search Method
+   * @param  {object} params User Query
+   * @return {object}        Promise
    */
   search(params) {
     let _self = this;
@@ -93,7 +118,7 @@ class Service {
   }
 
   /**
-   * Suggest
+   * Adapter Custom Suggest Method
    * @param  {object} params Query Object
    * @return {object}        Promise
    */
@@ -112,10 +137,10 @@ class Service {
     });
   }
 
-  /**
-   * [get description]
-   * @param  {[type]} id [description]
-   * @return {[type]}    [description]
+/**
+   * Adapter Get Method
+   * @param  {[type]} params User Query
+   * @return {[type]}        Promise
    */
   get(id, params) {
     let _self = this;
@@ -141,10 +166,10 @@ class Service {
     });
   }
 
-  /**
-   * [create description]
-   * @param  {[type]} data [description]
-   * @return {[type]}      [description]
+/**
+   * Adapter Create Method
+   * @param  {[type]} params User Query
+   * @return {[type]}        Promise
    */
   create(data) {
 
@@ -166,10 +191,13 @@ class Service {
   }
 
   /**
+   * Adapter Find Method
    * adapter.update(id, data, params) -> Promise
-   * @param  {[type]} id     [description]
-   * @param  {[type]} data   [description]
-   * @return {[type]}        [description]
+   *
+   * @param  {mixed}  id     [description]
+   * @param  {object} data   Update Data
+   * @param  {object} params User Query
+   * @return {object}        Promise
    */
   update(id, data) {
 

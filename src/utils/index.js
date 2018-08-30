@@ -1,14 +1,14 @@
 'use strict';
 
 import * as _ from './tools';
-import { describe, define } from './schema';
+import { describeSchema, defineSchema } from './schema';
 import { queryJson, querySuggest, queryDelete, queryPatch } from './query';
 import { responseFind, responseGet } from './response';
 
 export {
   _,
-  describe,
-  define,
+  describeSchema,
+  defineSchema,
   queryJson,
   querySuggest,
   queryDelete,
