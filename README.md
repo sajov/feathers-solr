@@ -510,10 +510,11 @@ Not all Solr API's implemented at the moment
 ## TODO
 * Write more Tests
 * Write more Docs
-* Implement $suggest and $spellcheck
-* Add demo autocompleter with suggestions.
-* Add demo search page with facet navigation, filter(ranges, sliders), pagination and result listing by just one query.
-
+* Implement Parallel SQL Interface
+* Implement ReplicationHandlers
+* Implement RealTime Get
+* Implement ShardHandlers
+* Implement Solr BolbStore API
 
 ## Changelog
 
