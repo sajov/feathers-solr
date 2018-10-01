@@ -26,7 +26,7 @@ let response;
 
 describe('Schema Api', () => {
 
-  describe('Get', () => {
+  describe('get', () => {
 
     it('name default-config', done => {
       SchemaApi
@@ -92,7 +92,7 @@ describe('Schema Api', () => {
 
   });
 
-  describe('Fields', () => {
+  describe('fields', () => {
 
     it('get', done => {
       SchemaApi
@@ -110,7 +110,7 @@ describe('Schema Api', () => {
     });
   });
 
-  describe('Dynamic Fields', () => {
+  describe('dynamicFields', () => {
     it('has property dynamicFields', done => {
       SchemaApi
         .dynamicfields()

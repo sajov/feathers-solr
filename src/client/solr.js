@@ -38,7 +38,8 @@ export default class Solr {
                 softCommit: true,
                 commitWithin: 50000,
                 overwrite: true
-            }
+            },
+            requestDefaults: {}
         }, opts);
 
         this.opts.url = this.opts.host;
@@ -46,6 +47,15 @@ export default class Solr {
         this.opts.coreUrl = this.opts.host + this.opts.core;
 
         this.req = request;
+
+
+        this.req.defaults(this.opts.requestDefaults);
+        // this.req.defaults({'auth': {
+        //   'user': 'username',
+        //   'pass': 'password',
+        //   'sendImmediately': false
+        // }})
+
     }
 
     /**

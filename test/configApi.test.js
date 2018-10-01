@@ -20,7 +20,7 @@ describe('Config Api', function () {
                             'name': 'suggest',
                             'lookupImpl': 'FuzzyLookupFactory',
                             'dictionaryImpl': 'DocumentDictionaryFactory',
-                            'field': 'name_autocomplete',
+                            'field': 'name',
                             'suggestAnalyzerFieldType': 'string',
                             'buildOnStartup': 'true',
                             'buildOnCommit': 'true'
@@ -79,7 +79,22 @@ describe('Config Api', function () {
             });
         });
 
-        it('Delete search component', function (done)  {
+      it('Suggest Handler', function (done)  {
+        this.timeout(10000);
+        Adapter.suggest({query:{$suggest:'Dean'}})
+          .then(function(res){
+            expect(res.responseHeader.status).to.be.equal(0);
+            expect(response).to.not.have.property('spellcheck');
+            expect(response).to.not.have.property('suggest');
+            done();
+          })
+          .catch(function (err) {
+              expect(err).to.be.equal('OK');
+              done();
+          });
+      });
+
+      it('Delete search component', function (done)  {
             this.timeout(10000);
             Client.config({
                     'delete-searchcomponent': 'suggest'
