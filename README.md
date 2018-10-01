@@ -518,6 +518,13 @@ Not all Solr API's implemented at the moment
 
 ## Changelog
 
+__1.1.15__
+- add support $between param
+- add support for auth
+
+__1.1.14__
+- ...
+
 __1.1.13__
 - refactor describe
 - refactor define
