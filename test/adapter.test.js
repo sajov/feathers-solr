@@ -243,8 +243,292 @@ describe('Status', () => {
         });
     });
 
-
   });
+
+
+    describe('Query', () => {
+
+        describe('Equality', () => {
+            it('should return country uk', done => {
+                Adapter.find({query:{country:'uk'}})
+                    .then(function(res) {
+                        expect(res.data[0]).to.deep.include({country:['uk']});
+                        done();
+                    })
+                    .catch(function(err) {
+                        done(err);
+                    });
+            });
+        });
+
+
+        describe('$limit', () => {
+            var result = {};
+            it('should set $limit 2', done => {
+                Adapter.find({query:{ $limit:2}})
+                    .then(function(res) {
+                        result = res;
+                        done();
+                    })
+                    .catch(function(err) {
+                        console.log('err',err);
+                        done(err);
+                    });
+            });
+
+            it('should return data.length == 2', done => {
+                expect(result.data.length).to.be.equal(2);
+                done();
+            })
+        });
+
+        describe('$skip', () => {
+            it('should $skip 3', done => {
+                Adapter.find({query:{age_i:{$in:[23,24]}, $sort:{age_i:1},$limit:2, $skip:1}})
+                    .then(function(res) {
+                        expect(res.limit).to.be.equal(2);
+                        expect(res.skip).to.be.equal(1);
+                        expect(res.data[0].age_i).to.be.equal(24);
+                        done();
+                    })
+                    .catch(function(err) {
+                        console.log('err',err)
+                        done(err);
+                    });
+            });
+        });
+
+        describe('$sort', () => {
+            it('should Documents sorted: asc', done => {
+                Adapter.find({query:{ $sort:{age_i:1},$limit:1}})
+                    .then(function(res) {
+                        // console.log('res',res);
+                        expect(res.limit).to.be.equal(1);
+                        expect(res.data[0].age_i).to.be.equal(23);
+                        done();
+                    })
+                    .catch(function(err) {
+                        console.log('err',err);
+                        done(err);
+                    });
+            });
+
+            it('should Documents sorted: desc', done => {
+                Adapter.find({query:{ $sort:{age_i:-1},$limit:1}})
+                    .then(function(res) {
+                        // console.log('res',res);
+                        expect(res.limit).to.be.equal(1);
+                        expect(res.data[0].age_i).to.be.equal(48);
+                        done();
+                    })
+                    .catch(function(err) {
+                        console.log('err',err);
+                        done(err);
+                    });
+            });
+
+        });
+
+        describe('$select', () => {
+            it('should return Documents with field name', done => {
+                Adapter.find({query:{$select:'name',$sort:{age_i:1}}})
+                    .then(function(res) {
+                        expect(Object.keys(res.data[0]).length).to.be.equal(1);
+                        expect(Object.keys(res.data[0])[0]).to.be.equal('name');
+                        expect(res.data).to.deep.include({name:['Doc adapter1']});
+                        done();
+                    })
+                    .catch(function(err) {
+                        done(err);
+                    });
+            });
+            it('should return Documents with field name,age_i', done => {
+                Adapter.find({query:{$sort:{age_i:1},$limit:1, $select:'name,age_i'}})
+                    .then(function(res) {
+                        // console.log('res',res);
+                        expect(Object.keys(res.data[0]).length).to.be.equal(2);
+                        expect(Object.keys(res.data[0])[0]).to.be.equal('name');
+                        expect(res.data).to.deep.include({name:['Doc adapter1'], age_i:23});
+                        done();
+                    })
+                    .catch(function(err) {
+                        done(err);
+                    });
+            });
+        });
+
+        describe('$in', () => {
+            it('should return name:{$in:[Doc adapter1,Doc adapter2]}', done => {
+              Adapter.find({query:{name:{$in:['Doc adapter1','Doc adapter2']},$sort:{age_i:1},$select:'name'}})
+                  .then(function(res) {
+                      // console.log('res',res.data);
+                      expect(res.data).to.deep.equal([{name:['Doc adapter1']},{name:['Doc adapter2']}]);
+                      expect(res.total).to.be.equal(2);
+                      done();
+                  })
+                  .catch(function(err) {
+                      // console.log('err',err);
+                      done(err);
+                  });
+            });
+
+           it('should return docs name:{$in:[Doc adapter1,Doc adapter2]}', done => {
+              Adapter.find({query:{name:{$in:['Doc adapter1','Doc adapter2']},$sort:{age_i:1},$select:'name,age_i'}})
+                  .then(function(res) {
+                      // console.log('res',res.data);
+                      expect(res.data).to.deep.equal([{name:['Doc adapter1'],age_i:23},{name:['Doc adapter2'],age_i:48}]);
+                      expect(res.total).to.be.equal(2);
+                      done();
+                  })
+                  .catch(function(err) {
+                      // console.log('err',err);
+                      done(err);
+                  });
+            });
+        });
+
+        describe('$nin', () => {
+            it('should return docs name:{$nin:[Doc adapter1,Doc adapter2]}', done => {
+                Adapter.find({query:{name:{$nin:['Doc adapter1','Doc adapter2']},$select:'name,age_i'}})
+                  .then(function(res) {
+                      // console.log('res',res.data);
+                      expect(res.data).to.deep.equal([{name:['Doc adapter3'],age_i:24}]);
+                      expect(res.total).to.be.equal(1);
+                      done();
+                  })
+                  .catch(function(err) {
+                      // console.log('err',err);
+                      done(err);
+                  });
+            });
+        });
+
+        describe('$lt', () => {
+            it('should return age_i:{$lt:24}', done => {
+                Adapter.find({query:{age_i:{$lt:24},$select:'name,age_i'}})
+                  .then(function(res) {
+                      // console.log('res',res.data);
+                      expect(res.data).to.deep.equal([{name:['Doc adapter1'],age_i:23}]);
+                      expect(res.total).to.be.equal(1);
+                      done();
+                  })
+                  .catch(function(err) {
+                      // console.log('err',err);
+                      done(err);
+                  });
+            });
+        });
+
+        describe('$lte', () => {
+            it('should return age_i:{$lte:24}', done => {
+               Adapter.find({query:{age_i:{$lte:24},$select:'name,age_i',$sort:{age_i:1}}})
+                  .then(function(res) {
+                      // console.log('res',res.data);
+                      expect(res.data).to.deep.equal([{name:['Doc adapter1'],age_i:23},{name:['Doc adapter3'],age_i:24}]);
+                      expect(res.total).to.be.equal(2);
+                      done();
+                  })
+                  .catch(function(err) {
+                      // console.log('err',err);
+                      done(err);
+                  });
+            });
+        });
+
+        describe('$gt', () => {
+            it('should return age_i:{$gt:40}', done => {
+               Adapter.find({query:{age_i:{$gt:40},$select:'name,age_i'}})
+                  .then(function(res) {
+                      // console.log('res',res.data);
+                      expect(res.data).to.deep.equal([{name:['Doc adapter2'],age_i:48}]);
+                      expect(res.total).to.be.equal(1);
+                      done();
+                  })
+                  .catch(function(err) {
+                      // console.log('err',err);
+                      done(err);
+                  });
+            });
+        });
+
+        describe('$gte', () => {
+            it('should return age_i:{$gte:24}', done => {
+               Adapter.find({query:{age_i:{$gte:24},$select:'name,age_i'}})
+                  .then(function(res) {
+                      // console.log('res',res.data);
+                      expect(res.data).to.deep.equal([{name:['Doc adapter3'],age_i:24},{name:['Doc adapter2'],age_i:48}]);
+                      expect(res.total).to.be.equal(2);
+                      done();
+                  })
+                  .catch(function(err) {
+                      // console.log('err',err);
+                      done(err);
+                  });
+            });
+        });
+
+        describe('$ne', () => {
+            it('should return age_i:{$ne:24}', done => {
+               Adapter.find({query:{age_i:{$ne:24},$select:'name,age_i'}})
+                  .then(function(res) {
+                      // console.log('res',res.data);
+                      expect(res.data).to.deep.equal([{name:['Doc adapter1'],age_i:23},{name:['Doc adapter2'],age_i:48}]);
+                      expect(res.total).to.be.equal(2);
+                      done();
+                  })
+                  .catch(function(err) {
+                      // console.log('err',err);
+                      done(err);
+                  });
+            });
+        });
+
+        describe('$or', () => {
+            it('should return $or:[{age_i:23},{age_i:48}]', done => {
+              Adapter.find({query:{$or:[{age_i:23},{age_i:48}],$select:'name,age_i'}})
+                  .then(function(res) {
+                      // console.log('res',res.data);
+                      expect(res.data).to.deep.equal([{name:['Doc adapter1'],age_i:23},{name:['Doc adapter2'],age_i:48}]);
+                      expect(res.total).to.be.equal(2);
+                      done();
+                  })
+                  .catch(function(err) {
+                      // console.log('err',err);
+                      done(err);
+                  });
+            });
+        });
+
+        describe('$between', () => {
+            it('should return age_i:{$between:[24,30]}', done => {
+              Adapter.find({query:{age_i:{$between:[24,30]},$select:'name,age_i'}})
+                  .then(function(res) {
+                      // console.log('res',res.data);
+                      expect(res.data).to.deep.equal([{name:['Doc adapter3'],age_i:24}]);
+                      expect(res.total).to.be.equal(1);
+                      done();
+                  })
+                  .catch(function(err) {
+                      // console.log('err',err);
+                      done(err);
+                  });
+            });
+
+            it('should return age_i:{$between:[40,60]}', done => {
+              Adapter.find({query:{age_i:{$between:[40,60]},$select:'name,age_i'}})
+                  .then(function(res) {
+                      // console.log('res',res.data);
+                      expect(res.data).to.deep.equal([{name:['Doc adapter2'],age_i:48}]);
+                      expect(res.total).to.be.equal(1);
+                      done();
+                  })
+                  .catch(function(err) {
+                      // console.log('err',err);
+                      done(err);
+                  });
+            });
+        });
+    });
 
   describe('Update', () => {
     var response;

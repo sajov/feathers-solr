@@ -95,6 +95,13 @@ export const Query = {
     this.query.filter.push('!' + field + ':("' + param + '")');
   },
 
+  $between(field, param) {
+    if (Array.isArray(param)) {
+      param = param.join(' TO ');
+    }
+    this.query.filter.push(field + ':[' + param + ']');
+  },
+
   $lt(field, param) {
     this.query.filter.push(field + ':[* TO ' + param + '}');
   },
