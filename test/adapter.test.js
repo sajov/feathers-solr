@@ -453,7 +453,7 @@ describe('Status', () => {
 
         describe('$gte', () => {
             it('should return age_i:{$gte:24}', done => {
-               Adapter.find({query:{age_i:{$gte:24},$select:'name,age_i'}})
+               Adapter.find({query:{age_i:{$gte:24},$select:'name,age_i',$sort:{age_i:1}}})
                   .then(function(res) {
                       // console.log('res',res.data);
                       expect(res.data).to.deep.equal([{name:['Doc adapter3'],age_i:24},{name:['Doc adapter2'],age_i:48}]);
@@ -469,7 +469,7 @@ describe('Status', () => {
 
         describe('$ne', () => {
             it('should return age_i:{$ne:24}', done => {
-               Adapter.find({query:{age_i:{$ne:24},$select:'name,age_i'}})
+               Adapter.find({query:{age_i:{$ne:24},$select:'name,age_i',$sort:{age_i:1}}})
                   .then(function(res) {
                       // console.log('res',res.data);
                       expect(res.data).to.deep.equal([{name:['Doc adapter1'],age_i:23},{name:['Doc adapter2'],age_i:48}]);
@@ -485,7 +485,7 @@ describe('Status', () => {
 
         describe('$or', () => {
             it('should return $or:[{age_i:23},{age_i:48}]', done => {
-              Adapter.find({query:{$or:[{age_i:23},{age_i:48}],$select:'name,age_i'}})
+              Adapter.find({query:{$or:[{age_i:23},{age_i:48}],$select:'name,age_i',$sort:{age_i:1}}})
                   .then(function(res) {
                       // console.log('res',res.data);
                       expect(res.data).to.deep.equal([{name:['Doc adapter1'],age_i:23},{name:['Doc adapter2'],age_i:48}]);
