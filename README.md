@@ -8,7 +8,7 @@
 > Require >= Solr 5.x
 
 ## Online Demo
-[feather-solr](http://feathers-solr.sajo-media.de/)
+[eCommerce Category Pages](http://feathers.better-search-box.com/)
 This demonstrate ease of a single query
 
 ## Installation
