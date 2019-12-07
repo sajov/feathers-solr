@@ -1,93 +1,77 @@
 {
   "name": "feathers-solr",
-  "description": "Solr Adapter for Feathersjs",
-  "version": "2.2.1",
+  "description": "A service plugin for Solr",
+  "version": "2.1.0",
   "homepage": "https://github.com/sajov/feathers-solr",
-  "main": "lib/",
   "keywords": [
-    "solr",
-    "client",
-    "adapter",
     "feathers",
-    "feathers-plugin"
+    "feathers-plugin",
+    "solr",
+    "solr-client"
   ],
-  "license": "MIT",
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/sajov/feathers-solr/blob/master/LICENSE"
+    }
+  ],
   "repository": {
     "type": "git",
     "url": "git://github.com/sajov/feathers-solr.git"
   },
   "author": {
-    "name": "sajov",
-    "email": "info@sajo-media.de",
-    "url": "https://feathersjs.com"
+    "name": "Sascha Jovanoski"
   },
   "contributors": [],
   "bugs": {
     "url": "https://github.com/sajov/feathers-solr/issues"
   },
   "engines": {
-    "node": ">= 4.6.0"
+    "node": ">= 6"
   },
+  "main": "lib/",
+  "types": "types",
   "scripts": {
-    "prepublish": "npm run compile",
-    "NOpublish": "git push origin && git push origin --tags",
-    "release:patch": "npm version patch && npm publish",
-    "release:minor": "npm version minor && npm publish",
-    "release:major": "npm version major && npm publish",
-    "compile": "rimraf lib/ && babel -d lib/ src/",
-    "watch": "babel --watch -d lib/ src/",
-    "jshint": "jshint src/. test/. --config",
-    "mocha": "mocha --recursive test/ --require babel-core/register",
-    "test": "npm run compile && npm run jshint && npm run mocha",
-    "test1": "npm run compile && npm run jshint && mocha --recursive test/adapter.test.js --require babel-core/register",
-    "test2": "npm run compile && npm run jshint && mocha --recursive test/adapter.test.js --require babel-core/register",
-    "test3": "npm run compile && npm run jshint && mocha --recursive test/client/configApi.test.js --require babel-core/register",
-    "test4": "npm run compile && npm run jshint && mocha --recursive test/client/schemaApi.test.js --require babel-core/register",
-    "test5": "npm run compile && npm run jshint && mocha --recursive test/query.test.js --require babel-core/register",
-    "start": "npm run compile && node example/app",
-    "test-cov": "node_modules/.bin/istanbul cover node_modules/mocha/bin/_mocha -- --require babel-core/register --colors test/*",
-    "travis": "node_modules/.bin/istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --require babel-core/register --colors --reporter spec test/"
+    "publish": "NOgit push origin --tags && npm run changelog && git push origin",
+    "changelog": "NOgithub_changelog_generator && git add CHANGELOG.md && git commit -am \"Updating changelog\"",
+    "release:patch": "NOnpm version patch && npm publish",
+    "release:minor": "NOnpm version minor && npm publish",
+    "release:major": "NOnpm version major && npm publish",
+    "lint": "semistandard --fix",
+    "dtslint": "dtslint types",
+    "mocha": "mocha --opts mocha.opts",
+    "test": "npm run lint && npm run dtslint && npm run coverage",
+    "example": "babel-node example/index",
+    "coverage": "istanbul cover node_modules/mocha/bin/_mocha -- --opts mocha.opts"
+  },
+  "semistandard": {
+    "env": [
+      "mocha"
+    ]
   },
   "directories": {
     "lib": "lib"
   },
   "dependencies": {
+    "@feathersjs/adapter-commons": "^4.3.8",
+    "@feathersjs/commons": "^4.3.0",
+    "@feathersjs/errors": "^4.3.4",
     "debug": "^4.1.1",
-    "feathers-errors": "^2.9.2",
-    "request": "^2.88.0",
-    "request-promise": "^4.2.4"
-  },
-  "babel": {
-    "presets": [
-      "es2015"
-    ]
-  },
-  "eslintConfig": {
-    "parser": "babel-eslint"
+    "is-plain-object": "^3.0.0",
+    "node-fetch": "^2.6.0",
+    "qs": "^6.9.1"
   },
   "devDependencies": {
-    "babel-cli": "^6.26.0",
-    "babel-core": "^6.26.3",
-    "babel-eslint": "^10.0.3",
-    "babel-plugin-add-module-exports": "^1.0.2",
-    "babel-preset-es2015": "^6.24.1",
+    "@feathersjs/adapter-tests": "^4.3.4",
+    "@feathersjs/express": "^4.3.5",
+    "@feathersjs/feathers": "^4.3.4",
     "body-parser": "^1.19.0",
     "chai": "^4.2.0",
-    "coveralls": "^3.0.6",
-    "faker": "^4.1.0",
-    "feathers": "^2.2.4",
-    "feathers-hooks": "^2.1.2",
-    "feathers-rest": "^1.8.1",
-    "feathers-socketio": "^2.0.1",
-    "ink-docstrap": "^1.3.2",
-    "istanbul": "1.0.0-alpha.2",
-    "jsdoc-to-markdown": "^5.0.1",
-    "jshint": "^2.10.2",
-    "mocha": "^6.2.0",
-    "mocha-coveralls-reporter": "^0.0.5",
-    "mocha-lcov-reporter": "^1.3.0",
-    "nsp": "^3.2.1",
-    "rimraf": "^3.0.0",
-    "supertest": "^4.0.2"
+    "chai-as-promised": "^7.1.1",
+    "dtslint": "^2.0.2",
+    "istanbul": "^1.1.0-alpha.1",
+    "loud-rejection": "^2.2.0",
+    "mocha": "^6.2.1",
+    "semistandard": "^14.2.0"
   }
 }
