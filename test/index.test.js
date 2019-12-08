@@ -4,6 +4,7 @@ const errors = require("@feathersjs/errors");
 const feathers = require("@feathersjs/feathers");
 
 const solr = require("../lib");
+const Client = require("../lib").Client;
 
 const testSuite = adapterTests([
   ".options"
@@ -72,57 +73,61 @@ const testSuite = adapterTests([
 
 describe("Feathers Solr Service", () => {
   const events = ["testing"];
-  const app = feathers()
-    .use("/people", solr({ events }))
-    .use(
-      "/people-customid",
-      solr({
-        id: "customid",
-        events
-      })
+  const options = {
+    Model: new Client("http://localhost:8983/solr"),
+    name: "techproducts",
+    paginate: {},
+    multi: true
+  };
+  const app = feathers().use("/techproducts", solr(options));
+
+  it("is CommonJS compatible", () =>
+    assert.strictEqual(typeof require("../lib"), "function"));
+
+  it("update with string id works", async () => {
+    const techproducts = app.service("techproducts");
+    const product = await techproducts.create({
+      id: "Tester",
+      name: "Test Product",
+      action_s: "create",
+      date_s: new Date()
+    });
+    product.action_s = "update";
+
+    const updatedProduct = await techproducts.update(
+      product.id.toString(),
+      product
     );
+    assert.strictEqual(typeof updatedProduct.id, "string");
+    assert.equal(updatedProduct.action_s, "update");
 
-  // it('is CommonJS compatible', () =>
-  //   assert.strictEqual(typeof require('../lib'), 'function'));
+    //   await techproducts.remove(person.id.toString());
+  });
 
-  // it('update with string id works', async () => {
-  //   const people = app.service('people');
-  //   const person = await people.create({
-  //     name: 'Tester',
-  //     age: 33
-  //   });
+  it("patch record with prop also in query", async () => {
+    const techproducts = app.service("techproducts");
 
-  //   const updatedPerson = await people.update(person.id.toString(), person);
+    // await techproducts.create([
+    //   {
+    //     name: "cart",
+    //     price: 30
+    //   },
+    //   {
+    //     name: "van",
+    //     price: 10
+    //   }
+    // ]);
 
-  //   assert.strictEqual(typeof updatedPerson.id, 'number');
+    //   const [updated] = await animals.patch(
+    //     null,
+    //     { age: 40 },
+    //     { query: { age: 30 } }
+    //   );
 
-  //   await people.remove(person.id.toString());
-  // });
+    //   assert.strictEqual(updated.age, 40);
 
-  // it('patch record with prop also in query', async () => {
-  //   app.use('/animals', solr({ multi: true }));
-  //   const animals = app.service('animals');
-  //   await animals.create([
-  //     {
-  //       type: 'cat',
-  //       age: 30
-  //     },
-  //     {
-  //       type: 'dog',
-  //       age: 10
-  //     }
-  //   ]);
-
-  //   const [updated] = await animals.patch(
-  //     null,
-  //     { age: 40 },
-  //     { query: { age: 30 } }
-  //   );
-
-  //   assert.strictEqual(updated.age, 40);
-
-  //   await animals.remove(null, {});
-  // });
+    //   await animals.remove(null, {});
+  });
 
   // it('allows to pass custom find and sort matcher', async () => {
   //   let sorterCalled = false;
@@ -156,28 +161,28 @@ describe("Feathers Solr Service", () => {
   // });
 
   // it('does not modify the original data', async () => {
-  //   const people = app.service('people');
+  //   const techproducts = app.service('techproducts');
 
-  //   const person = await people.create({
+  //   const person = await techproducts.create({
   //     name: 'Delete tester',
   //     age: 33
   //   });
 
   //   delete person.age;
 
-  //   const otherPerson = await people.get(person.id);
+  //   const otherPerson = await techproducts.get(person.id);
 
   //   assert.strictEqual(otherPerson.age, 33);
 
-  //   await people.remove(person.id);
+  //   await techproducts.remove(person.id);
   // });
 
   // it('does not $select the id', async () => {
-  //   const people = app.service('people');
-  //   const person = await people.create({
+  //   const techproducts = app.service('techproducts');
+  //   const person = await techproducts.create({
   //     name: 'Tester'
   //   });
-  //   const results = await people.find({
+  //   const results = await techproducts.find({
   //     query: {
   //       name: 'Tester',
   //       $select: ['name']
@@ -190,12 +195,12 @@ describe("Feathers Solr Service", () => {
   //     'deepEquals the same'
   //   );
 
-  //   await people.remove(person.id);
+  //   await techproducts.remove(person.id);
   // });
 
   // it('update with null throws error', async () => {
   //   try {
-  //     await app.service('people').update(null, {});
+  //     await app.service('techproducts').update(null, {});
   //     throw new Error('Should never get here');
   //   } catch (error) {
   //     assert.strictEqual(
@@ -205,6 +210,6 @@ describe("Feathers Solr Service", () => {
   //   }
   // });
 
-  testSuite(app, errors, "people");
-  // testSuite(app, errors, 'people-customid', 'customid');
+  // testSuite(app, errors, "techproducts");
+  // testSuite(app, errors, 'techproducts-customid', 'customid');
 });

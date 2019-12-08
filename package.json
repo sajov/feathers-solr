@@ -1,7 +1,7 @@
 {
   "name": "feathers-solr",
   "description": "A service plugin for Solr",
-  "version": "2.1.0",
+  "version": "2.2.1",
   "homepage": "https://github.com/sajov/feathers-solr",
   "keywords": [
     "feathers",
@@ -59,7 +59,8 @@
     "debug": "^4.1.1",
     "is-plain-object": "^3.0.0",
     "node-fetch": "^2.6.0",
-    "qs": "^6.9.1"
+    "qs": "^6.9.1",
+    "uuid": "^3.3.3"
   },
   "devDependencies": {
     "@feathersjs/adapter-tests": "^4.3.4",
