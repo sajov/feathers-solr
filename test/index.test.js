@@ -5,129 +5,129 @@ const feathers = require("@feathersjs/feathers");
 
 const solr = require("../lib");
 const Client = require("../lib").Client;
+const options = {
+  Model: new Client("http://localhost:8983/solr/techproducts"),
+  // name: "techproducts",
+  paginate: {},
+  multi: true,
+  event: ["testing"]
+};
 
 const testSuite = adapterTests([
-  ".options"
-  // '.events',
-  // '._get',
-  // '._find',
-  // '._create',
-  // '._update',
-  // '._patch',
-  // '._remove',
-  // '.get',
-  // '.get + $select',
-  // '.get + id + query',
-  // '.get + NotFound',
-  // '.get + id + query id',
-  // '.find',
-  // '.remove',
-  // '.remove + $select',
-  // '.remove + id + query',
-  // '.remove + multi',
-  // '.remove + id + query id',
-  // '.update',
-  // '.update + $select',
-  // '.update + id + query',
-  // '.update + NotFound',
-  // '.update + id + query id',
-  // '.patch',
-  // '.patch + $select',
-  // '.patch + id + query',
-  // '.patch multiple',
-  // '.patch multi query',
-  // '.patch + NotFound',
-  // '.patch + id + query id',
-  // '.create',
-  // '.create + $select',
-  // '.create multi',
-  // 'internal .find',
-  // 'internal .get',
-  // 'internal .create',
-  // 'internal .update',
-  // 'internal .patch',
-  // 'internal .remove',
-  // '.find + equal',
-  // '.find + equal multiple',
-  // '.find + $sort',
-  // '.find + $sort + string',
-  // '.find + $limit',
-  // '.find + $limit 0',
-  // '.find + $skip',
-  // '.find + $select',
-  // '.find + $or',
-  // '.find + $in',
-  // '.find + $nin',
-  // '.find + $lt',
-  // '.find + $lte',
-  // '.find + $gt',
-  // '.find + $gte',
-  // '.find + $ne',
-  // '.find + $gt + $lt + $sort',
-  // '.find + $or nested + $sort',
-  // '.find + paginate',
-  // '.find + paginate + $limit + $skip',
-  // '.find + paginate + $limit 0',
-  // '.find + paginate + params'
+  ".options",
+  // ".events",
+  "._get",
+  "._find",
+  "._create",
+  "._update",
+  // "._patch",
+  // "._remove",
+  ".get",
+  // ".get + $select"
+  // ".get + id + query",
+  // ".get + NotFound",
+  // ".get + id + query id"
+  ".find",
+  // ".remove",
+  // ".remove + $select",
+  // ".remove + id + query",
+  // ".remove + multi",
+  // ".remove + id + query id",
+  ".update",
+  // ".update + $select",
+  // ".update + id + query",
+  // ".update + NotFound",
+  // ".update + id + query id",
+  // ".patch",
+  // ".patch + $select",
+  // ".patch + id + query",
+  // ".patch multiple",
+  // ".patch multi query",
+  // ".patch + NotFound",
+  // ".patch + id + query id",
+  // ".create",
+  // ".create + $select",
+  // ".create multi",
+  "internal .find",
+  "internal .get",
+  "internal .create",
+  "internal .update",
+  "internal .patch",
+  "internal .remove",
+  // ".find + equal"
+  // ".find + equal multiple",
+  // ".find + $sort"
+  // ".find + $sort + string"
+  // ".find + $limit"
+  ".find + $limit 0"
+  // ".find + $skip"
+  // ".find + $select"
+  // ".find + $or",
+  // ".find + $in",
+  // ".find + $nin",
+  // ".find + $lt",
+  // ".find + $lte",
+  // ".find + $gt",
+  // ".find + $gte",
+  // ".find + $ne",
+  // ".find + $gt + $lt + $sort",
+  // ".find + $or nested + $sort",
+  // ".find + paginate",
+  // ".find + paginate + $limit + $skip",
+  // ".find + paginate + $limit 0",
+  // ".find + paginate + params"
 ]);
 
 describe("Feathers Solr Service", () => {
   const events = ["testing"];
-  const options = {
-    Model: new Client("http://localhost:8983/solr"),
-    name: "techproducts",
-    paginate: {},
-    multi: true
-  };
-  const app = feathers().use("/techproducts", solr(options));
+  const app = feathers().use("techproducts", solr(options));
+  // it("is CommonJS compatible", () =>
+  //   assert.strictEqual(typeof require("../lib"), "function"));
 
-  it("is CommonJS compatible", () =>
-    assert.strictEqual(typeof require("../lib"), "function"));
+  // it("update with string id works", async () => {
+  //   const techproducts = app.service("techproducts");
+  //   const product = await techproducts.create({
+  //     id: "Tester",
+  //     name: "Test Product",
+  //     action_s: "create",
+  //     date_s: new Date()
+  //   });
+  //   product.action_s = "update";
 
-  it("update with string id works", async () => {
-    const techproducts = app.service("techproducts");
-    const product = await techproducts.create({
-      id: "Tester",
-      name: "Test Product",
-      action_s: "create",
-      date_s: new Date()
-    });
-    product.action_s = "update";
+  //   const updatedProduct = await techproducts.update(
+  //     product.id.toString(),
+  //     product
+  //   );
+  //   assert.strictEqual(typeof updatedProduct.id, "string");
+  //   assert.equal(updatedProduct.action_s, "update");
 
-    const updatedProduct = await techproducts.update(
-      product.id.toString(),
-      product
-    );
-    assert.strictEqual(typeof updatedProduct.id, "string");
-    assert.equal(updatedProduct.action_s, "update");
+  //   await techproducts.remove(product.id);
+  // });
 
-    //   await techproducts.remove(person.id.toString());
-  });
+  // it("patch record with prop also in query", async () => {
+  //   const techproducts = app.service("techproducts");
 
-  it("patch record with prop also in query", async () => {
-    const techproducts = app.service("techproducts");
+  //   // await techproducts.create([
+  //   //   {
+  //   //     name: "cart",
+  //   //     price: 30
+  //   //   },
+  //   //   {
+  //   //     name: "van",
+  //   //     price: 10
+  //   //   }
+  //   // ]);
 
-    // await techproducts.create([
-    //   {
-    //     name: "cart",
-    //     price: 30
-    //   },
-    //   {
-    //     name: "van",
-    //     price: 10
-    //   }
-    // ]);
+  //   //   const [updated] = await animals.patch(
+  //   //     null,
+  //   //     { age: 40 },
+  //   //     { query: { age: 30 } }
+  //   //   );
 
-    //   const [updated] = await animals.patch(
-    //     null,
-    //     { age: 40 },
-    //     { query: { age: 30 } }
-    //   );
+  //   //   assert.strictEqual(updated.age, 40);
 
-    //   assert.strictEqual(updated.age, 40);
-
-    //   await animals.remove(null, {});
-  });
+  //   //   await animals.remove(null, {});
+  // });
 
   // it('allows to pass custom find and sort matcher', async () => {
   //   let sorterCalled = false;
@@ -209,7 +209,5 @@ describe("Feathers Solr Service", () => {
   //     );
   //   }
   // });
-
-  // testSuite(app, errors, "techproducts");
-  // testSuite(app, errors, 'techproducts-customid', 'customid');
+  testSuite(app, errors, "techproducts");
 });
