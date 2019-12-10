@@ -7,10 +7,10 @@ const solr = require("../lib");
 const Client = require("../lib").Client;
 const options = {
   Model: new Client("http://localhost:8983/solr/techproducts"),
-  // name: "techproducts",
   paginate: {},
   multi: true,
   event: ["testing"]
+  // paginate: { default: 10, max: 1000 }
 };
 
 const testSuite = adapterTests([
@@ -33,8 +33,8 @@ const testSuite = adapterTests([
   // ".remove + id + query",
   // ".remove + multi",
   // ".remove + id + query id",
-  ".update",
-  ".update + $select",
+  // ".update",
+  // ".update + $select",
   // ".update + id + query",
   // ".update + NotFound",
   // ".update + id + query id",
@@ -54,55 +54,129 @@ const testSuite = adapterTests([
   "internal .update",
   "internal .patch",
   "internal .remove",
-  // ".find + equal"
-  // ".find + equal multiple",
-  // ".find + $sort"
-  // ".find + $sort + string"
-  // ".find + $limit"
+  ".find + equal",
+  ".find + equal multiple",
+  ".find + $sort",
+  ".find + $sort + string",
+  ".find + $limit",
   ".find + $limit 0",
-  // ".find + $skip"
-  ".find + $select"
-  // ".find + $or",
-  // ".find + $in",
-  // ".find + $nin",
-  // ".find + $lt",
-  // ".find + $lte",
-  // ".find + $gt",
-  // ".find + $gte",
-  // ".find + $ne",
-  // ".find + $gt + $lt + $sort",
-  // ".find + $or nested + $sort",
-  // ".find + paginate",
-  // ".find + paginate + $limit + $skip",
+  ".find + $skip",
+  ".find + $select",
+  ".find + $or",
+  ".find + $in",
+  ".find + $nin",
+  ".find + $lt",
+  ".find + $lte",
+  ".find + $gt",
+  ".find + $gte",
+  ".find + $ne",
+  ".find + $gt + $lt + $sort",
+  // ".find + $or nested + $sort"
+  ".find + paginate"
+  // ".find + paginate + $limit + $skip"
   // ".find + paginate + $limit 0",
   // ".find + paginate + params"
 ]);
 
 describe("Feathers Solr Service", () => {
   const events = ["testing"];
-  const app = feathers().use("techproducts", solr(options));
-  // it("is CommonJS compatible", () =>
-  //   assert.strictEqual(typeof require("../lib"), "function"));
+  const app = feathers().use("techproducts", new solr(options));
 
-  // it("update with string id works", async () => {
+  it("is CommonJS compatible", () =>
+    assert.strictEqual(typeof require("../lib"), "function"));
+
+  testSuite(app, errors, "techproducts");
+
+  // it("create with string id works", async () => {
   //   const techproducts = app.service("techproducts");
+
   //   const product = await techproducts.create({
   //     id: "Tester",
   //     name: "Test Product",
   //     action_s: "create",
   //     date_s: new Date()
   //   });
-  //   product.action_s = "update";
+
+  //   assert.strictEqual(typeof product.id, "string");
+  //   assert.equal(product.action_s, "create");
+
+  //   // await techproducts.remove(product.id);
+  // });
+
+  // it("update with string id works", async () => {
+  //   const techproducts = app.service("techproducts");
+
+  //   const product = await techproducts.get("Tester");
 
   //   const updatedProduct = await techproducts.update(
   //     product.id.toString(),
-  //     product
+  //     Object.assign(product, { action_s: "update" })
   //   );
+
   //   assert.strictEqual(typeof updatedProduct.id, "string");
   //   assert.equal(updatedProduct.action_s, "update");
 
+  //   const productNew = await techproducts.get("Tester");
+  //   // console.log(productNew);
+  //   assert.strictEqual(typeof productNew.id, "string");
+  //   // assert.equal(productNew.action_s, "update");
+
   //   await techproducts.remove(product.id);
   // });
+
+  // it("find with complex query works", async () => {
+  //   const techproducts = app.service("techproducts");
+
+  //   const cerateProduct = await techproducts.create([
+  //     {
+  //       id: "1",
+  //       name: "Dude",
+  //       action_s: "create",
+  //       date_s: new Date()
+  //     },
+  //     {
+  //       id: "2",
+  //       name: "Dude",
+  //       action_s: "create",
+  //       date_s: new Date()
+  //     }
+  //   ]);
+
+  //   const findProduct = await techproducts.find({
+  //     $limit: 1,
+  //     $skip: 0
+  //   });
+  //   console.log(findProduct);
+  //   // const updatedProduct = await techproducts.update(
+  //   //   product.id.toString(),
+  //   //   Object.assign(product, { action_s: "update" })
+  //   // );
+
+  //   // await techproducts.remove(product.id);
+  // });
+
+  it("find with complex query works", async () => {
+    const techproducts = app.service("techproducts");
+
+    const findProduct = await techproducts.find({
+      query: {
+        $search: "*:*",
+        // $limit: 1,
+        // $limit: 1,
+        $skip: 0,
+        $params: { rows: 1 }
+        // $suggest: "dsad",
+        // $select: ["name", "age"],
+        // name: "sajov"
+      }
+    });
+    // const updatedProduct = await techproducts.update(
+    //   product.id.toString(),
+    //   Object.assign(product, { action_s: "update" })
+    // );
+    assert.strictEqual(typeof "typeof productNew.id", "string");
+    // await techproducts.remove(product.id);
+  });
 
   // it("patch record with prop also in query", async () => {
   //   const techproducts = app.service("techproducts");
@@ -209,5 +283,4 @@ describe("Feathers Solr Service", () => {
   //     );
   //   }
   // });
-  testSuite(app, errors, "techproducts");
 });
