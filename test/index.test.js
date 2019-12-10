@@ -47,7 +47,7 @@ const testSuite = adapterTests([
   // ".patch + id + query id",
   // ".create",
   // ".create + $select",
-  // ".create multi",
+  ".create multi",
   "internal .find",
   "internal .get",
   "internal .create",
@@ -71,11 +71,11 @@ const testSuite = adapterTests([
   ".find + $gte",
   ".find + $ne",
   ".find + $gt + $lt + $sort",
-  // ".find + $or nested + $sort"
-  ".find + paginate"
-  // ".find + paginate + $limit + $skip"
-  // ".find + paginate + $limit 0",
-  // ".find + paginate + params"
+  // ".find + $or nested + $sort",
+  ".find + paginate",
+  ".find + paginate + $limit + $skip",
+  ".find + paginate + $limit 0",
+  ".find + paginate + params"
 ]);
 
 describe("Feathers Solr Service", () => {

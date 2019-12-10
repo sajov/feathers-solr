@@ -27,40 +27,50 @@ const solr = new Service(options);
 //     console.log("ERR", err);
 //   });
 
-solr
-  .get("afd6e1d0-1a07-11ea-ba7b-efce98bcbcd7")
-  .then(res => {
-    console.log("Solr.get.res ???", res);
-  })
-  .catch(err => {
-    console.log("Solr.get.err ???", err);
-  });
-
 // solr
-//   .remove("*")
+//   .get("afd6e1d0-1a07-11ea-ba7b-efce98bcbcd7")
 //   .then(res => {
-//     solr
-//       .create({
-//         name: "Sajo",
-//         age: 49,
-//         id: "afd6e1d0-1a07-11ea-ba7b-efce98bcbcd7"
-//       })
-//       .then(res => {
-//         // console.log("Solr.create.res", res);
-//         solr
-//           .get("afd6e1d0-1a07-11ea-ba7b-efce98bcbcd7")
-//           .then(res => {
-//             // console.log("Solr.get.res", res);
-//           })
-//           .catch(err => {
-//             // console.log("Solr.get.err", err);
-//           });
-//       })
-//       .catch(err => {
-//         // console.log("Solr.create.err", err);
-//       });
+//     console.log("Solr.get.res ???", res);
 //   })
-//   .catch(err => console.log(err));
+//   .catch(err => {
+//     console.log("Solr.get.err ???", err);
+//   });
+
+solr
+  .remove("*")
+  .then(res => {
+    solr
+      .create({
+        name: "Sajo",
+        age: 49,
+        id: "afd6e1d0-1a07-11ea-ba7b-efce98bcbcd7"
+      })
+      .then(res => {
+        // console.log("Solr.create.res", res);
+        solr
+          .get("afd6e1d0-1a07-11ea-ba7b-efce98bcbcd7")
+          .then(res => {
+            console.log("Solr.get.res", res);
+            solr.remove("*").catch(err => console.log(err));
+          })
+          .catch(err => {
+            // console.log("Solr.get.err", err);
+          });
+        solr
+          .find({ query: { $limit: 0 }, pagination: { default: 2 } })
+          .then(res => {
+            console.log("Solr.find.res", res);
+            solr.remove("*").catch(err => console.log(err));
+          })
+          .catch(err => {
+            // console.log("Solr.get.err", err);
+          });
+      })
+      .catch(err => {
+        // console.log("Solr.create.err", err);
+      });
+  })
+  .catch(err => console.log(err));
 
 // solr
 //   .find({})
