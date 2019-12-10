@@ -21,12 +21,12 @@ const testSuite = adapterTests([
   "._create",
   "._update",
   // "._patch",
-  // "._remove",
+  "._remove",
   ".get",
-  // ".get + $select"
+  // ".get + $select",
   // ".get + id + query",
   // ".get + NotFound",
-  // ".get + id + query id"
+  // ".get + id + query id",
   ".find",
   // ".remove",
   // ".remove + $select",
@@ -34,7 +34,7 @@ const testSuite = adapterTests([
   // ".remove + multi",
   // ".remove + id + query id",
   ".update",
-  // ".update + $select",
+  ".update + $select",
   // ".update + id + query",
   // ".update + NotFound",
   // ".update + id + query id",
@@ -59,9 +59,9 @@ const testSuite = adapterTests([
   // ".find + $sort"
   // ".find + $sort + string"
   // ".find + $limit"
-  ".find + $limit 0"
+  ".find + $limit 0",
   // ".find + $skip"
-  // ".find + $select"
+  ".find + $select"
   // ".find + $or",
   // ".find + $in",
   // ".find + $nin",

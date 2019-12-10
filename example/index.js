@@ -10,29 +10,58 @@ const options = {
 };
 
 const solr = new Service(options);
-console.log(solr.Model);
-solr.options.Model.post("schema/fields", {
-  "add-field": {
-    name: "namewwwwss",
-    type: "text_general",
-    multiValued: false,
-    indexed: true,
-    stored: true
-  }
-})
+// console.log(solr.Model);
+// solr.options.Model.post("schema/fields", {
+//   "add-field": {
+//     name: "namewwwwss",
+//     type: "text_general",
+//     multiValued: false,
+//     indexed: true,
+//     stored: true
+//   }
+// })
+//   .then(res => {
+//     console.log("RES", res);
+//   })
+//   .catch(err => {
+//     console.log("ERR", err);
+//   });
+
+solr
+  .get("afd6e1d0-1a07-11ea-ba7b-efce98bcbcd7")
   .then(res => {
-    console.log("RES", res);
+    console.log("Solr.get.res ???", res);
   })
   .catch(err => {
-    console.log("ERR", err);
+    console.log("Solr.get.err ???", err);
   });
 
 // solr
-//   .create({ name: "Doug", age: 32, id: "afd6e1d0-1a07-11ea-ba7b-efce98bcbcd7" })
+//   .remove("*")
 //   .then(res => {
-//     console.log(res);
+//     solr
+//       .create({
+//         name: "Sajo",
+//         age: 49,
+//         id: "afd6e1d0-1a07-11ea-ba7b-efce98bcbcd7"
+//       })
+//       .then(res => {
+//         // console.log("Solr.create.res", res);
+//         solr
+//           .get("afd6e1d0-1a07-11ea-ba7b-efce98bcbcd7")
+//           .then(res => {
+//             // console.log("Solr.get.res", res);
+//           })
+//           .catch(err => {
+//             // console.log("Solr.get.err", err);
+//           });
+//       })
+//       .catch(err => {
+//         // console.log("Solr.create.err", err);
+//       });
 //   })
 //   .catch(err => console.log(err));
+
 // solr
 //   .find({})
 //   .then(res => {
