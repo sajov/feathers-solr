@@ -23,7 +23,7 @@ const testSuite = adapterTests([
   // "._patch",
   "._remove",
   ".get",
-  // ".get + $select",
+  ".get + $select",
   // ".get + id + query",
   // ".get + NotFound",
   // ".get + id + query id",
