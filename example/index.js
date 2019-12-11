@@ -10,6 +10,31 @@ const options = {
 };
 
 const solr = new Service(options);
+
+const params = {
+  query: {
+    $or: [
+      { name: "Doug" },
+      {
+        age: {
+          $gte: 18,
+          $lt: 25
+        }
+      }
+    ],
+    $sort: { name: 1 }
+  }
+};
+
+solr
+  .find(params)
+  .then(res => {
+    console.log("RES", res);
+  })
+  .catch(err => {
+    console.log("ERR", err);
+  });
+
 // console.log(solr.Model);
 // solr.options.Model.post("schema/fields", {
 //   "add-field": {
@@ -36,41 +61,41 @@ const solr = new Service(options);
 //     console.log("Solr.get.err ???", err);
 //   });
 
-solr
-  .remove("*")
-  .then(res => {
-    solr
-      .create({
-        name: "Sajo",
-        age: 49,
-        id: "afd6e1d0-1a07-11ea-ba7b-efce98bcbcd7"
-      })
-      .then(res => {
-        // console.log("Solr.create.res", res);
-        solr
-          .get("afd6e1d0-1a07-11ea-ba7b-efce98bcbcd7")
-          .then(res => {
-            console.log("Solr.get.res", res);
-            solr.remove("*").catch(err => console.log(err));
-          })
-          .catch(err => {
-            // console.log("Solr.get.err", err);
-          });
-        solr
-          .find({ query: { $limit: 0 }, pagination: { default: 2 } })
-          .then(res => {
-            console.log("Solr.find.res", res);
-            solr.remove("*").catch(err => console.log(err));
-          })
-          .catch(err => {
-            // console.log("Solr.get.err", err);
-          });
-      })
-      .catch(err => {
-        // console.log("Solr.create.err", err);
-      });
-  })
-  .catch(err => console.log(err));
+// solr
+//   .remove("*")
+//   .then(res => {
+//     solr
+//       .create({
+//         name: "Sajo",
+//         age: 49,
+//         id: "afd6e1d0-1a07-11ea-ba7b-efce98bcbcd7"
+//       })
+//       .then(res => {
+//         // console.log("Solr.create.res", res);
+//         solr
+//           .get("afd6e1d0-1a07-11ea-ba7b-efce98bcbcd7")
+//           .then(res => {
+//             console.log("Solr.get.res", res);
+//             solr.remove("*").catch(err => console.log(err));
+//           })
+//           .catch(err => {
+//             // console.log("Solr.get.err", err);
+//           });
+//         solr
+//           .find({ query: { $limit: 0 }, pagination: { default: 2 } })
+//           .then(res => {
+//             console.log("Solr.find.res", res);
+//             solr.remove("*").catch(err => console.log(err));
+//           })
+//           .catch(err => {
+//             // console.log("Solr.get.err", err);
+//           });
+//       })
+//       .catch(err => {
+//         // console.log("Solr.create.err", err);
+//       });
+//   })
+//   .catch(err => console.log(err));
 
 // solr
 //   .find({})
