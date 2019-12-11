@@ -42,7 +42,8 @@
     "mocha": "mocha --opts mocha.opts",
     "test": "npm run lint && npm run dtslint && npm run coverage",
     "example": "babel-node example/index",
-    "coverage": "istanbul cover node_modules/mocha/bin/_mocha -- --opts mocha.opts"
+    "coverage": "istanbul cover node_modules/mocha/bin/_mocha -- --opts mocha.opts",
+    "travis": "node_modules/.bin/istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --colors --reporter spec test/"
   },
   "semistandard": {
     "env": [
