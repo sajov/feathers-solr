@@ -81,22 +81,29 @@ const testSuite = adapterTests([
 describe("Feathers Solr Service", () => {
   const events = ["testing"];
   const app = feathers().use("techproducts", new solr(options));
-  app.service("techproducts").options.Model.post("schema/fields", {
-    "add-field": {
-      name: "name",
-      type: "text_general",
-      multiValued: false,
-      indexed: true,
-      stored: true
-    },
-    "add-field": {
-      name: "age",
-      type: "pint",
-      multiValued: false,
-      indexed: true,
-      stored: true
-    }
-  }).catch(err => console.log("ERR", err));
+  app
+    .service("techproducts")
+    .remove("*")
+    .catch(err => console.log(err));
+  app
+    .service("techproducts")
+    .options.Model.post("schema/fields", {
+      "add-field": {
+        name: "name",
+        type: "text_general",
+        multiValued: false,
+        indexed: true,
+        stored: true
+      },
+      "add-field": {
+        name: "age",
+        type: "pint",
+        multiValued: false,
+        indexed: true,
+        stored: true
+      }
+    })
+    .catch(err => console.log("ERR", err));
 
   it("is CommonJS compatible", () =>
     assert.strictEqual(typeof require("../lib"), "function"));
@@ -110,6 +117,8 @@ describe("Feathers Solr Service", () => {
   //     id: "Tester",
   //     name: "Test Product",
   //     action_s: "create",
+  //     date_s: new Date()
+  //     date_s: new Date()
   //     date_s: new Date()
   //   });
 
