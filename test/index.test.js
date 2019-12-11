@@ -25,7 +25,7 @@ const testSuite = adapterTests([
   ".get",
   ".get + $select",
   ".get + id + query",
-  // ".get + NotFound",
+  ".get + NotFound",
   // ".get + id + query id",
   ".find",
   // ".remove",
