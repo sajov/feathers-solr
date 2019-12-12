@@ -7,12 +7,14 @@ const solr = require("../lib");
 const Client = require("../lib").Client;
 const options = {
   Model: new Client("http://localhost:8983/solr/techproducts"),
-  paginate: {},
-  multi: true,
-  event: ["testing"]
   // paginate: { default: 10, max: 1000 }
+  paginate: {},
+  // multi: true,
+  event: ["testing"]
 };
 
+// const testSuite = adapterTests([".create + $select"]);
+// const testSuite = adapterTests([".remove + $select"]);
 const testSuite = adapterTests([
   ".options",
   // ".events",
@@ -28,8 +30,8 @@ const testSuite = adapterTests([
   ".get + NotFound",
   ".get + id + query id",
   ".find",
-  // ".remove",
-  // ".remove + $select",
+  ".remove",
+  ".remove + $select",
   // ".remove + id + query",
   // ".remove + multi",
   // ".remove + id + query id",
@@ -45,9 +47,9 @@ const testSuite = adapterTests([
   // ".patch multi query",
   // ".patch + NotFound",
   // ".patch + id + query id",
-  // ".create",
-  // ".create + $select",
-  ".create multi",
+  ".create",
+  ".create + $select",
+  // ".create multi",
   "internal .find",
   "internal .get",
   "internal .create",
