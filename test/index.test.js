@@ -13,7 +13,11 @@ const options = {
   event: ["testing"]
 };
 
-// const testSuite = adapterTests([".create + $select"]);
+// const testSuite = adapterTests([
+//   ".remove",
+//   ".remove + $select",
+//   ".remove + id + query"
+// ]);
 // const testSuite = adapterTests([".remove + $select"]);
 const testSuite = adapterTests([
   ".options",
@@ -32,7 +36,7 @@ const testSuite = adapterTests([
   ".find",
   ".remove",
   ".remove + $select",
-  // ".remove + id + query",
+  ".remove + id + query",
   // ".remove + multi",
   // ".remove + id + query id",
   // ".update",
