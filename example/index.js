@@ -6,10 +6,17 @@ const options = {
   Model: new Client("http://localhost:8983/solr/techproducts"),
   name: "techproducts",
   paginate: {},
-  multi: true
+  multi: true,
+  events: ["testing"]
 };
-
+const app = feathers();
 const solr = new Service(options);
+app.use("solr", solr);
+// solr.on("testing", res => console.log("on.testing", res));
+app.service("solr").emit("testing", {
+  type: "customEvent",
+  data: "can be anything"
+});
 
 const params = {
   query: {
@@ -25,10 +32,18 @@ const params = {
     $sort: { name: 1 }
   }
 };
+
+console.log("events:", app.service("solr").events);
 solr
   .remove("*")
-  .then(res => console.log("RES", res))
+  .then(res => console.log("remove", res))
   .catch(err => console.log(err));
+
+solr
+  .get("1")
+  .then(res => console.log("get", res))
+  .catch(err => console.log(err));
+
 // solr
 //   .find(params)
 //   .then(res => {

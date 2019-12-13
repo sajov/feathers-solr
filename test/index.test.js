@@ -7,10 +7,10 @@ const solr = require("../lib");
 const Client = require("../lib").Client;
 const options = {
   Model: new Client("http://localhost:8983/solr/techproducts"),
-  // paginate: { default: 10, max: 1000 }
   paginate: {},
+  events: ["testing"]
   // multi: true,
-  event: ["testing"]
+  // paginate: { default: 10, max: 1000 }
 };
 
 // const testSuite = adapterTests([
@@ -22,12 +22,12 @@ const options = {
 // const testSuite = adapterTests([".patch"]);
 const testSuite = adapterTests([
   ".options",
-  // ".events",
+  ".events",
   "._get",
   "._find",
   "._create",
   "._update",
-  // "._patch",
+  "._patch",
   "._remove",
   ".get",
   ".get + $select",
