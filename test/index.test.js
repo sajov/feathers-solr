@@ -19,6 +19,7 @@ const options = {
 //   ".remove + id + query"
 // ]);
 // const testSuite = adapterTests([".remove + $select"]);
+// const testSuite = adapterTests([".patch"]);
 const testSuite = adapterTests([
   ".options",
   // ".events",
