@@ -34,15 +34,39 @@ const params = {
 };
 
 console.log("events:", app.service("solr").events);
-solr
-  .remove("*")
-  .then(res => console.log("remove", res))
-  .catch(err => console.log(err));
+// solr
+//   .remove("demo")
+//   .then(res => {
+//     console.log("remove", res);
 
+//   })
+//   .catch(err => console.log(err));
 solr
-  .get("1")
-  .then(res => console.log("get", res))
-  .catch(err => console.log(err));
+  .create({
+    id: "demo",
+    name: "Dougler",
+    age: 10
+  })
+  .then(res => {
+    console.log("create.res", res);
+    solr
+      .patch("demo", {
+        name: "PatchDoug"
+      })
+      .then(res => {
+        console.log("patch.res", res);
+      })
+      .catch(err => {
+        console.log("patch.err", err);
+      });
+  })
+  .catch(err => {
+    console.log("create.err", err);
+  });
+// solr
+//   .get("1")
+//   .then(res => console.log("get", res))
+//   .catch(err => console.log(err));
 
 // solr
 //   .find(params)
