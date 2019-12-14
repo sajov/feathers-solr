@@ -32,37 +32,42 @@ const params = {
     $sort: { name: 1 }
   }
 };
-
+const service = app.service("solr");
 console.log("events:", app.service("solr").events);
-// solr
-//   .remove("demo")
-//   .then(res => {
-//     console.log("remove", res);
-
-//   })
-//   .catch(err => console.log(err));
-solr
-  .create({
-    id: "demo",
-    name: "Dougler",
-    age: 10
-  })
+service
+  .remove(null, { query: { id: "*" } })
   .then(res => {
-    console.log("create.res", res);
-    solr
-      .patch("demo", {
-        name: "PatchDoug"
-      })
-      .then(res => {
-        console.log("patch.res", res);
-      })
-      .catch(err => {
-        console.log("patch.err", err);
-      });
+    console.log("remove", res);
+    // service.create({ name: "Dave", age: 29, created: true });
+    // service.create({
+    //   name: "David",
+    //   age: 3,
+    //   created: true
+    // });
   })
-  .catch(err => {
-    console.log("create.err", err);
-  });
+  .catch(err => console.log(err));
+// solr
+//   .create({
+//     id: "demo",
+//     name: "Dougler",
+//     age: 10
+//   })
+//   .then(res => {
+//     console.log("create.res", res);
+//     solr
+//       .patch("demo", {
+//         name: "PatchDoug"
+//       })
+//       .then(res => {
+//         console.log("patch.res", res);
+//       })
+//       .catch(err => {
+//         console.log("patch.err", err);
+//       });
+//   })
+//   .catch(err => {
+//     console.log("create.err", err);
+//   });
 // solr
 //   .get("1")
 //   .then(res => console.log("get", res))

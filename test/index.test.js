@@ -13,13 +13,7 @@ const options = {
   // paginate: { default: 10, max: 1000 }
 };
 
-// const testSuite = adapterTests([
-//   ".remove",
-//   ".remove + $select",
-//   ".remove + id + query"
-// ]);
-// const testSuite = adapterTests([".remove + $select"]);
-// const testSuite = adapterTests([".patch"]);
+// const testSuite = adapterTests([".remove + multi"]);
 const testSuite = adapterTests([
   ".options",
   ".events",
@@ -38,7 +32,7 @@ const testSuite = adapterTests([
   ".remove",
   ".remove + $select",
   ".remove + id + query",
-  // ".remove + multi",
+  ".remove + multi",
   ".remove + id + query id",
   ".update",
   ".update + $select",
@@ -90,7 +84,7 @@ describe("Feathers Solr Service", () => {
   const app = feathers().use("techproducts", new solr(options));
   app
     .service("techproducts")
-    .remove("*")
+    .remove(null, { query: { id: "*" } })
     .catch(err => console.log(err));
   app
     .service("techproducts")
@@ -105,6 +99,13 @@ describe("Feathers Solr Service", () => {
       "add-field": {
         name: "age",
         type: "pint",
+        multiValued: false,
+        indexed: true,
+        stored: true
+      },
+      "add-field": {
+        name: "created",
+        type: "boolean",
         multiValued: false,
         indexed: true,
         stored: true
@@ -187,28 +188,28 @@ describe("Feathers Solr Service", () => {
   //   // await techproducts.remove(product.id);
   // });
 
-  it("find with complex query works", async () => {
-    const techproducts = app.service("techproducts");
+  // it("find with complex query works", async () => {
+  //   const techproducts = app.service("techproducts");
 
-    const findProduct = await techproducts.find({
-      query: {
-        $search: "*:*",
-        // $limit: 1,
-        // $limit: 1,
-        $skip: 0,
-        $params: { rows: 1 }
-        // $suggest: "dsad",
-        // $select: ["name", "age"],
-        // name: "sajov"
-      }
-    });
-    // const updatedProduct = await techproducts.update(
-    //   product.id.toString(),
-    //   Object.assign(product, { action_s: "update" })
-    // );
-    assert.strictEqual(typeof "typeof productNew.id", "string");
-    // await techproducts.remove(product.id);
-  });
+  //   const findProduct = await techproducts.find({
+  //     query: {
+  //       $search: "*:*",
+  //       // $limit: 1,
+  //       // $limit: 1,
+  //       $skip: 0,
+  //       $params: { rows: 1 }
+  //       // $suggest: "dsad",
+  //       // $select: ["name", "age"],
+  //       // name: "sajov"
+  //     }
+  //   });
+  //   // const updatedProduct = await techproducts.update(
+  //   //   product.id.toString(),
+  //   //   Object.assign(product, { action_s: "update" })
+  //   // );
+  //   assert.strictEqual(typeof "typeof productNew.id", "string");
+  //   // await techproducts.remove(product.id);
+  // });
 
   // it("patch record with prop also in query", async () => {
   //   const techproducts = app.service("techproducts");
