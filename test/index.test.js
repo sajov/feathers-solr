@@ -80,7 +80,7 @@ const tests = [
 const testSuite = adapterTests(tests);
 
 describe("Feathers Solr Service", () => {
-  beforeEach(done => setTimeout(done, 50));
+  beforeEach(done => setTimeout(done, 1000));
 
   const events = ["testing"];
   const app = feathers().use("techproducts", new solr(options));
@@ -118,26 +118,22 @@ describe("Feathers Solr Service", () => {
   it("is CommonJS compatible", () =>
     assert.strictEqual(typeof require("../lib"), "function"));
 
+  it("create with string id works", async () => {
+    const techproducts = app.service("techproducts");
+
+    const product = await techproducts.create({
+      id: "Tester",
+      name: "Test Product",
+      action_s: "create",
+      date_s: new Date()
+    });
+
+    assert.strictEqual(typeof product.id, "string");
+    assert.equal(product.action_s, "create");
+
+    // await techproducts.remove(product.id);
+  });
   testSuite(app, errors, "techproducts");
-
-  // it("create with string id works", async () => {
-  //   const techproducts = app.service("techproducts");
-
-  //   const product = await techproducts.create({
-  //     id: "Tester",
-  //     name: "Test Product",
-  //     action_s: "create",
-  //     date_s: new Date()
-  //     date_s: new Date()
-  //     date_s: new Date()
-  //   });
-
-  //   assert.strictEqual(typeof product.id, "string");
-  //   assert.equal(product.action_s, "create");
-
-  //   // await techproducts.remove(product.id);
-  // });
-
   // it("update with string id works", async () => {
   //   const techproducts = app.service("techproducts");
 
