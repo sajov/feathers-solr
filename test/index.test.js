@@ -13,8 +13,7 @@ const options = {
   // paginate: { default: 10, max: 1000 }
 };
 
-// const testSuite = adapterTests([".remove + multi"]);
-const testSuite = adapterTests([
+const tests = [
   ".options",
   ".events",
   "._get",
@@ -77,7 +76,8 @@ const testSuite = adapterTests([
   ".find + paginate + $limit + $skip",
   ".find + paginate + $limit 0",
   ".find + paginate + params"
-]);
+];
+const testSuite = adapterTests(tests);
 
 describe("Feathers Solr Service", () => {
   const events = ["testing"];

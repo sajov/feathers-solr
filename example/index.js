@@ -33,11 +33,28 @@ const params = {
   }
 };
 const service = app.service("solr");
-console.log("events:", app.service("solr").events);
+// const create = service
+//   .create({
+//     id: "test",
+//     name: "Dave",
+//     age: 29,
+//     created: true
+//   })
+//   .then(res => console.log(res));
+// const get = service
+//   .get("test", {
+//     query: { name: "Dave", age: 29, created: true }
+//   })
+//   .then(res => {
+//     console.log(res);
+//     console.log(create);
+//   });
 service
   .remove(null, { query: { id: "*" } })
   .then(res => {
     console.log("remove", res);
+    console.log("events:", app.service("solr").events);
+    console.log("events:", app.service("solr").Model);
     // service.create({ name: "Dave", age: 29, created: true });
     // service.create({
     //   name: "David",
