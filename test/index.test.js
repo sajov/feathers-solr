@@ -81,6 +81,7 @@ const testSuite = adapterTests(tests);
 
 describe("Feathers Solr Service", () => {
   beforeEach(done => setTimeout(done, 1000));
+  afterEach(done => setTimeout(done, 1000));
 
   const events = ["testing"];
   const app = feathers().use("techproducts", new solr(options));
