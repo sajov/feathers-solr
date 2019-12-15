@@ -81,7 +81,7 @@ const tests = [
 const testSuite = adapterTests(tests);
 
 describe("Feathers Solr Service", () => {
-  beforeEach(done => setTimeout(done, 50));
+  // beforeEach(done => setTimeout(done, 10));
 
   before(async function() {
     await service.Model.post("schema/fields", {
