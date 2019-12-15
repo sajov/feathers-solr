@@ -80,8 +80,8 @@ const tests = [
 const testSuite = adapterTests(tests);
 
 describe("Feathers Solr Service", () => {
-  beforeEach(done => setTimeout(done, 1000));
-  afterEach(done => setTimeout(done, 1000));
+  beforeEach(done => setTimeout(done, 50));
+  // afterEach(done => setTimeout(done, 1000));
 
   const events = ["testing"];
   const app = feathers().use("techproducts", new solr(options));
@@ -91,21 +91,31 @@ describe("Feathers Solr Service", () => {
     .catch(err => console.log(err));
   app
     .service("techproducts")
-    .options.Model.post("schema/fields", {
+    .Model.post("schema/fields", {
       "add-field": {
         name: "name",
         type: "text_general",
         multiValued: false,
         indexed: true,
         stored: true
-      },
+      }
+    })
+    .catch(err => console.log("ERR", err));
+  app
+    .service("techproducts")
+    .Model.post("schema/fields", {
       "add-field": {
         name: "age",
         type: "pint",
         multiValued: false,
         indexed: true,
         stored: true
-      },
+      }
+    })
+    .catch(err => console.log("ERR", err));
+  app
+    .service("techproducts")
+    .Model.post("schema/fields", {
       "add-field": {
         name: "created",
         type: "boolean",
@@ -119,21 +129,21 @@ describe("Feathers Solr Service", () => {
   it("is CommonJS compatible", () =>
     assert.strictEqual(typeof require("../lib"), "function"));
 
-  it("create with string id works", async () => {
-    const techproducts = app.service("techproducts");
+  // it("create with string id works", async () => {
+  //   const techproducts = app.service("techproducts");
 
-    const product = await techproducts.create({
-      id: "Tester",
-      name: "Test Product",
-      action_s: "create",
-      date_s: new Date()
-    });
+  //   const product = await techproducts.create({
+  //     id: "Tester",
+  //     name: "Test Product",
+  //     action_s: "create",
+  //     date_s: new Date()
+  //   });
 
-    assert.strictEqual(typeof product.id, "string");
-    assert.equal(product.action_s, "create");
+  //   assert.strictEqual(typeof product.id, "string");
+  //   assert.equal(product.action_s, "create");
 
-    // await techproducts.remove(product.id);
-  });
+  //   // await techproducts.remove(product.id);
+  // });
   testSuite(app, errors, "techproducts");
   // it("update with string id works", async () => {
   //   const techproducts = app.service("techproducts");
