@@ -43,7 +43,8 @@
     "test": "npm run lint && npm run dtslint && npm run coverage",
     "example": "babel-node example/index",
     "coverage": "istanbul cover node_modules/mocha/bin/_mocha -- --opts mocha.opts",
-    "travis": "node_modules/.bin/istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --colors --reporter spec test/"
+    "travis": "node_modules/.bin/istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --colors --reporter spec test/",
+    "benchmark": "ab -n 1000 -c 10 http://localhost:3030/fetch/TWINX2048-3200PRO && ab -n 1000 -c 10 http://localhost:3030/fastreq/TWINX2048-3200PRO && ab -n 1000 -c 10 http://localhost:3030/undici/TWINX2048-3200PRO"
   },
   "semistandard": {
     "env": [
