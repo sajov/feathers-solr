@@ -16,19 +16,24 @@ app.configure(express.rest());
 
 // Set up Solr Services
 const options = {
-  Model: new Client("http://localhost:8983/solr/techproducts"),
+  Model: {},
   name: "techproducts",
   paginate: {},
   multi: true,
   events: ["testing"]
 };
+
+// Http Client Fetch
+options.Model = new Client("http://localhost:8983/solr/techproducts");
 const solr = new Service(options);
 app.use("fetch", solr);
 
+// Http Client Fast-Req
 options.Model = new ClientFastReq("http://localhost:8983/solr/techproducts");
 const solrFastReq = new Service(options);
 app.use("fastreq", solrFastReq);
 
+// Http Client Undici
 options.Model = new ClientUndici("http://localhost:8983/solr/techproducts");
 const solrUndici = new Service(options);
 app.use("undici", solrUndici);
