@@ -58,7 +58,6 @@
     "@feathersjs/commons": "^4.4.3",
     "@feathersjs/errors": "^4.4.3",
     "debug": "^4.1.1",
-    "is-plain-object": "^3.0.0",
     "node-fetch": "^2.6.0",
     "qs": "^6.9.1",
     "uuid": "^3.3.3"
@@ -70,10 +69,13 @@
     "body-parser": "^1.19.0",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
+    "clinic": "^5.0.0",
     "dtslint": "^2.0.2",
     "istanbul": "^1.1.0-alpha.1",
     "loud-rejection": "^2.2.0",
     "mocha": "^6.2.2",
-    "semistandard": "^14.2.0"
+    "req-fast": "^0.2.19",
+    "semistandard": "^14.2.0",
+    "undici": "^0.4.0"
   }
 }

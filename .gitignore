@@ -34,3 +34,4 @@ node_modules
 example/data/mage
 example/public/img
 example/public/docs
+.clinic
