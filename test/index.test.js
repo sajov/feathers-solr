@@ -10,7 +10,7 @@ const options = {
   paginate: {},
   events: ["testing"]
 };
-const events = ["testing"];
+
 const app = feathers().use("techproducts", new solr(options));
 const service = app.service("techproducts");
 
@@ -78,7 +78,6 @@ const tests = [
   ".find + paginate + $limit 0",
   ".find + paginate + params"
 ];
-// const testSuite = adapterTests([".create multi"]);
 const testSuite = adapterTests(tests);
 
 describe("Feathers Solr Service", () => {
@@ -117,14 +116,53 @@ describe("Feathers Solr Service", () => {
   it("is CommonJS compatible", () =>
     assert.strictEqual(typeof require("../lib"), "function"));
 
-  it(".delete multi ", async () => {
-    service.options.multi = ["remove"];
-    await service.remove(null, { query: { id: "*" } });
-    service.options.multi = false;
-    const result = await service.find({});
-    assert.ok(Array.isArray(result), "data is an array");
-    assert.ok(result.length == 0, "data is an array");
-    assert.ok(result.length == 0, "data is an array");
+  describe("Whitelisted params", () => {
+    it("should accept $search", async () => {
+      const result = await service.find({ query: { $search: true } });
+      assert.ok(Array.isArray(result), "result is array");
+    });
+    it("should accept $suggest", async () => {
+      const result = await service.find({ query: { $suggest: true } });
+      assert.ok(Array.isArray(result), "result is array");
+    });
+    it("should accept $params", async () => {
+      const result = await service.find({ query: { $params: true } });
+      assert.ok(Array.isArray(result), "result is array");
+    });
+    it("should accept $facet", async () => {
+      const result = await service.find({ query: { $facet: true } });
+      assert.ok(Array.isArray(result), "result is array");
+    });
+    it("should accept $populate", async () => {
+      const result = await service.find({ query: { $populate: true } });
+      assert.ok(Array.isArray(result), "result is array");
+    });
+  });
+
+  describe("Prepare Adapter Tests", () => {
+    it(".delete multi ", async () => {
+      service.options.multi = ["remove"];
+      await service.remove(null, { query: { id: "*" } });
+      service.options.multi = false;
+      const result = await service.find({});
+      assert.ok(Array.isArray(result), "data is an array");
+      assert.ok(result.length == 0, "data is empty");
+    });
+
+    it("has fields name", async () => {
+      const response = await service.Model.get("schema/fields/name");
+      assert.ok(response.field.name == "name", "field name exists");
+    });
+
+    it("has fields age", async () => {
+      const response = await service.Model.get("schema/fields/age");
+      assert.ok(response.field.name == "age", "field age exists");
+    });
+
+    it("has fields created", async () => {
+      const response = await service.Model.get("schema/fields/created");
+      assert.ok(response.field.name == "created", "field created exists");
+    });
   });
   testSuite(app, errors, "techproducts");
 });
