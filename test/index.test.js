@@ -47,7 +47,7 @@ const tests = [
   ".patch + id + query id",
   ".create",
   ".create + $select",
-  // ".create multi",
+  ".create multi",
   "internal .find",
   "internal .get",
   "internal .create",
@@ -77,6 +77,7 @@ const tests = [
   ".find + paginate + $limit 0",
   ".find + paginate + params"
 ];
+// const testSuite = adapterTests([".create multi"]);
 const testSuite = adapterTests(tests);
 
 describe("Feathers Solr Service", () => {
