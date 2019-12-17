@@ -120,5 +120,24 @@ describe('Feathers Solr Service Core Tests', () => {
         assert.strictEqual(error.name, 'Bad Request', 'Got a Bad Request Feathers error');
       }
     });
+
+    it('$facet ', async () => {
+      const response = await service.find({
+        query: {
+          $facet: {
+            age_ranges: {
+              type: 'range',
+              field: 'age',
+              start: 0,
+              end: 100,
+              gap: 25
+            }
+          }
+        },
+        paginate: { max: 3, default: 4 }
+      });
+      console.log('dfsdfsd', response);
+      assert.ok(response);
+    });
   });
 });
