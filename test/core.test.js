@@ -14,7 +14,7 @@ const options = {
 const app = feathers().use("techproducts", new solr(options));
 const service = app.service("techproducts");
 
-describe("Feathers Solr Service", () => {
+describe("Feathers Solr Service Core Tests", () => {
   // beforeEach(done => setTimeout(done, 10));
 
   before(async function() {});
@@ -41,6 +41,28 @@ describe("Feathers Solr Service", () => {
       assert.ok(Array.isArray(result), "result is array");
     });
   });
+
+  describe("Test Techproducts Response", () => {
+    it(".find simple ", async () => {
+      const response = await service.find({
+        query: {},
+        paginate: { max: 3, default: 4 }
+      });
+      console.log(response);
+      assert.ok(response);
+    });
+  });
+
+  // describe("Test Techproducts Response", () => {
+  //   it(".find simple ", async () => {
+  //     const response = await service.find({
+  //       query: { $unknown: 1 },
+  //       paginate: { max: 3, default: 4 }
+  //     });
+  //     console.log(response);
+  //     assert.ok(response);
+  //   });
+  // });
 
   describe("Test Query Parser", () => {
     it(".complex multi ", async () => {
@@ -76,7 +98,7 @@ describe("Feathers Solr Service", () => {
         },
         paginate: { max: 3, default: 4 }
       });
-      console.log(response);
+      // console.log(response);
       assert.ok(response);
     });
   });

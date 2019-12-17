@@ -80,7 +80,7 @@ const tests = [
 ];
 const testSuite = adapterTests(tests);
 
-describe("Feathers Solr Service", () => {
+describe("Feathers Solr Service Common Adapter Tests", () => {
   // beforeEach(done => setTimeout(done, 10));
 
   before(async function() {
