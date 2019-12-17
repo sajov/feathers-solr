@@ -1,33 +1,33 @@
-const req = require("req-fast");
-const qs = require("qs");
-const debug = require("debug")("feathers-solr-client");
+const req = require('req-fast');
+const qs = require('qs');
+const debug = require('debug')('feathers-solr-client');
 
 class Client {
-  constructor(conn) {
+  constructor (conn) {
     if (!conn) {
       throw new Error(
-        "Connection string must be defined! http://localhost:8983/solr/core/"
+        'Connection string must be defined! http://localhost:8983/solr/core/'
       );
     }
 
     this.conn = conn;
-    this.params = { wt: "json" };
+    this.params = { wt: 'json' };
   }
 
-  get(api, params = {}) {
+  get (api, params = {}) {
     const url = `${this.conn}/${api}?${qs.stringify(
       Object.assign({}, params, this.params),
       { encode: false }
     )}`;
 
-    debug("GET", url);
+    debug('GET', url);
 
     const options = {
       url: url,
-      method: "get",
-      "content-type": "application/json"
+      method: 'get',
+      'content-type': 'application/json'
     };
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
       req(options, (err, response) => {
         // console.log("FAST REQUEST GET", err, response.body);
         if (err) reject(err);
@@ -36,17 +36,17 @@ class Client {
     });
   }
 
-  post(api, data, params = {}) {
+  post (api, data, params = {}) {
     const url = `${this.conn}/${api}`;
     const options = {
       url: url,
-      method: "post",
+      method: 'post',
       data: data,
-      "content-type": "application/json"
+      'content-type': 'application/json'
     };
-    debug("POST", url, "\n", data);
+    debug('POST', url, '\n', data);
 
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
       req(options, (err, response) => {
         // console.log("FAST REQUEST POST", err, response.body);
         if (err) reject(err);
