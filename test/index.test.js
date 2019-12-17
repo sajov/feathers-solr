@@ -72,7 +72,7 @@ const tests = [
   ".find + $gte",
   ".find + $ne",
   ".find + $gt + $lt + $sort",
-  // ".find + $or nested + $sort",
+  ".find + $or nested + $sort",
   ".find + paginate",
   ".find + paginate + $limit + $skip",
   ".find + paginate + $limit 0",
@@ -116,29 +116,6 @@ describe("Feathers Solr Service", () => {
   it("is CommonJS compatible", () =>
     assert.strictEqual(typeof require("../lib"), "function"));
 
-  describe("Whitelisted params", () => {
-    it("should accept $search", async () => {
-      const result = await service.find({ query: { $search: true } });
-      assert.ok(Array.isArray(result), "result is array");
-    });
-    it("should accept $suggest", async () => {
-      const result = await service.find({ query: { $suggest: true } });
-      assert.ok(Array.isArray(result), "result is array");
-    });
-    it("should accept $params", async () => {
-      const result = await service.find({ query: { $params: true } });
-      assert.ok(Array.isArray(result), "result is array");
-    });
-    it("should accept $facet", async () => {
-      const result = await service.find({ query: { $facet: true } });
-      assert.ok(Array.isArray(result), "result is array");
-    });
-    it("should accept $populate", async () => {
-      const result = await service.find({ query: { $populate: true } });
-      assert.ok(Array.isArray(result), "result is array");
-    });
-  });
-
   describe("Prepare Adapter Tests", () => {
     it(".delete multi ", async () => {
       service.options.multi = ["remove"];
@@ -164,5 +141,6 @@ describe("Feathers Solr Service", () => {
       assert.ok(response.field.name == "created", "field created exists");
     });
   });
+
   testSuite(app, errors, "techproducts");
 });
