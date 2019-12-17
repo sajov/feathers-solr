@@ -83,38 +83,47 @@ const testSuite = adapterTests(tests);
 describe('Feathers Solr Service Common Adapter Tests', () => {
   // beforeEach(done => setTimeout(done, 10));
 
-  before(async function () {
-    await service.Model.post('schema/fields', {
-      'add-field': {
-        name: 'name',
-        type: 'text_general',
-        multiValued: false,
-        indexed: true,
-        stored: true
-      }
-    });
-    await service.Model.post('schema/fields', {
-      'add-field': {
-        name: 'age',
-        type: 'pint',
-        multiValued: false,
-        indexed: true,
-        stored: true
-      }
-    });
-    await service.Model.post('schema/fields', {
-      'add-field': {
-        name: 'created',
-        type: 'boolean',
-        multiValued: false,
-        indexed: true,
-        stored: true
-      }
-    });
+  before(function(done) {
+    Promise.all([
+      service.Model.post('schema/fields', {
+        'add-field': {
+          name: 'name',
+          type: 'text_general',
+          multiValued: false,
+          indexed: true,
+          stored: true
+        }
+      }),
+      service.Model.post('schema/fields', {
+        'add-field': {
+          name: 'age',
+          type: 'pint',
+          multiValued: false,
+          indexed: true,
+          stored: true
+        }
+      }),
+      service.Model.post('schema/fields', {
+        'add-field': {
+          name: 'created',
+          type: 'boolean',
+          multiValued: false,
+          indexed: true,
+          stored: true
+        }
+      })
+    ])
+      .then(result => {
+        // console.log(result);
+        done();
+      })
+      .catch(error => {
+        // console.log(error);
+        done();
+      }); // ["Completed in 1000", "Completed in 2000"]
   });
 
-  it('is CommonJS compatible', () =>
-    assert.strictEqual(typeof require('../lib'), 'function'));
+  it('is CommonJS compatible', () => assert.strictEqual(typeof require('../lib'), 'function'));
 
   describe('Prepare Adapter Tests', () => {
     it('.delete multi ', async () => {

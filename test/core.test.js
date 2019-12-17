@@ -19,16 +19,45 @@ describe('Feathers Solr Service Core Tests', () => {
 
   before(async function() {});
 
-  // describe("Setup Service", () => {
-  //   it("should throw an error", async () => {
-  //     const options = {
-  //       paginate: {},
-  //       events: ["testing"]
-  //     };
+  describe('Setup Service with out a Model', () => {
+    it('should throw an error', async () => {
+      const options = {
+        paginate: {},
+        events: ['testing']
+      };
+      try {
+        const client = new solr(options);
 
-  //     const client = new solr(options);
-  //   });
-  // });
+        throw new Error('Should never get here');
+      } catch (error) {
+        assert.strictEqual(error.name, 'Error', 'Got a NotFound Feathers error');
+      }
+    });
+  });
+
+  describe('Test Techproducts Response', () => {
+    it('.find simple ', async () => {
+      const response = await service.find({
+        query: {},
+        paginate: { max: 3, default: 4 }
+      });
+      // console.log(response);
+      assert.ok(response);
+    });
+
+    it('.find not whitelisted param ', async () => {
+      try {
+        const response = await service.find({
+          query: { $unknown: 1 },
+          paginate: { max: 3, default: 4 }
+        });
+
+        throw new Error('Should never get here');
+      } catch (error) {
+        assert.strictEqual(error.name, 'BadRequest', 'Got a NotFound Feathers error');
+      }
+    });
+  });
 
   describe('Whitelisted params', () => {
     it('should accept $search', async () => {
@@ -53,64 +82,43 @@ describe('Feathers Solr Service Core Tests', () => {
     });
   });
 
-  describe('Test Techproducts Response', () => {
-    it('.find simple ', async () => {
+  describe('Test Query Parser', () => {
+    it('.find + $search ', async () => {
       const response = await service.find({
-        query: {},
+        query: {
+          $select: ['name', 'age'],
+          $search: 'CORSAIR',
+          popularity: {
+            $in: [2, 5]
+          },
+
+          $sort: { name: 1 }
+        },
         paginate: { max: 3, default: 4 }
       });
       console.log(response);
       assert.ok(response);
     });
-  });
 
-  // describe('Test Techproducts Response', () => {
-  //   it('.find simple ', async () => {
-  //     const response = await service.find({
-  //       query: { $unknown: 1 },
-  //       paginate: { max: 3, default: 4 }
-  //     });
-  //     console.log(response);
-  //     assert.ok(response);
-  //   });
-  // });
+    it('.find + $search ', async () => {
+      try {
+        const response = await service.find({
+          query: {
+            $select: ['name', 'age'],
+            $search: 'CORSAIR',
+            popularity: {
+              $in: [2, 5]
+            },
+            unknown: true,
+            $sort: { name: 1 }
+          },
+          paginate: { max: 3, default: 4 }
+        });
 
-  describe('Test Query Parser', () => {
-    it('.complex multi ', async () => {
-      const solr = {
-        filter: ['name:Doug', 'age:{18 TO 25]', 'id:( 1 OR 2 OR 3)']
-      };
-      const response = await service.find({
-        query: {
-          $select: ['name', 'age'],
-          id: 'jklfdjslkjr34j32lk5',
-          $search: 'stars',
-          roomId: {
-            $in: [2, 5]
-          },
-          color: { $ne: 'red' },
-          location: 'Ohio',
-          mail: 'in@web.com',
-          kids: {
-            $gte: 2,
-            $lt: 5
-          },
-          $or: [
-            { name: 'Doug' },
-            { id: { $in: [1, 2, 3] } },
-            {
-              age: {
-                $gte: 18,
-                $lt: 25
-              }
-            }
-          ],
-          $sort: { name: 1 }
-        },
-        paginate: { max: 3, default: 4 }
-      });
-      // console.log(response);
-      assert.ok(response);
+        throw new Error('Should never get here');
+      } catch (error) {
+        assert.strictEqual(error.name, 'Bad Request', 'Got a Bad Request Feathers error');
+      }
     });
   });
 });
