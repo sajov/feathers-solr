@@ -114,13 +114,11 @@ describe('Feathers Solr Service Common Adapter Tests', () => {
       })
     ])
       .then(result => {
-        // console.log(result);
         done();
       })
       .catch(error => {
-        // console.log(error);
         done();
-      }); // ["Completed in 1000", "Completed in 2000"]
+      });
   });
 
   it('is CommonJS compatible', () => assert.strictEqual(typeof require('../lib'), 'function'));

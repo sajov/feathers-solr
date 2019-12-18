@@ -136,7 +136,6 @@ describe('Feathers Solr Service Core Tests', () => {
         },
         paginate: { max: 3, default: 4 }
       });
-      console.log('dfsdfsd', response);
       assert.ok(response);
     });
   });
