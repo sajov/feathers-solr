@@ -462,8 +462,17 @@ Adapter.patch(id, data, params);
 ## TODO
 
 - Implement Spcial Query Params `$parms, $suggest, $facet, $populate, $highlight, $spellcheck`
+- Schema
+  - Validation Hook
+  - Json Hook
+  - Migration Hook
 
 ## Changelog
+
+**2.2.0**
+
+- complete refactoring
+- implement @feathers/adapter-tests
 
 **1.1.15**
 
