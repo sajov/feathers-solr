@@ -408,7 +408,7 @@ query: {
 Feathers Rest query
 
 ```
-http://localhost:3030/solr?$search=Handmake&color=Handmke&color="sky blue"&$limit=10&$spellcheck
+http://localhost:3030/solr?$search=Handmake&color=Handmke&color="sky blue"&$limit=10&$spellcheck=1
 ```
 
 Feathers Result
