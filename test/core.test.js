@@ -41,7 +41,6 @@ describe('Feathers Solr Service Core Tests', () => {
         query: {},
         paginate: { max: 3, default: 4 }
       });
-      // console.log(response);
       assert.ok(response);
     });
 
@@ -69,11 +68,11 @@ describe('Feathers Solr Service Core Tests', () => {
       assert.ok(Array.isArray(result), 'result is array');
     });
     it('should accept $params', async () => {
-      const result = await service.find({ query: { $params: true } });
+      const result = await service.find({ query: { $params: {} } });
       assert.ok(Array.isArray(result), 'result is array');
     });
     it('should accept $facet', async () => {
-      const result = await service.find({ query: { $facet: true } });
+      const result = await service.find({ query: { $facet: {} } });
       assert.ok(Array.isArray(result), 'result is array');
     });
     it('should accept $populate', async () => {
@@ -96,7 +95,6 @@ describe('Feathers Solr Service Core Tests', () => {
         },
         paginate: { max: 3, default: 4 }
       });
-      console.log(response);
       assert.ok(response);
     });
 
@@ -121,21 +119,47 @@ describe('Feathers Solr Service Core Tests', () => {
       }
     });
 
-    it('$facet ', async () => {
+    it('$search ', async () => {
+      const response = await service.find({
+        query: {
+          $search: 'CORSAIR'
+        }
+      });
+      assert.strictEqual(response.length, 2, 'Got two entries');
+      assert.strictEqual(response[0].id, 'VS1GB400C3', 'data.id matches');
+      assert.ok(response);
+    });
+
+    it('$params - example edismax', async () => {
+      const response = await service.find({
+        query: {
+          $params: {
+            group: true,
+            'group.field': 'manu_id_s'
+          }
+        },
+        paginate: { max: 10, default: 1 }
+      });
+      assert.ok(response);
+      assert.strictEqual(response.data.manu_id_s.matches, 32, 'Got 32 entries');
+    });
+
+    it('$facet - type terms', async () => {
       const response = await service.find({
         query: {
           $facet: {
-            age_ranges: {
-              type: 'range',
-              field: 'age',
-              start: 0,
-              end: 100,
-              gap: 25
+            categories: {
+              type: 'terms',
+              field: 'cat'
             }
           }
         },
-        paginate: { max: 3, default: 4 }
+        paginate: { max: 10, default: 1 }
       });
+      assert.strictEqual(response.total, 32, 'Got 32 entries');
+      assert.strictEqual(response.data.length, 1, 'Got two entries');
+      assert.strictEqual(response.facets.count, 32, 'Got 32 entries');
+      assert.strictEqual(response.facets.categories.buckets.length, 10, 'Got 10 entries');
       assert.ok(response);
     });
   });
