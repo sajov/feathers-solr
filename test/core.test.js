@@ -85,7 +85,7 @@ describe('Feathers Solr Service Core Tests', () => {
     it('.find + $search ', async () => {
       const response = await service.find({
         query: {
-          $select: ['name', 'age'],
+          $select: ['name', 'cat'],
           $search: 'CORSAIR',
           popularity: {
             $in: [2, 5]
@@ -102,7 +102,7 @@ describe('Feathers Solr Service Core Tests', () => {
       try {
         const response = await service.find({
           query: {
-            $select: ['name', 'age'],
+            $select: ['name', 'cat'],
             $search: 'CORSAIR',
             popularity: {
               $in: [2, 5]
@@ -162,5 +162,25 @@ describe('Feathers Solr Service Core Tests', () => {
       assert.strictEqual(response.facets.categories.buckets.length, 10, 'Got 10 entries');
       assert.ok(response);
     });
+
+    it('$params - type terms', async () => {
+      const response = await service.find({
+        query: {
+          $search: 'CORSAIR',
+          $params: {
+            "hl":"on",
+            "hl.simple.post":"</i>",
+            "hl.fl":"name,cat,manu",
+            "hl.simple.pre":"<i>",
+          }
+        },
+        paginate: { max: 10, default: 1 }
+      });
+      assert.strictEqual(response.highlighting[response.data[0].id].name[0], "<i>CORSAIR</i> ValueSelect 1GB 184-Pin DDR SDRAM Unbuffered DDR 400 (PC 3200) System Memory - Retail", 'Got 32 entries');
+      assert.strictEqual(response.highlighting[response.data[0].id].manu[0], "<i>Corsair</i> Microsystems Inc.", 'Got two entries');
+      assert.ok(response);
+    });
+
+
   });
 });
