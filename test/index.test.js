@@ -5,14 +5,18 @@ const feathers = require('@feathersjs/feathers');
 
 const solr = require('../lib');
 const Client = require('../lib').Client;
+const ClientUndici = require('../example/client-undici');
 const options = {
   Model: new Client('http://localhost:8983/solr/techproducts'),
   paginate: {},
   events: ['testing']
 };
+const app = feathers().use('fetch', new solr(options));
+const service = app.service('fetch');
 
-const app = feathers().use('techproducts', new solr(options));
-const service = app.service('techproducts');
+// Http Client Undici
+options.Model = new ClientUndici('http://localhost:8983/solr/techproducts');
+app.use('undici', new solr(options));
 
 const tests = [
   '.options',
@@ -149,5 +153,6 @@ describe('Feathers Solr Service Common Adapter Tests', () => {
     });
   });
 
-  testSuite(app, errors, 'techproducts');
+  testSuite(app, errors, 'fetch');
+  testSuite(app, errors, 'undici');
 });

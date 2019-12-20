@@ -11,18 +11,27 @@ class HttpClient {
     }
 
     this.conn = conn;
-    this.params = { wt: 'json' };
     this.client = new Client('http://localhost:8983', {
       connections: 100,
       pipelining: 10
     });
   }
 
+  _response(res) {
+    try {
+      if (res.status >= 200 && res.status < 300) {
+        debug('Response:', res.status);
+        return res.json();
+      } else {
+        throw new FeathersError(res.status, res.statusText);
+      }
+    } catch (err) {
+      debugError('Error:', err);
+      throw new FeathersError(res.status, res.statusText);
+    }
+  }
+
   get (api, params = {}) {
-    const url = `${this.conn}/${api}?${qs.stringify(
-      Object.assign({}, params, this.params),
-      { encode: false }
-    )}`;
     const self = this;
     return new Promise(function (resolve, reject) {
       self.client.request(
@@ -31,7 +40,7 @@ class HttpClient {
             'content-type': 'application/json'
           },
           path: `/solr/techproducts/${api}?${qs.stringify(
-            Object.assign({}, params, this.params),
+            params,
             { encode: false }
           )}`,
           method: 'GET'
@@ -47,15 +56,20 @@ class HttpClient {
     });
   }
 
-  async post (api, data, params = {}) {
+  post (api, data, params = {}) {
     const self = this;
+
     return new Promise(function (resolve, reject) {
       self.client.request(
         {
           headers: {
             'content-type': 'application/json'
           },
-          path: `/solr/techproducts/${api}`,
+          path: `/solr/techproducts/${api}?${qs.stringify(
+            params,
+            {wt:'json'},
+            { encode: false }
+          )}`,
           method: 'POST',
           body: Buffer.from(JSON.stringify(data))
         },
@@ -63,7 +77,7 @@ class HttpClient {
           if (err) reject(err);
           const { statusCode, headers, body } = data;
           body.on('data', d => {
-            resolve(JSON.parse(d.toString()));
+            return resolve(JSON.parse(d.toString()));
           });
         }
       );
