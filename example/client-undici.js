@@ -17,20 +17,6 @@ class HttpClient {
     });
   }
 
-  _response(res) {
-    try {
-      if (res.status >= 200 && res.status < 300) {
-        debug('Response:', res.status);
-        return res.json();
-      } else {
-        throw new FeathersError(res.status, res.statusText);
-      }
-    } catch (err) {
-      debugError('Error:', err);
-      throw new FeathersError(res.status, res.statusText);
-    }
-  }
-
   get (api, params = {}) {
     const self = this;
     return new Promise(function (resolve, reject) {
@@ -47,10 +33,19 @@ class HttpClient {
         },
         function (err, data) {
           if (err) reject(err);
-          const { statusCode, headers, body } = data;
-          body.on('data', d => {
-            resolve(JSON.parse(d.toString()));
-          });
+          try {
+            const { statusCode, headers, body } = data;
+            if (statusCode >= 200 && statusCode < 300) {
+              debug('Response:', statusCode);
+              body.on('data', d => {
+                return resolve(JSON.parse(d.toString()));
+              });
+            } else {
+              reject(statusCode);
+            }
+          } catch (error) {
+            reject(statusCode, error);
+          }
         }
       );
     });
@@ -75,10 +70,19 @@ class HttpClient {
         },
         function (err, data) {
           if (err) reject(err);
-          const { statusCode, headers, body } = data;
-          body.on('data', d => {
-            return resolve(JSON.parse(d.toString()));
-          });
+          try {
+            const { statusCode, headers, body } = data;
+            if (statusCode >= 200 && statusCode < 300) {
+              debug('Response:', statusCode);
+              body.on('data', d => {
+                return resolve(JSON.parse(d.toString()));
+              });
+            } else {
+              reject(statusCode);
+            }
+          } catch (error) {
+            reject(statusCode, error);
+          }
         }
       );
     });
