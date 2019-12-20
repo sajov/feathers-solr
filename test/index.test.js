@@ -83,7 +83,7 @@ const tests = [
 const testSuite = adapterTests(tests);
 
 describe('Feathers Solr Service Common Adapter Tests', () => {
-  // beforeEach(done => setTimeout(done, 10));
+  beforeEach(done => setTimeout(done, 1000));
 
   before(function(done) {
     Promise.all([
@@ -124,7 +124,9 @@ describe('Feathers Solr Service Common Adapter Tests', () => {
   });
 
   it('is CommonJS compatible', () => assert.strictEqual(typeof require('../lib'), 'function'));
+});
 
+describe('Feathers Solr Service Common Adapter Tests', () => {
   describe('Prepare Adapter Tests', () => {
     it('.delete multi ', async () => {
       service.options.multi = ['remove'];
