@@ -186,7 +186,7 @@ describe('Feathers Solr Service Core Tests', () => {
       assert.ok(response);
     });
 
-    it('$facet - type aggragation', async () => {
+    it('$facet - aggresgation', async () => {
       const response = await service.find({
         query: {
           $facet: {
@@ -202,5 +202,45 @@ describe('Feathers Solr Service Core Tests', () => {
       assert.ok(response.facets.priceAvg > 328, 'Price AGV greather than');
       assert.ok(response.facets.priceSum > 5200, 'Price SUM greather than');
     });
+
+
+    it('$facet - aggresgation sum', async () => {
+      const response = await service.find({
+        query: {
+          $facet: {
+            priceSum: "sum(price)"
+          }
+        },
+        paginate: { max: 10, default: 1 }
+      });
+      assert.ok(response.facets.priceSum > 5200, 'Price SUM greather than');
+    });
+
+    it('$facet - aggresgation sum', async () => {
+      const response = await service.find({
+        query: {
+          $facet: {
+            priceAvg: "avg(price)"
+          }
+        },
+        paginate: { max: 10, default: 1 }
+      });
+      assert.ok(response.facets.priceAvg > 328, 'Price SUM greather than');
+    });
+
+    it('$facet - aggresgation sumsq', async () => {
+      const response = await service.find({
+        query: {
+          $facet: {
+            price: "avg(price)"
+          }
+        },
+        paginate: { max: 10, default: 1 }
+      });
+      assert.ok(response.facets.price > 328, 'Price SUM greather than');
+    });
+
+
   });
+
 });
