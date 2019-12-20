@@ -129,7 +129,8 @@ describe('Feathers Solr Service Core Tests', () => {
       assert.strictEqual(response[0].id, 'VS1GB400C3', 'data.id matches');
       assert.ok(response);
     });
-
+  });
+  describe('Test Query $params', () => {
     it('$params - example edismax', async () => {
       const response = await service.find({
         query: {
@@ -143,7 +144,29 @@ describe('Feathers Solr Service Core Tests', () => {
       assert.ok(response);
       assert.strictEqual(response.data.manu_id_s.matches, 32, 'Got 32 entries');
     });
+  });
 
+  describe('Test Query $params', () => {
+    it('$params - Highlighting', async () => {
+      const response = await service.find({
+        query: {
+          $search: 'CORSAIR',
+          $params: {
+            "hl":"on",
+            "hl.simple.post":"</i>",
+            "hl.fl":"name,cat,manu",
+            "hl.simple.pre":"<i>",
+          }
+        },
+        paginate: { max: 10, default: 1 }
+      });
+      assert.strictEqual(response.highlighting[response.data[0].id].name[0], "<i>CORSAIR</i> ValueSelect 1GB 184-Pin DDR SDRAM Unbuffered DDR 400 (PC 3200) System Memory - Retail", 'Got 32 entries');
+      assert.strictEqual(response.highlighting[response.data[0].id].manu[0], "<i>Corsair</i> Microsystems Inc.", 'Got two entries');
+      assert.ok(response);
+    });
+  });
+
+  describe('Test Query $facet', () => {
     it('$facet - type terms', async () => {
       const response = await service.find({
         query: {
@@ -163,24 +186,21 @@ describe('Feathers Solr Service Core Tests', () => {
       assert.ok(response);
     });
 
-    it('$params - type terms', async () => {
+    it('$facet - type aggragation', async () => {
       const response = await service.find({
         query: {
-          $search: 'CORSAIR',
-          $params: {
-            "hl":"on",
-            "hl.simple.post":"</i>",
-            "hl.fl":"name,cat,manu",
-            "hl.simple.pre":"<i>",
+          $facet: {
+            priceAvg: "avg(price)",
+            priceSum: "sum(price)",
           }
         },
         paginate: { max: 10, default: 1 }
       });
-      assert.strictEqual(response.highlighting[response.data[0].id].name[0], "<i>CORSAIR</i> ValueSelect 1GB 184-Pin DDR SDRAM Unbuffered DDR 400 (PC 3200) System Memory - Retail", 'Got 32 entries');
-      assert.strictEqual(response.highlighting[response.data[0].id].manu[0], "<i>Corsair</i> Microsystems Inc.", 'Got two entries');
-      assert.ok(response);
+      assert.strictEqual(response.total, 32, 'Got 32 entries');
+      assert.strictEqual(response.data.length, 1, 'Got two entries');
+      assert.strictEqual(response.facets.count, 32, 'Got 32 entries');
+      assert.ok(response.facets.priceAvg > 328, 'Price AGV greather than');
+      assert.ok(response.facets.priceSum > 5200, 'Price SUM greather than');
     });
-
-
   });
 });
