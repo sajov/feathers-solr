@@ -4,9 +4,9 @@ const errors = require('@feathersjs/errors');
 const feathers = require('@feathersjs/feathers');
 
 const solr = require('../lib');
-const Client = require('../lib').Client;
+const {fetch, undici} = require('../lib');
 const options = {
-  Model: new Client('http://localhost:8983/solr/techproducts'),
+  Model: new fetch('http://localhost:8983/solr/techproducts'),
   paginate: {},
   events: ['testing']
 };

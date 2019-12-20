@@ -2,12 +2,10 @@ const assert = require('assert');
 const adapterTests = require('@feathersjs/adapter-tests');
 const errors = require('@feathersjs/errors');
 const feathers = require('@feathersjs/feathers');
-
+const {fetch,  undici} = require('../lib');
 const solr = require('../lib');
-const Client = require('../lib').Client;
-const ClientUndici = require('../example/client-undici');
 const options = {
-  Model: new Client('http://localhost:8983/solr/techproducts'),
+  Model: new fetch('http://localhost:8983/solr/techproducts'),
   paginate: {},
   events: ['testing']
 };
@@ -15,7 +13,7 @@ const app = feathers().use('fetch', new solr(options));
 const service = app.service('fetch');
 
 // Http Client Undici
-options.Model = new ClientUndici('http://localhost:8983/solr/techproducts');
+options.Model = new undici('http://localhost:8983/solr/techproducts');
 app.use('undici', new solr(options));
 
 const tests = [
