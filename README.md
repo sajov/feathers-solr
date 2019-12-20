@@ -1,42 +1,48 @@
 # feathers-solr
 
-[![Build Status](https://travis-ci.org/sajov/feathers-solr.png?branch=master)](https://travis-ci.org/sajov/feathers-solr)
-[![Coverage Status](https://coveralls.io/repos/github/sajov/feathers-solr/badge.svg?branch=master)](https://coveralls.io/github/sajov/feathers-solr?branch=master)
+[![Build Status](https://travis-ci.org/sajov/feathers-solr.png?branch=feature/refactor)](https://travis-ci.org/sajov/feathers-solr)
+[![Coverage Status](https://coveralls.io/repos/github/sajov/feathers-solr/badge.svg?branch=feature/refactor)](https://coveralls.io/github/sajov/feathers-solr?branch=feature/refactor)
 [![dependencies Status](https://david-dm.org/sajov/feathers-solr/status.svg)](https://david-dm.org/sajov/feathers-solr)
 [![Known Vulnerabilities](https://snyk.io/test/npm/feathers-solr/badge.svg)](https://snyk.io/test/npm/feathers-solr)
 
-> Solr Adapter for Feathersjs. Can also used as a Solr-client. See [additional-client-methods](https://github.com/sajov/feathers-solr/blob/master/README.md#additional-client-methods)
-> Require >= Solr 5.x
-
-## Online Demo
-
-[eCommerce Category Pages](http://feathers.better-search-box.com/)
-This demonstrate ease of a single query
-
-## Installation
+A [Feathers](https://feathersjs.com/) Solr Adapter.
 
 ```
-npm install feathers-solr --save
+$ npm install feathers-solr --save
 ```
 
-## Documentation
+> **Important:** `feathers-solr` implements the [Feathers Common database adapter API](https://docs.feathersjs.com/api/databases/common.html) and [querying syntax](https://docs.feathersjs.com/api/databases/querying.html).
 
-Please refer to the [Feathers database adapter documentation](http://docs.feathersjs.com/databases/readme.html) for more details or directly at:
+Demo [eCommerce Category Page](http://feathers.better-search-box.com/)
 
-- [Service methods](https://docs.feathersjs.com/api/databases/common.html#service-methods) - How to use a database adapter
-- [Pagination and Sorting](https://docs.feathersjs.com/api/databases/common.html#pagination) - How to use pagination and sorting for the database adapter
-- [Querying](https://docs.feathersjs.com/api/databases/querying.html) - The common adapter querying mechanism
-- [Extending](https://docs.feathersjs.com/api/databases/common.html#extending-adapters) - How to extend a database adapter
+## API
 
-## Getting Started
+### `service([options])`
 
-### Install Feathers-Solr Adapter
+Returns a new service instance initialized with the given options.
 
+```js
+const service = require('feathers-solr');
+
+app.use('/techproducts', service());
+app.use('/techproducts', service({ id, startId, store, events, paginate }));
 ```
- npm i feathers-solr
-```
 
-### Setup a Service
+**Options:**
+
+- `Model` (**required**) - HTTP Client (fetch, undici, or your custom).
+- `name` - The name of the Solr Core / Colelction.
+- `defaultParams` - This params added to all Solr request.
+- `commitStrategy` - (_optional_, default: `{ softCommit: true, commitWithin: 10000,overwrite: true }`) - Define how Index changes are stored [Solr Commits](https://lucene.apache.org/solr/guide/7_7/updatehandlers-in-solrconfig.html#UpdateHandlersinSolrConfig-commitandsoftCommit).
+- `schema` (_optional_) - .
+- `migrate` (_optional_) - .
+- `id` (_optional_, default: `'id'`) - The name of the id field property.
+- `events` (_optional_) - A list of [custom service events](https://docs.feathersjs.com/api/events.html#custom-events) sent by this service
+- `paginate` (_optional_) - A [pagination object](https://docs.feathersjs.com/api/databases/common.html#pagination) containing a `default` and `max` page size
+- `whitelist` (_optional_) - A list of additional query parameters to allow
+- `multi` (_optional_) - Allow `create` with arrays and `update` and `remove` with `id` `null` to change multiple items. Can be `true` for all methods or an array of allowed methods (e.g. `[ 'remove', 'create' ]`)
+
+## Example
 
 ```javascript
 const feathers = require('@feathersjs/feathers');
@@ -50,7 +56,7 @@ app.configure(express.rest());
 
 const options = {
   Model: new Client('http://localhost:8983/solr/techproducts'),
-  name: 'techproducts',
+  core: 'techproducts',
   paginate: { default: 10, max: 100 },
   multi: true,
   events: ['testing']
@@ -67,58 +73,58 @@ app.listen(3030, () => {
 ### Install Solr
 
 ```
- bin/solr start -e schemaless
+ bin/solr start -e techproducts
 ```
 
-Use feathers-solr/bin/install-solr.sh for a kickstart installation.
+Use `feathers-solr/bin/install-solr.sh` for a kickstart installation.
 
-### Options
+Run the example with `node app` and go to [localhost:3030/techproducts](http://localhost:3030/techproducts).
 
-| Option         | Default                                                  | Description                                                   |
-| -------------- | -------------------------------------------------------- | ------------------------------------------------------------- |
-| host           | http://localhost:8983/solr                               |                                                               |
-| core           | /gettingstarted                                          |                                                               |
-| schema         | false                                                    | {title: {type:"string"}}                                      |
-| migrate        | alter                                                    | _safe_, _alter_ and _drop_ (delete all data and reset schema) |
-| idfield        | 'id'                                                     | Unique Document identifier                                    |
-| commitStrategy | {softCommit: true, commitWithin: 50000, overwrite: true} |                                                               |
-| paginate       | {default: 10, max: 100}                                  |                                                               |
+## Querying
 
-#### Managed Schema
+Additionally to the [common querying mechanism](https://docs.feathersjs.com/api/databases/querying.html) this adapter also supports special params:
 
-[Schemaless Mode](https://lucene.apache.org/solr/guide/6_6/schemaless-mode.html) is recommended.
-Use [Solr Field Types](https://cwiki.apache.org/confluence/display/solr/Solr+Field+Types) and [Field Type Definitions and Properties](https://cwiki.apache.org/confluence/display/solr/Field+Type+Definitions+and+Properties) to define Model properties
-
-```javascript
-{
-    title: {
-        type: "text_general", // For more flexible searching. Default type is 'string'
-        stored: true, // default, keep value visible in results
-        indexed: true, // default, make it searchable
-        multiValued: false, // default, true becomes an array field
-    }
-}
-```
-
-See your current schema definition
-
-```
- http://localhost:8983/solr/gettingstarted/schema/
-```
-
-## Support all Feathers Queries
-
-See [Feathers querying](https://docs.feathersjs.com/api/databases/querying.html) for more detail
-
-## Supported Solr Queries
+## Additional Query Params
 
 ### \$search
 
-Simple query
+Simple Query
 
 ```javascript
 query: {
   $search: 'John';
+}
+```
+
+Complex Query
+
+```javascript
+query: {
+  $skip: 0,
+  $limit: 50,
+  $select: "id,image,name,price,special_price,categories",
+  $search: "red red*",
+  $facet: {
+    Categories: {type: "terms", field: "categories", sort: {…}, limit: 1000, domain: {…}}
+    activity: {type: "terms", field: "activity", sort: {…}, limit: 1000}
+    category_gear: {type: "terms", field: "category_gear", sort: {…}, limit: 1000}
+    color: {type: "terms", field: "color", sort: {…}, limit: 1000}
+    eco_collection: {type: "terms", field: "eco_collection", sort: {…}, limit: 1000}
+    erin_recommends: {type: "terms", field: "erin_recommends", sort: {…}, limit: 1000}
+    features_bags: {type: "terms", field: "features_bags", sort: {…}, limit: 1000}
+    format: {type: "terms", field: "format", sort: {…}, limit: 1000}
+    gender: {type: "terms", field: "gender", sort: {…}, limit: 1000}
+    material: {type: "terms", field: "material", sort: {…}, limit: 1000}
+    new: {type: "terms", field: "new", sort: {…}, limit: 1000}
+    performance_fabric: {type: "terms", field: "performance_fabric", sort: {…}, limit: 1000}
+    price_type: {type: "terms", field: "price_type", sort: {…}, limit: 1000}
+    sale: {type: "terms", field: "sale", sort: {…}, limit: 1000}
+    size: {type: "terms", field: "size", sort: {…}, limit: 1000}
+    strap_bags: {type: "terms", field: "strap_bags", sort: {…}, limit: 1000}
+    style_bags: {type: "terms", field: "style_bags", sort: {…}, limit: 1000}
+  },
+  $params: {defType: "edismax", qf: "name^10 categories^5 _text_"},
+  doc_type: "product"
 }
 ```
 
@@ -130,9 +136,13 @@ More complex query with a default Solr configuration.
 query: {
 
   $search: "John !Doe +age:[80 TO *]", // Search in default field _text_. See Solr copy field `copy:* to _text_`
-  // $params: {
-  //   qf: "name^10 friends" define explicit fields to query and boost
-  // }
+
+  // Optional to optimize search relevance
+  $params: {
+      // define explicit fields to query and boost
+      defType: "edismax",
+      qf: "name^10 friends"
+  }
   // or $search: "name:John^10 AND !name:Doe AND age:[80 TO *]",
   // or $search: "joh*",
   // or $search: '"john doe"',
@@ -188,55 +198,7 @@ Feathers Result
               }
             ]
           }
-        },
-        {
-          "groupValue": "female",
-          "doclist": {
-            "numFound": 26,
-            "start": 0,
-            "docs": [
-              {
-                "id": "595019590a8632fecd292592",
-                "age": "51",
-                "gender": "female"
-              }
-            ]
-          }
-        }
-      ]
-    },
-    "age": {
-      "matches": 50,
-      "groups": [
-        {
-          "groupValue": "45",
-          "doclist": {
-            "numFound": 3,
-            "start": 0,
-            "docs": [
-              {
-                "id": "59501959f2786e0207a8b29f",
-                "age": "45",
-                "gender": "male"
-              }
-            ]
-          }
-        },
-        {
-          "groupValue": "51",
-          "doclist": {
-            "numFound": 2,
-            "start": 0,
-            "docs": [
-              {
-                "id": "595019590a8632fecd292592",
-                "age": "51",
-                "gender": "female"
-              }
-            ]
-          }
-        }
-      ]
+        }]
     }
   }
 }
@@ -457,8 +419,6 @@ data: {views: {inc:1}}; // inc, set, add, remove, removeregex
 Adapter.patch(id, data, params);
 ```
 
-| ------
-
 ## TODO
 
 - Implement Spcial Query Params `$parms, $suggest, $facet, $populate, $highlight, $spellcheck`
@@ -466,6 +426,7 @@ Adapter.patch(id, data, params);
   - Validation Hook
   - Json Hook
   - Migration Hook
+- Add Support for Batch Update and Patch
 
 ## Changelog
 
@@ -473,30 +434,6 @@ Adapter.patch(id, data, params);
 
 - complete refactoring
 - implement @feathers/adapter-tests
-
-**1.1.15**
-
-**1.1.15**
-
-- add support \$between param
-- add support for auth
-
-**1.1.14**
-
-- ...
-
-**1.1.13**
-
-- refactor describe
-- refactor define
-- add schema tests
-- edit docs
-
-**1.1.12**
-
-- refactor patch method
-
-...
 
 ## License
 
