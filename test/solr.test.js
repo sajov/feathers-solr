@@ -187,7 +187,7 @@ describe('Feathers Solr Config + Schema test', function() {
       });
       assert.ok(response);
       assert.strictEqual(response.total, 3, 'Got 3 entries');
-      assert.strictEqual(response.data.length, 1, 'Got two entries');
+      assert.strictEqual(response.data.length, 1, 'Got one entry');
       assert.strictEqual(response.facets.count, 3, 'Got 3 entries');
       assert.strictEqual(response.facets.gender.buckets.length, 2, 'Got 2 entries');
     });
@@ -202,7 +202,7 @@ describe('Feathers Solr Config + Schema test', function() {
         paginate: { max: 10, default: 1 }
       });
       assert.strictEqual(response.total, 3, 'Got 3 entries');
-      assert.strictEqual(response.data.length, 1, 'Got two entries');
+      assert.strictEqual(response.data.length, 1, 'Got one entry');
       assert.strictEqual(response.facets.count, 3, 'Got 3 entries');
       assert.ok((response.facets.ageAvg = 20), 'age AGV is 20');
       assert.ok((response.facets.ageSum = 60), 'age SUM is 60');
