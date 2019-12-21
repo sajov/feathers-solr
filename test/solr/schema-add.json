@@ -1,0 +1,36 @@
+{
+  "add-field-type": {
+    "name": "text_auto",
+    "class": "solr.TextField",
+    "positionIncrementGap": "100",
+    "analyzer": {
+      "tokenizer": {
+        "class": "solr.WhitespaceTokenizerFactory"
+      },
+      "filters": [
+        {
+          "class": "solr.WordDelimiterFilterFactory",
+          "generateWordParts": "1",
+          "generateNumberParts": "1",
+          "catenateWords": "1",
+          "catenateNumbers": "1",
+          "catenateAll": "1",
+          "splitOnCaseChange": "1"
+        },
+        {
+          "class": "solr.LowerCaseFilterFactory"
+        }
+      ]
+    }
+  },
+  "add-field": {
+    "name": "autocomplete",
+    "type": "text_auto",
+    "indexed": true,
+    "stored": true
+  },
+  "add-copy-field": {
+    "source": "*",
+    "dest": "autocomplete"
+  }
+}
