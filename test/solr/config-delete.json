@@ -1,1 +1,1 @@
-{ "delete-searchcomponent": "suggest", "delete-requesthandler": "/suggest" }
+{ "delete-requesthandler": "/suggest", "delete-searchcomponent": "suggest" }

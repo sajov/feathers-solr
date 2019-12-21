@@ -6,7 +6,7 @@
       "name": "suggest",
       "lookupImpl": "FuzzyLookupFactory",
       "dictionaryImpl": "DocumentDictionaryFactory",
-      "field": "autocomplete_shingle",
+      "field": "name",
       "suggestAnalyzerFieldType": "string",
       "buildOnStartup": "true",
       "buildOnCommit": "true"

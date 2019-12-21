@@ -9,6 +9,6 @@ tar xfz solr-7.7.2.tgz
 cd solr-7.7.2
 
 java -version
-#bin/solr start -e schemaless
-#bin/solr start -e cloud -noprompt
-bin/solr start -e techproducts
+# bin/solr start -e cloud -noprompt
+# bin/solr start -e techproducts
+bin/solr start -e schemaless

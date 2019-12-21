@@ -2,18 +2,29 @@ const assert = require('assert');
 const adapterTests = require('@feathersjs/adapter-tests');
 const errors = require('@feathersjs/errors');
 const feathers = require('@feathersjs/feathers');
-const {fetch,  undici} = require('../lib');
+const { fetchClient, undiciClient } = require('../lib');
 const solr = require('../lib');
-const options = {
-  Model: new fetch('http://localhost:8983/solr/techproducts'),
+const configAdd = require('./solr/config-add.json');
+const configDelete = require('./solr/config-delete.json');
+const schemaAdd = require('./solr/schema-add.json');
+const schemaDelete = require('./solr/schema-delete.json');
+const app = feathers();
+
+// Http Client Fetch
+let options = {
+  Model: new fetchClient('http://localhost:8983/solr/gettingstarted'),
   paginate: {},
   events: ['testing']
 };
-const app = feathers().use('fetch', new solr(options));
+app.use('fetch', new solr(options));
 const service = app.service('fetch');
 
 // Http Client Undici
-options.Model = new undici('http://localhost:8983/solr/techproducts');
+options = {
+  Model: new undiciClient('http://localhost:8983/solr/gettingstarted'),
+  paginate: {},
+  events: ['testing']
+};
 app.use('undici', new solr(options));
 
 const tests = [
@@ -83,76 +94,52 @@ const tests = [
 const testSuite = adapterTests(tests);
 
 describe('Feathers Solr Service Common Adapter Tests', () => {
-  beforeEach(done => setTimeout(done, 1000));
+  beforeEach(done => setTimeout(done, 100));
 
-  before(function(done) {
-    Promise.all([
-      service.Model.post('schema/fields', {
-        'add-field': {
-          name: 'name',
-          type: 'text_general',
-          multiValued: false,
-          indexed: true,
-          stored: true
-        }
-      }),
-      service.Model.post('schema/fields', {
-        'add-field': {
-          name: 'age',
-          type: 'pint',
-          multiValued: false,
-          indexed: true,
-          stored: true
-        }
-      }),
-      service.Model.post('schema/fields', {
-        'add-field': {
-          name: 'created',
-          type: 'boolean',
-          multiValued: false,
-          indexed: true,
-          stored: true
-        }
-      })
-    ])
-      .then(result => {
-        done();
-      })
-      .catch(error => {
-        done();
-      });
+  before(async () => {
+    service.options.multi = ['create', 'remove'];
+    await service.Model.post('config', configAdd);
+    await service.Model.post('schema', schemaAdd);
+    // TODO: fix Multiple
+    await service.create({
+      name: 'Alice',
+      age: 20,
+      gender: 'female'
+    });
+    await service.create({
+      name: 'Junior',
+      age: 10,
+      gender: 'male'
+    });
+    await service.create({
+      name: 'Doug',
+      age: 30,
+      gender: 'male'
+    });
   });
 
-  it('is CommonJS compatible', () => assert.strictEqual(typeof require('../lib'), 'function'));
+  after(async () => {
+    await service.remove(null, { query: { id: '*' } });
+    await service.Model.post('config', configDelete);
+    await service.Model.post('schema', schemaDelete);
+  });
+
+  beforeEach(async () => {});
+
+  afterEach(async () => {});
 });
-
 describe('Feathers Solr Service Common Adapter Tests', () => {
-  describe('Prepare Adapter Tests', () => {
-    it('.delete multi ', async () => {
-      service.options.multi = ['remove'];
-      await service.remove(null, { query: { id: '*' } });
-      service.options.multi = false;
-      const result = await service.find({});
-      assert.ok(Array.isArray(result), 'data is an array');
-      assert.ok(result.length == 0, 'data is empty');
-    });
-
-    it('has fields name', async () => {
-      const response = await service.Model.get('schema/fields/name');
-      assert.ok(response.field.name == 'name', 'field name exists');
-    });
-
-    it('has fields age', async () => {
-      const response = await service.Model.get('schema/fields/age');
-      assert.ok(response.field.name == 'age', 'field age exists');
-    });
-
-    it('has fields created', async () => {
-      const response = await service.Model.get('schema/fields/created');
-      assert.ok(response.field.name == 'created', 'field created exists');
-    });
+  before(async () => {
+    service.options.multi = ['create', 'remove'];
+    await service.Model.post('config', configAdd);
+    await service.Model.post('schema', schemaAdd);
+    await service.remove(null, { query: { id: '*' } });
   });
 
+  after(async () => {
+    await service.Model.post('config', configDelete);
+    await service.Model.post('schema', schemaDelete);
+  });
   testSuite(app, errors, 'fetch');
   testSuite(app, errors, 'undici');
 });

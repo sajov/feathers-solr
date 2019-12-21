@@ -1,8 +1,4 @@
 {
-  "delete-copy-field": {
-    "source": "*",
-    "dest": "autocomplete"
-  },
-  "delete-field": { "name": "autocomplete" },
+  "delete-field": [{ "name": "name" }, { "name": "age" }, { "name": "gender" }, { "name": "autocomplete" }],
   "delete-field-type": { "name": "text_auto" }
 }

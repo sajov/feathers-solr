@@ -1,9 +1,7 @@
 const feathers = require('@feathersjs/feathers');
 const express = require('@feathersjs/express');
 const Service = require('../lib');
-const Client = require('../lib').Client;
-const ClientFastReq = require('./client-fast-req');
-const ClientUndici = require('./client-undici');
+const { fetchClient, undiciClient } = require('../lib');
 // Create an Express compatible Feathers application instance.
 const app = express(feathers());
 // Turn on JSON parser for REST services
@@ -17,24 +15,18 @@ app.configure(express.rest());
 // Set up Solr Services
 const options = {
   Model: {},
-  name: 'techproducts',
   paginate: {},
   multi: true,
   events: ['testing']
 };
 
 // Http Client Fetch
-options.Model = new Client('http://localhost:8983/solr/techproducts');
-const solr = new Service(options);
-app.use('fetch', solr);
-
-// Http Client Fast-Req
-options.Model = new ClientFastReq('http://localhost:8983/solr/techproducts');
-const solrFastReq = new Service(options);
-app.use('fastreq', solrFastReq);
+options.Model = new fetchClient('http://localhost:8983/solr/gettingstarted');
+const solrFetch = new Service(options);
+app.use('fetch', solrFetch);
 
 // Http Client Undici
-options.Model = new ClientUndici('http://localhost:8983/solr/techproducts');
+options.Model = new undiciClient('http://localhost:8983/solr/gettingstarted');
 const solrUndici = new Service(options);
 app.use('undici', solrUndici);
 
@@ -48,7 +40,7 @@ var server = app.listen(port, () => {
   console.log(`Feathers server listening on port http://127.0.0.1:${port}`);
 });
 
-process.on('SIGINT', function () {
+process.on('SIGINT', function() {
   console.error('Caught SIGINT, shutting down.');
   server.close();
 });
