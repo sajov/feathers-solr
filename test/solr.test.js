@@ -93,7 +93,7 @@ describe('Feathers Solr Setup Tests', () => {
 });
 
 describe('Feathers Solr Config + Schema test', function() {
-  beforeEach(done => setTimeout(done, 100));
+  // beforeEach(done => setTimeout(done, 100));
 
   before(async () => {
     service.options.multi = ['create', 'remove'];
@@ -102,29 +102,28 @@ describe('Feathers Solr Config + Schema test', function() {
   });
 
   after(async () => {
-    // await service.remove(null, { query: { id: '*' } });
-    // service.options.multi = false;
     await service.Model.post('config', configDelete);
     await service.Model.post('schema', schemaDelete);
   });
 
   beforeEach(async () => {
-    // TODO: fix Multiple
-    await service.create({
-      name: 'Alice',
-      age: 20,
-      gender: 'female'
-    });
-    await service.create({
-      name: 'Junior',
-      age: 10,
-      gender: 'male'
-    });
-    await service.create({
-      name: 'Doug',
-      age: 30,
-      gender: 'male'
-    });
+    await service.create([
+      {
+        name: 'Alice',
+        age: 20,
+        gender: 'female'
+      },
+      {
+        name: 'Junior',
+        age: 10,
+        gender: 'male'
+      },
+      {
+        name: 'Doug',
+        age: 30,
+        gender: 'male'
+      }
+    ]);
   });
 
   afterEach(async () => {

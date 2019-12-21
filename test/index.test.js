@@ -100,22 +100,23 @@ describe('Feathers Solr Service Common Adapter Tests', () => {
     service.options.multi = ['create', 'remove'];
     await service.Model.post('config', configAdd);
     await service.Model.post('schema', schemaAdd);
-    // TODO: fix Multiple
-    await service.create({
-      name: 'Alice',
-      age: 20,
-      gender: 'female'
-    });
-    await service.create({
-      name: 'Junior',
-      age: 10,
-      gender: 'male'
-    });
-    await service.create({
-      name: 'Doug',
-      age: 30,
-      gender: 'male'
-    });
+    await service.create([
+      {
+        name: 'Alice',
+        age: 20,
+        gender: 'female'
+      },
+      {
+        name: 'Junior',
+        age: 10,
+        gender: 'male'
+      },
+      {
+        name: 'Doug',
+        age: 30,
+        gender: 'male'
+      }
+    ]);
   });
 
   after(async () => {
