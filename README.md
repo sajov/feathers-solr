@@ -24,8 +24,8 @@ Returns a new service instance initialized with the given options.
 ```js
 const service = require('feathers-solr');
 
-app.use('/techproducts', service());
-app.use('/techproducts', service({ id, startId, store, events, paginate }));
+app.use('/gettingstarted', service());
+app.use('/gettingstarted', service({ id, startId, store, events, paginate }));
 ```
 
 **Options:**
@@ -55,8 +55,8 @@ app.use(express.urlencoded({ extended: true }));
 app.configure(express.rest());
 
 const options = {
-  Model: new Client('http://localhost:8983/solr/techproducts'),
-  core: 'techproducts',
+  Model: new Client('http://localhost:8983/solr/gettingstarted'),
+  core: 'gettingstarted',
   paginate: { default: 10, max: 100 },
   multi: true,
   events: ['testing']
@@ -73,12 +73,12 @@ app.listen(3030, () => {
 ### Install Solr
 
 ```
- bin/solr start -e techproducts
+ bin/solr start -e gettingstarted
 ```
 
 Use `feathers-solr/bin/install-solr.sh` for a kickstart installation.
 
-Run the example with `node app` and go to [localhost:3030/techproducts](http://localhost:3030/techproducts).
+Run the example with `node app` and go to [localhost:3030/gettingstarted](http://localhost:3030/gettingstarted).
 
 ## Querying
 

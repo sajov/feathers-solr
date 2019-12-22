@@ -41,7 +41,7 @@
     "dtslint": "dtslint types",
     "mocha": "mocha --opts mocha.opts -S",
     "mocha:watch": "mocha --opts mocha.opts -S --watch lib node_modules/@feathersjs/adapter-tests/lib",
-    "mocha:core": "mocha test/core.test.js --watch lib node_modules/@feathersjs/adapter-tests/lib",
+    "mocha:solr": "mocha test/core.test.js --watch lib node_modules/@feathersjs/adapter-tests/lib",
     "mocha:adapter": "mocha test/index.test.js --watch lib node_modules/@feathersjs/adapter-tests/lib",
     "test": "npm run lint && npm run dtslint && npm run coverage",
     "example": "babel-node example/index",
@@ -49,7 +49,6 @@
     "travis": "node_modules/.bin/istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --colors --reporter spec test/",
     "start": "nodemon example -w example -w lib -w test",
     "benchmark:fetch": "ab -n 1000 -c 10 http://localhost:3030/fetch/TWINX2048-3200PRO",
-    "benchmark:fast-req": "ab -n 1000 -c 10 http://localhost:3030/fastreq/TWINX2048-3200PRO",
     "benchmark:undici": "ab -n 1000 -c 10 http://localhost:3030/undici/TWINX2048-3200PRO"
   },
   "semistandard": {
