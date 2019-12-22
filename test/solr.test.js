@@ -2,17 +2,26 @@ const assert = require('assert');
 const adapterTests = require('@feathersjs/adapter-tests');
 const errors = require('@feathersjs/errors');
 const feathers = require('@feathersjs/feathers');
-
 const solr = require('../lib');
 const { fetchClient, undiciClient } = require('../lib');
+const solrServer = 'http://localhost:8983/solr/gettingstarted';
+
 const options = {
-  Model: new fetchClient('http://localhost:8983/solr/gettingstarted'),
+  Model: new fetchClient(solrServer),
   paginate: {},
   events: ['testing']
 };
 
-const app = feathers().use('gettingstarted', new solr(options));
-const service = app.service('gettingstarted');
+const app = feathers().use('fetch', new solr(options));
+const service = app.service('fetch');
+app.use(
+  'undici',
+  new solr({
+    Model: new undiciClient(solrServer),
+    paginate: {},
+    events: ['testing']
+  })
+);
 
 const configAdd = require('./solr/config-add.json');
 const configDelete = require('./solr/config-delete.json');
@@ -42,6 +51,56 @@ describe('Feathers Solr Setup Tests', () => {
     it('Should be pingable', async () => {
       const response = await service.Model.get('admin/ping');
       assert.ok(response);
+    });
+  });
+
+  describe('Client setup with out a connection', () => {
+    it('Unidici should throw an error', async () => {
+      try {
+        new undiciClient();
+
+        throw new Error('Should never get here');
+      } catch (error) {
+        assert.strictEqual(error.name, 'Error', 'Got a NotFound Feathers error');
+      }
+    });
+
+    it('Fetch should throw an error', async () => {
+      try {
+        new fetchClient();
+
+        throw new Error('Should never get here');
+      } catch (error) {
+        assert.strictEqual(error.name, 'Error', 'Got a NotFound Feathers error');
+      }
+    });
+  });
+
+  describe('Client get', () => {
+    it('Unidici should get', async () => {
+      const response = await app.service('undici').Model.get('admin/ping');
+      assert.ok(response, 'Error', 'Got no ping result');
+      assert.strictEqual(response.status, 'OK', 'Error', 'Got not a response status');
+    });
+
+    it('Fetch should get', async () => {
+      const response = await app.service('fetch').Model.get('admin/ping');
+      assert.ok(response, 'Error', 'Got no ping result');
+      assert.strictEqual(response.status, 'OK', 'Error', 'Got not a response status');
+    });
+  });
+
+  describe('Client post', () => {
+    it('Unidici should post', async () => {
+      const response = await app.service('undici').Model.post('query', { query: '*:*' });
+      assert.ok(response, 'Error', 'Got a NotFound Feathers error');
+      assert.strictEqual(response.response.numFound, 0, 'Error', 'Got a NotFound Feathers error');
+    });
+
+    it('Fetch should post', async () => {
+      const response = await app.service('fetch').Model.post('query', { query: '*:*' });
+      assert.ok(response, 'Error', 'Got a NotFound Feathers error');
+      assert.strictEqual(response.response.numFound, 0, 'Error', 'Got a NotFound Feathers error');
     });
   });
 
