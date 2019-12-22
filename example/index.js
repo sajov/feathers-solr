@@ -30,6 +30,14 @@ options.Model = new undiciClient('http://localhost:8983/solr/gettingstarted');
 const solrUndici = new Service(options);
 app.use('undici', solrUndici);
 
+app.service('fetch').create({
+  id: 'TWINX2048-3200PRO',
+  name: 'Product One'
+});
+app.service('undici').create({
+  id: 'HELIX1015-1800SL',
+  name: 'Product Two'
+});
 // Set up default error handler
 // app.use(express.errorHandler());
 
