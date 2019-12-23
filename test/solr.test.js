@@ -128,13 +128,23 @@ describe('Feathers Solr Setup Tests', () => {
   });
 
   describe('Service whitelisted params', () => {
+    before(async () => {
+      service.options.multi = ['create', 'remove'];
+      await service.Model.post('config', configAdd);
+    });
+
+    after(async () => {
+      await service.Model.post('config', configDelete);
+    });
     it('should accept $search', async () => {
       const result = await service.find({ query: { $search: true } });
       assert.ok(Array.isArray(result), 'result is array');
     });
     it('should accept $suggest', async () => {
-      const result = await service.find({ query: { $suggest: true } });
-      assert.ok(Array.isArray(result), 'result is array');
+      const result = await service.find({ query: { $suggest: 'max' } });
+      assert.ok(result, 'result is array');
+      assert.ok(result.suggest.suggest.max, 'result is array');
+      assert.strictEqual(result.spellcheck.suggestions.length, 0, 'result is array');
     });
     it('should accept $params', async () => {
       const result = await service.find({ query: { $params: {} } });
