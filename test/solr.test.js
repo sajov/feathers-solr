@@ -277,4 +277,21 @@ describe('Feathers Solr Config + Schema test', function() {
       assert.ok((response.facets.ageSum = 60), 'age SUM is 60');
     });
   });
+
+  describe('Query $params search relevance', () => {
+    it('$params - edismax', async () => {
+      const response = await service.find({
+        query: {
+          $search: 'Doug~',
+          $params: {
+            edismax: 'true',
+            qf: 'name^10,age^1,gender'
+          }
+        },
+        paginate: { max: 10, default: 1 }
+      });
+      console.log(response);
+      assert.ok(response);
+    });
+  });
 });
