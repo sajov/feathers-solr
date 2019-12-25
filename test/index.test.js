@@ -2,30 +2,38 @@ const assert = require('assert');
 const adapterTests = require('@feathersjs/adapter-tests');
 const errors = require('@feathersjs/errors');
 const feathers = require('@feathersjs/feathers');
-const { fetchClient, undiciClient } = require('../lib');
+const fetch = require('node-fetch');
+const undici = require('undici');
 const solr = require('../lib');
+const { SolrClient } = require('../lib');
 const configAdd = require('./solr/config-add.json');
 const configDelete = require('./solr/config-delete.json');
 const schemaAdd = require('./solr/schema-add.json');
 const schemaDelete = require('./solr/schema-delete.json');
+const solrServer = 'http://localhost:8983/solr/gettingstarted';
+
 const app = feathers();
 
 // Http Client Fetch
-let options = {
-  Model: new fetchClient('http://localhost:8983/solr/gettingstarted'),
-  paginate: {},
-  events: ['testing']
-};
-app.use('fetch', new solr(options));
+app.use(
+  'fetch',
+  new solr({
+    Model: SolrClient(fetch, solrServer),
+    paginate: {},
+    events: ['testing']
+  })
+);
 const service = app.service('fetch');
 
 // Http Client Undici
-options = {
-  Model: new undiciClient('http://localhost:8983/solr/gettingstarted'),
-  paginate: {},
-  events: ['testing']
-};
-app.use('undici', new solr(options));
+app.use(
+  'undici',
+  new solr({
+    Model: SolrClient(undici, solrServer),
+    paginate: {},
+    events: ['testing']
+  })
+);
 
 const tests = [
   '.options',
