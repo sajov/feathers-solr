@@ -1,6 +1,4 @@
 const assert = require('assert');
-const adapterTests = require('@feathersjs/adapter-tests');
-const errors = require('@feathersjs/errors');
 const feathers = require('@feathersjs/feathers');
 const fetch = require('node-fetch');
 const undici = require('undici');
