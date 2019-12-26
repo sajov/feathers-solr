@@ -5,7 +5,7 @@
 [![dependencies Status](https://david-dm.org/sajov/feathers-solr/status.svg)](https://david-dm.org/sajov/feathers-solr)
 [![Known Vulnerabilities](https://snyk.io/test/npm/feathers-solr/badge.svg)](https://snyk.io/test/npm/feathers-solr)
 
-A [Feathers](https://feathersjs.com/) Solr Adapter.
+A [Feathers](https://feathersjs.com/) Solr Adapter. Require >= Solr 5.x
 
 ```
 $ npm install feathers-solr --save
@@ -259,7 +259,7 @@ Add the field `_version_` to the `$select` params will return the document conte
 
 ### Service.update
 
-Will overide the complete Document. I the `_version_` field is part of update content, it will be removed.
+Will overide the complete Document. If the `_version_` field is part of update content, it will be removed.
 
 ### Service.patch
 
