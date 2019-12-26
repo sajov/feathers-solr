@@ -13,7 +13,7 @@ $ npm install feathers-solr --save
 
 > **Important:** `feathers-solr` implements the [Feathers Common database adapter API](https://docs.feathersjs.com/api/databases/common.html) and [querying syntax](https://docs.feathersjs.com/api/databases/querying.html).
 
-Install a supported HTTP Client [Fetch](https://github.com/bitinn/node-fetch), [Undici](https://github.com/mcollina/undici) or a [custom HTTP Client]('/#Custom Client').
+Install a supported HTTP Client [Fetch](https://github.com/bitinn/node-fetch), [Undici](https://github.com/mcollina/undici) or [use a different HTTP Client](https://github.com/sajov/feathers-solr/tree/feature/refactor#use-a-different-http-client).
 
 ```
 $ npm install node-fetch --save
@@ -99,12 +99,9 @@ This Adapter use the Solr [JSON Request API](https://lucene.apache.org/solr/guid
 
 The following params passed raw:
 
-- \$search = Solr param `query`
-
+- \$search - Solr param `query`
 - \$params - Solr param `params`
-  [Passing Parameters via JSON](https://lucene.apache.org/solr/guide/7_7/json-request-api.html#passing-parameters-via-json)
-
-- \$facet
+- \$facet - Solr param `facet`
 
 ## Examples
 

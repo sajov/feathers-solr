@@ -1,8 +1,8 @@
 const feathers = require('@feathersjs/feathers');
 const express = require('@feathersjs/express');
-const Service = require('../lib');
 const fetch = require('node-fetch');
 const undici = require('undici');
+const Service = require('../lib');
 const { SolrClient } = require('../lib');
 const solrServer = 'http://localhost:8983/solr/gettingstarted';
 
