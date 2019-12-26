@@ -19,8 +19,6 @@ Install a supported HTTP Client [Fetch](https://github.com/bitinn/node-fetch), [
 $ npm install node-fetch --save
 ```
 
-Demo [eCommerce Category Page](http://feathers.better-search-box.com/)
-
 ## API
 
 ### `service([options])`
@@ -93,179 +91,44 @@ Run the example with `node app` and go to [localhost:3030/gettingstarted](http:/
 
 ## Querying
 
-Additionally to the [common querying mechanism](https://docs.feathersjs.com/api/databases/querying.html) this adapter also supports special params:
+Feathers Docs [Database Querying](https://docs.feathersjs.com/api/databases/querying.html)
 
 ## Additional Query Params
 
-### \$search
+This Adapter use the Solr [JSON Request API](https://lucene.apache.org/solr/guide/7_7/json-request-api.html).
 
-Simple Query
+The following params passed raw:
 
-```javascript
-query: {
-  $search: 'John';
-}
-```
+- \$search = Solr param `query`
 
-Complex Query
+- \$params - Solr param `params`
+  [Passing Parameters via JSON](https://lucene.apache.org/solr/guide/7_7/json-request-api.html#passing-parameters-via-json)
 
-```javascript
-query: {
-  $skip: 0,
-  $limit: 50,
-  $select: "id,image,name,price,special_price,categories",
-  $search: "red red*",
-  $facet: {
-    Categories: {type: "terms", field: "categories", sort: {…}, limit: 1000, domain: {…}}
-    activity: {type: "terms", field: "activity", sort: {…}, limit: 1000}
-    category_gear: {type: "terms", field: "category_gear", sort: {…}, limit: 1000}
-    color: {type: "terms", field: "color", sort: {…}, limit: 1000}
-    eco_collection: {type: "terms", field: "eco_collection", sort: {…}, limit: 1000}
-    erin_recommends: {type: "terms", field: "erin_recommends", sort: {…}, limit: 1000}
-    features_bags: {type: "terms", field: "features_bags", sort: {…}, limit: 1000}
-    format: {type: "terms", field: "format", sort: {…}, limit: 1000}
-    gender: {type: "terms", field: "gender", sort: {…}, limit: 1000}
-    material: {type: "terms", field: "material", sort: {…}, limit: 1000}
-    new: {type: "terms", field: "new", sort: {…}, limit: 1000}
-    performance_fabric: {type: "terms", field: "performance_fabric", sort: {…}, limit: 1000}
-    price_type: {type: "terms", field: "price_type", sort: {…}, limit: 1000}
-    sale: {type: "terms", field: "sale", sort: {…}, limit: 1000}
-    size: {type: "terms", field: "size", sort: {…}, limit: 1000}
-    strap_bags: {type: "terms", field: "strap_bags", sort: {…}, limit: 1000}
-    style_bags: {type: "terms", field: "style_bags", sort: {…}, limit: 1000}
-  },
-  $params: {defType: "edismax", qf: "name^10 categories^5 _text_"},
-  doc_type: "product"
-}
-```
+- \$facet
 
-'\$search' will try to match against Solr default search field '_text_' [Schemaless Mode](https://cwiki.apache.org/confluence/display/solr/Schemaless+Mode)
+## Examples
 
-More complex query with a default Solr configuration.
+Get Min and Max - [Solr Facet Functions and Analytics](http://yonik.com/solr-facet-functions/)
+
+query:
 
 ```javascript
-query: {
-
-  $search: "John !Doe +age:[80 TO *]", // Search in default field _text_. See Solr copy field `copy:* to _text_`
-
-  // Optional to optimize search relevance
-  $params: {
-      // define explicit fields to query and boost
-      defType: "edismax",
-      qf: "name^10 friends"
-  }
-  // or $search: "name:John^10 AND !name:Doe AND age:[80 TO *]",
-  // or $search: "joh*",
-  // or $search: '"john doe"',
-  // or $search: 'jon~',
-
-}
-```
-
-### \$params
-
-Add all kind of Solr query params!
-Combine huge Solr Features like _facets_, _stats_, _ranges_, _grouping_ and more with the default response.
-This example will group the result.
-
-```javascript
-query: {
-    $params: {
-        group : true,
-        "group.field" : "country",
-        "group.format" : "simple",
-    }
-}
-```
-
-Feathers Rest query
-
-```
-http://localhost:3030/solr?$params[group]=true&$params[group.field]=gender&$params[group.field]=age&$params[group.limit]=1&$params[group.format]=grouped&$select=id,age,gender
-```
-
-Feathers Result
-
-```javascript
-{
-  "QTime": 0,
-  "total": 0,
-  "limit": 10,
-  "skip": 0,
-  "data": {
-    "gender": {
-      "matches": 50,
-      "groups": [
-        {
-          "groupValue": "male",
-          "doclist": {
-            "numFound": 24,
-            "start": 0,
-            "docs": [
-              {
-                "id": "59501959f2786e0207a8b29f",
-                "age": "45",
-                "gender": "male"
-              }
-            ]
-          }
-        }]
-    }
-  }
-}
-
-```
-
-### \$facet Functions and Analytics
-
-See [Solr Facet Functions and Analytics](http://yonik.com/solr-facet-functions/)
-
-| Aggregation | Example                          | Effect                                                  |
-| ----------- | -------------------------------- | ------------------------------------------------------- |
-| sum         | sum(sales)                       | summation of numeric values                             |
-| avg         | avg(popularity)                  | average of numeric values                               |
-| sumsq       | sumsq(rent)                      | sum of squares                                          |
-| min         | min(salary)                      | minimum value                                           |
-| max         | max(mul(price,popularity))       | maximum value                                           |
-| unique      | unique(state)                    | number of unique values (count distinct)                |
-| hll         | hll(state)                       | number of unique values using the HyperLogLog algorithm |
-| percentile  | percentile(salary,50,75,99,99.9) | calculates percentiles                                  |
-
-```javascript
-query: {
+ {
     $facet: {
-        age_avg : "avg(age)",
-        age_sum : "sum(age)"
-    }
-}
-
-```
-
-### \$facet Ranges
-
-Add a facet type range
-
-```javascript
-query: {
-    $facet: {
+        age_min : "min(age)",
+        age_max : "max(age)",
         age_ranges: {
             type: "range",
             field: "age",
             start: 0,
             end: 100,
-            gap: 25
+            gap: 10
         }
     }
 }
 ```
 
-Feathers Rest query
-
-```
-http://localhost:3030/solr?&$facet[age_ranges][type]=range&$facet[age_ranges][field]=age&$facet[age_ranges][start]=0&$facet[age_ranges][end]=100&$facet[age_ranges][gap]=25&$facet[age_avg]=avg(age)&$facet[age_sum]=sum(age)
-```
-
-Feathers Result
+result:
 
 ```javascript
 {
@@ -275,8 +138,8 @@ Feathers Result
     skip: 0,
     data: [...],
     facet: {
-        age_avg: 29.44,
-        age_sum: 1472,
+        age_min: 1,
+        age_max: 104,
         count: 54,
         age_ranges: {
             buckets: [{
@@ -298,123 +161,26 @@ Feathers Result
 
 ```
 
+Get a Range Facet - [Multi Select Faceting](http://yonik.com/multi-select-faceting/)
+
+query:
+
+```Javascript
+{
+  $search:'blue',
+  '{!tag=COLOR}color':'Blue',
+  $facet:{
+      sizes:{type:terms, field:size},
+      colors:{type:terms, field:color, domain:{excludeTags:COLOR} },
+      brands:{type:terms, field:brand, domain:{excludeTags:BRAND}
+  }
+}
+
+```
+
 See more query variants [JSON Facet API](http://yonik.com/json-facet-api/),[Solr Facet Functions and Analytics](http://yonik.com/solr-facet-functions/), [Solr Subfacets](http://yonik.com/solr-subfacets/), [Multi-Select Faceting](http://yonik.com/multi-select-faceting/)
 
-### \$suggest
-
-A custom response object for autocompleter suggestions.
-See example _app.js_ for creating a custom searchcomponent and requesthandler including a spellcheck component
-
-```
-query: {
-    $suggest: 'Handmake',
-    $params: {} // to plain solr parameter
-}
-```
-
-Feathers Rest query
-
-```
-http://localhost:3030/solr?&$suggest=Handmake
-```
-
-Feathers Result
-This is a plain solr response
-
-```javascript
-{
-    {
-        "responseHeader": {
-            "status": 0,
-            "QTime": 1
-        },
-        "spellcheck": {
-            "suggestions": [
-                "handmake", {
-                    "numFound": 1,
-                    "startOffset": 0,
-                    "endOffset": 8,
-                    "origFreq": 0,
-                    "suggestion": [{
-                        "word": "handmade",
-                        "freq": 1
-                    }]
-                }
-            ],
-            "correctlySpelled": false,
-            "collations": [
-                "collation",
-                "handmade"
-            ]
-        },
-        "suggest": {
-            "suggest": {
-                "Handmake": {
-                    "numFound": 1,
-                    "suggestions": [{
-                        "term": "Handmade Wooden Keyboard",
-                        "weight": 0,
-                        "payload": ""
-                    }]
-                }
-            }
-        }
-    }
-}
-
-```
-
-### \$spellcheck
-
-This feature add a spellcheck component to the default find result
-
-```
-query: {
-    $search: "Handmake",
-    $spellcheck:1,
-    color: "sky blue",
-    $limit: 10,
-
-}
-```
-
-Feathers Rest query
-
-```
-http://localhost:3030/solr?$search=Handmake&color=Handmke&color="sky blue"&$limit=10&$spellcheck=1
-```
-
-Feathers Result
-
-```javascript
-{
-    "QTime": 0,
-    "total": 6,
-    "limit": 10,
-    "skip": 0,
-    "data": [...],
-    "spellcheck": {
-            "suggestions": [
-                "handmake", {
-                    "numFound": 1,
-                    "startOffset": 0,
-                    "endOffset": 8,
-                    "origFreq": 0,
-                    "suggestion": [{
-                        "word": "handmade",
-                        "freq": 1
-                    }]
-                }
-            ],
-            "correctlySpelled": false,
-            "collations": [
-                "collation",
-                "handmade"
-            ]
-        },
-```
-
-### Adapter.patch
+## Adapter.patch
 
 Support simple usage [Feathers Docs](https://docs.feathersjs.com/api/services.html#patchid-data-params)
 
@@ -430,19 +196,13 @@ data: {views: {inc:1}}; // inc, set, add, remove, removeregex
 Adapter.patch(id, data, params);
 ```
 
-## Custom HTTP Client
-
-A decision of comfort or Performance.
-Use a different HTTP Client
+## Use a different HTTP Client
 
 ```Javascript
 class CustomClient {
-  constructor(HTTPModule, conn) {
-  }
-  get(api, params = {}) {
-  }
-  post(api, data, params = {}) {
-  }
+  constructor(HTTPModule, conn) {}
+  get(api, params = {}) {}
+  post(api, data, params = {}) {}
 };
 
 const options = {
@@ -457,8 +217,8 @@ app.service('solr', new Service(options))
 ## TODO
 
 - Hook Examples
-  - Migration Hook
-  - Json Hook
+  - Schema Migration Hook (drop,alter,safe)
+  - Json Hook Store Data as JSON
   - Validation Hook
 
 ## Changelog
