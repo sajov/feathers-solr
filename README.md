@@ -50,10 +50,10 @@ app.use('/gettingstarted', service({ id, Model, events, paginate }));
 ```javascript
 const feathers = require('@feathersjs/feathers');
 const express = require('@feathersjs/express');
-const Service = require('feathers-solr');
 const fetch = require('node-fetch');
 const undici = require('undici');
-const { SolrClient } = require('../lib');
+const Service = require('feathers-solr');
+const { SolrClient } = require('feathers-solr');
 const solrServer = 'http://localhost:8983/solr/gettingstarted';
 
 // Create an Express compatible Feathers application instance.
