@@ -1,7 +1,11 @@
 const feathers = require('@feathersjs/feathers');
 const express = require('@feathersjs/express');
 const Service = require('../lib');
-const { fetchClient, undiciClient } = require('../lib');
+const fetch = require('node-fetch');
+const undici = require('undici');
+const { SolrClient } = require('../lib');
+const solrServer = 'http://localhost:8983/solr/gettingstarted';
+
 // Create an Express compatible Feathers application instance.
 const app = express(feathers());
 // Turn on JSON parser for REST services
@@ -12,23 +16,24 @@ app.use(express.urlencoded({ extended: true }));
 app.configure(express.rest());
 // Enable REST services
 
-// Set up Solr Services
-const options = {
-  Model: {},
-  paginate: {},
-  multi: true,
-  events: ['testing']
-};
-
-// Http Client Fetch
-options.Model = new fetchClient('http://localhost:8983/solr/gettingstarted');
-const solrFetch = new Service(options);
-app.use('fetch', solrFetch);
-
-// Http Client Undici
-options.Model = new undiciClient('http://localhost:8983/solr/gettingstarted');
-const solrUndici = new Service(options);
-app.use('undici', solrUndici);
+// init Adapter witch Fetch
+app.use(
+  'fetch',
+  new Service({
+    Model: SolrClient(fetch, solrServer),
+    paginate: {},
+    events: ['testing']
+  })
+);
+// init Adapter witch Undici
+app.use(
+  'undici',
+  new Service({
+    Model: SolrClient(undici, solrServer),
+    paginate: {},
+    events: ['testing']
+  })
+);
 
 app.service('fetch').create({
   id: 'TWINX2048-3200PRO',

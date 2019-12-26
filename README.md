@@ -13,6 +13,12 @@ $ npm install feathers-solr --save
 
 > **Important:** `feathers-solr` implements the [Feathers Common database adapter API](https://docs.feathersjs.com/api/databases/common.html) and [querying syntax](https://docs.feathersjs.com/api/databases/querying.html).
 
+Install a supported HTTP Client [Fetch](https://github.com/bitinn/node-fetch), [Undici](https://github.com/mcollina/undici) or a [custom HTTP Client]('/#Custom Client').
+
+```
+$ npm install node-fetch --save
+```
+
 Demo [eCommerce Category Page](http://feathers.better-search-box.com/)
 
 ## API
@@ -24,8 +30,7 @@ Returns a new service instance initialized with the given options.
 ```js
 const service = require('feathers-solr');
 
-app.use('/gettingstarted', service());
-app.use('/gettingstarted', service({ id, startId, store, events, paginate }));
+app.use('/gettingstarted', service({ id, Model, events, paginate }));
 ```
 
 **Options:**
@@ -48,22 +53,28 @@ app.use('/gettingstarted', service({ id, startId, store, events, paginate }));
 const feathers = require('@feathersjs/feathers');
 const express = require('@feathersjs/express');
 const Service = require('feathers-solr');
-const Client = require('feathers-solr').Client;
-const app = express(feathers());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.configure(express.rest());
+const fetch = require('node-fetch');
+const undici = require('undici');
+const { SolrClient } = require('../lib');
+const solrServer = 'http://localhost:8983/solr/gettingstarted';
 
+// Create an Express compatible Feathers application instance.
+const app = express(feathers());
+// Turn on JSON parser for REST services
+app.use(express.json());
+// Turn on URL-encoded parser for REST services
+app.use(express.urlencoded({ extended: true }));
+// Enable REST services
+app.configure(express.rest());
+// Enable REST services
+
+// init Adapter witch Fetch or Undici
 const options = {
-  Model: new Client('http://localhost:8983/solr/gettingstarted'),
-  core: 'gettingstarted',
-  paginate: { default: 10, max: 100 },
-  multi: true,
+  Model: SolrClient(fetch, solrServer),
+  paginate: {},
   events: ['testing']
 };
-
-const solr = new Service(options);
-app.use('solr', solr);
+app.use('fetch', new Service(options));
 
 app.listen(3030, () => {
   console.log(`Feathers server listening on port http://127.0.0.1:3030`);
@@ -419,14 +430,36 @@ data: {views: {inc:1}}; // inc, set, add, remove, removeregex
 Adapter.patch(id, data, params);
 ```
 
+## Custom HTTP Client
+
+A decision of comfort or Performance.
+Use a different HTTP Client
+
+```Javascript
+class CustomClient {
+  constructor(HTTPModule, conn) {
+  }
+  get(api, params = {}) {
+  }
+  post(api, data, params = {}) {
+  }
+};
+
+const options = {
+    Model: CustomClient(HTTPModule, solrServer),
+    paginate: {},
+    events: ['testing']
+  };
+
+app.service('solr', new Service(options))
+```
+
 ## TODO
 
-- Implement Spcial Query Params `$parms, $suggest, $facet, $populate, $highlight, $spellcheck`
-- Schema
-  - Validation Hook
-  - Json Hook
+- Hook Examples
   - Migration Hook
-- Add Support for Batch Update and Patch
+  - Json Hook
+  - Validation Hook
 
 ## Changelog
 
