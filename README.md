@@ -37,7 +37,7 @@ app.use('/gettingstarted', service({ id, Model, events, paginate }));
 - `Model` (**required**) - HTTP Client (fetch, undici, or your custom).
 - `name` - The name of the Solr Core / Colelction.
 - `defaultParams` - This params added to all Solr request.
-- `commitStrategy` - (_optional_, default: `{ softCommit: true, commitWithin: 10000,overwrite: true }`) - Define how Index changes are stored [Solr Commits](https://lucene.apache.org/solr/guide/7_7/updatehandlers-in-solrconfig.html#UpdateHandlersinSolrConfig-commitandsoftCommit).
+- `commitStrategy` - (_optional_, default: `{ softCommit: true, commitWithin: 10000, overwrite: true }`) - Define how Index changes are stored [Solr Commits](https://lucene.apache.org/solr/guide/7_7/updatehandlers-in-solrconfig.html#UpdateHandlersinSolrConfig-commitandsoftCommit).
 - `schema` (_optional_) - .
 - `migrate` (_optional_) - .
 - `id` (_optional_, default: `'id'`) - The name of the id field property.
@@ -306,7 +306,7 @@ Most of the data mutating operations in Solr (create, update, remove) do not ret
 
 You can access all Solr API endpoints by using a direct model usage.
 
-Ping a Solr core:
+Ping the Solr core/collection:
 
 ```Javascript
 service.Model.get('admin/ping');
