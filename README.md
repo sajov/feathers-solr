@@ -1,7 +1,7 @@
 # feathers-solr
 
-[![Build Status](https://travis-ci.org/sajov/feathers-solr.png?branch=feature/refactor)](https://travis-ci.org/sajov/feathers-solr)
-[![Coverage Status](https://coveralls.io/repos/github/sajov/feathers-solr/badge.svg?branch=feature/refactor)](https://coveralls.io/github/sajov/feathers-solr?branch=feature/refactor)
+[![Build Status](https://travis-ci.org/sajov/feathers-solr.png?branch=master)](https://travis-ci.org/sajov/feathers-solr)
+[![Coverage Status](https://coveralls.io/repos/github/sajov/feathers-solr/badge.svg?branch=master)](https://coveralls.io/github/sajov/feathers-solr?branch=master)
 [![dependencies Status](https://david-dm.org/sajov/feathers-solr/status.svg)](https://david-dm.org/sajov/feathers-solr)
 [![Known Vulnerabilities](https://snyk.io/test/npm/feathers-solr/badge.svg)](https://snyk.io/test/npm/feathers-solr)
 [![Download Status](https://img.shields.io/npm/dm/feathers-solr.svg?style=flat-square)](https://www.npmjs.com/package/feathers-solr)
@@ -14,7 +14,7 @@ $ npm install feathers-solr --save
 
 > **Important:** `feathers-solr` implements the [Feathers Common database adapter API](https://docs.feathersjs.com/api/databases/common.html) and [querying syntax](https://docs.feathersjs.com/api/databases/querying.html).
 
-Install a supported HTTP Client [Fetch](https://github.com/bitinn/node-fetch), [Undici](https://github.com/mcollina/undici) or [use a different HTTP Client](https://github.com/sajov/feathers-solr/tree/feature/refactor#use-a-different-http-client).
+Install a supported HTTP Client [Fetch](https://github.com/bitinn/node-fetch), [Undici](https://github.com/mcollina/undici) or [use a different HTTP Client](https://github.com/sajov/feathers-solr/tree/master#use-a-different-http-client).
 
 ```
 $ npm install node-fetch --save
