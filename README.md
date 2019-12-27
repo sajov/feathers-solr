@@ -4,6 +4,7 @@
 [![Coverage Status](https://coveralls.io/repos/github/sajov/feathers-solr/badge.svg?branch=feature/refactor)](https://coveralls.io/github/sajov/feathers-solr?branch=feature/refactor)
 [![dependencies Status](https://david-dm.org/sajov/feathers-solr/status.svg)](https://david-dm.org/sajov/feathers-solr)
 [![Known Vulnerabilities](https://snyk.io/test/npm/feathers-solr/badge.svg)](https://snyk.io/test/npm/feathers-solr)
+[![Download Status](https://img.shields.io/npm/dm/feathers-solr.svg?style=flat-square)](https://www.npmjs.com/package/feathers-solr)
 
 A [Feathers](https://feathersjs.com/) Solr Adapter. Require >= Solr 5.x
 
