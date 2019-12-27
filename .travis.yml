@@ -4,7 +4,7 @@ language: node_js
 jdk:
   - oraclejdk8
 node_js:
-  - "5"
+  - "8"
 node_js: 'node'
 before_script:
   - node -v

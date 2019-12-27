@@ -1,0 +1,56 @@
+{
+  "add-field-type": {
+    "name": "text_auto",
+    "class": "solr.TextField",
+    "positionIncrementGap": "100",
+    "analyzer": {
+      "tokenizer": {
+        "class": "solr.WhitespaceTokenizerFactory"
+      },
+      "filters": [
+        {
+          "class": "solr.WordDelimiterFilterFactory",
+          "generateWordParts": "1",
+          "generateNumberParts": "1",
+          "catenateWords": "1",
+          "catenateNumbers": "1",
+          "catenateAll": "1",
+          "splitOnCaseChange": "1"
+        },
+        {
+          "class": "solr.LowerCaseFilterFactory"
+        }
+      ]
+    }
+  },
+  "add-field": [
+    {
+      "name": "name",
+      "type": "text_auto",
+      "multiValued": false,
+      "indexed": true,
+      "stored": true
+    },
+    {
+      "name": "autocomplete",
+      "type": "text_auto",
+      "multiValued": false,
+      "indexed": true,
+      "stored": true
+    },
+    {
+      "name": "age",
+      "type": "pint",
+      "multiValued": false,
+      "indexed": true,
+      "stored": true
+    },
+    {
+      "name": "gender",
+      "type": "text_general",
+      "multiValued": false,
+      "indexed": true,
+      "stored": true
+    }
+  ]
+}

@@ -4,320 +4,198 @@
 [![Coverage Status](https://coveralls.io/repos/github/sajov/feathers-solr/badge.svg?branch=master)](https://coveralls.io/github/sajov/feathers-solr?branch=master)
 [![dependencies Status](https://david-dm.org/sajov/feathers-solr/status.svg)](https://david-dm.org/sajov/feathers-solr)
 [![Known Vulnerabilities](https://snyk.io/test/npm/feathers-solr/badge.svg)](https://snyk.io/test/npm/feathers-solr)
-> Solr Adapter for Feathersjs. Can also used as a Solr-client. See [additional-client-methods](https://github.com/sajov/feathers-solr/blob/master/README.md#additional-client-methods)
-> Require >= Solr 5.x
+[![Download Status](https://img.shields.io/npm/dm/feathers-solr.svg?style=flat-square)](https://www.npmjs.com/package/feathers-solr)
 
-## Online Demo
-[eCommerce Category Pages](http://feathers.better-search-box.com/)
-This demonstrate ease of a single query
-
-## Installation
+A [Feathers](https://feathersjs.com/) Solr Adapter. Require >= Solr 5.x
 
 ```
-npm install feathers-solr --save
+$ npm install feathers-solr --save
 ```
 
-## Documentation
+> **Important:** `feathers-solr` implements the [Feathers Common database adapter API](https://docs.feathersjs.com/api/databases/common.html) and [querying syntax](https://docs.feathersjs.com/api/databases/querying.html).
 
-Please refer to the [Feathers database adapter documentation](http://docs.feathersjs.com/databases/readme.html) for more details or directly at:
+Install a supported HTTP Client [Fetch](https://github.com/bitinn/node-fetch), [Undici](https://github.com/mcollina/undici) or [use a different HTTP Client](https://github.com/sajov/feathers-solr/tree/master#use-a-different-http-client).
 
-- [Service methods](https://docs.feathersjs.com/api/databases/common.html#service-methods) - How to use a database adapter
-- [Pagination and Sorting](https://docs.feathersjs.com/api/databases/common.html#pagination) - How to use pagination and sorting for the database adapter
-- [Querying](https://docs.feathersjs.com/api/databases/querying.html) - The common adapter querying mechanism
-- [Extending](https://docs.feathersjs.com/api/databases/common.html#extending-adapters) - How to extend a database adapter
+```
+$ npm install node-fetch --save
+```
+
+## API
+
+### `service([options])`
+
+Returns a new service instance initialized with the given options.
+
+```js
+const service = require('feathers-solr');
+
+app.use('/gettingstarted', service({ id, Model, events, paginate }));
+```
+
+**Options:**
+
+- `Model` (**required**) - HTTP Client (fetch, undici, or your custom).
+- `name` - The name of the Solr Core / Colelction.
+- `defaultParams` - This params added to all Solr request.
+- `commitStrategy` - (_optional_, default: `{ softCommit: true, commitWithin: 10000, overwrite: true }`) - Define how Index changes are stored [Solr Commits](https://lucene.apache.org/solr/guide/7_7/updatehandlers-in-solrconfig.html#UpdateHandlersinSolrConfig-commitandsoftCommit).
+- `schema` (_optional_) - .
+- `migrate` (_optional_) - .
+- `id` (_optional_, default: `'id'`) - The name of the id field property.
+- `events` (_optional_) - A list of [custom service events](https://docs.feathersjs.com/api/events.html#custom-events) sent by this service
+- `paginate` (_optional_) - A [pagination object](https://docs.feathersjs.com/api/databases/common.html#pagination) containing a `default` and `max` page size
+- `whitelist` (default: `['$search', '$params', '$facet', '$filter']`) [optional] - The list of additional non-standard query parameters to allow, by default populated with all Solr specific ones. You can override, for example in order to restrict access to some queries (see the [options documentation](https://docs.feathersjs.com/api/databases/common.html#serviceoptions)).
+- `multi` (_optional_) - Allow `create` with arrays and `update` and `remove` with `id` `null` to change multiple items. Can be `true` for all methods or an array of allowed methods (e.g. `[ 'remove', 'create' ]`)
 
 ## Getting Started
 
-### Install Solr
-
-```
- bin/solr start -e schemaless
-``` 
-
-Use feathers-solr/bin/install-solr.sh for a kickstart installation.
-
-
-## Options
-
-| Option           | Default                                                    | Description                                                        |
-| ---------------- | ---------------------------------------------------------- | ------------------------------------------------------------------ |
-| host             | http://localhost:8983/solr                                 |                                                                    |
-| core             | /gettingstarted                                            |                                                                    |
-| schema           | false                                                      | {title: {type:"string"}}                                           |
-| migrate          | alter                                                      | *safe*, *alter* and  *drop* (delete all data and reset schema)     |
-| idfield          | 'id'                                                       | Unique Document identifier                                         |
-| commitStrategy   | {softCommit: true, commitWithin: 50000, overwrite: true}   |                                                                    |
-| paginate         | {default: 10, max: 100}                                    |                                                                    |
-
-
-## Managed Schema
-[Schemaless Mode](https://lucene.apache.org/solr/guide/6_6/schemaless-mode.html) is recommended.
-Use [Solr Field Types](https://cwiki.apache.org/confluence/display/solr/Solr+Field+Types) and [Field Type Definitions and Properties](https://cwiki.apache.org/confluence/display/solr/Field+Type+Definitions+and+Properties) to define Model properties
-
+The following example will create a Service with the name and endpoint `solr`.
 
 ```javascript
-{
-    title: {
-        type: "text_general", // For more flexible searching. Default type is 'string'
-        stored: true, // default, keep value visible in results
-        indexed: true, // default, make it searchable
-        multiValued: false, // default, true becomes an array field
-    }
-}
+const feathers = require('@feathersjs/feathers');
+const express = require('@feathersjs/express');
+const fetch = require('node-fetch');
+const undici = require('undici');
+const Service = require('feathers-solr');
+const { SolrClient } = require('feathers-solr');
+const solrServer = 'http://localhost:8983/solr/gettingstarted';
+
+// Create an Express compatible Feathers application instance.
+const app = express(feathers());
+// Turn on JSON parser for REST services
+app.use(express.json());
+// Turn on URL-encoded parser for REST services
+app.use(express.urlencoded({ extended: true }));
+// Enable REST services
+app.configure(express.rest());
+// Enable REST services
+
+// init Adapter witch Fetch or Undici
+const options = {
+  Model: SolrClient(fetch, solrServer),
+  paginate: {},
+  events: ['testing']
+};
+app.use('gettingstarted', new Service(options));
+
+app.listen(3030, () => {
+  console.log(`Feathers server listening on port http://127.0.0.1:3030`);
+});
 ```
 
-See your current schema definition
+Install Solr
 
 ```
- http://localhost:8983/solr/gettingstarted/schema/
+ bin/solr start -e gettingstarted
 ```
 
+Use `feathers-solr/bin/install-solr.sh` for a kickstart installation.
 
+Run the example with `node app` and go to [localhost:3030/gettingstarted](http://localhost:3030/gettingstarted).
 
-## Complete Example
+## Querying
 
-Here's an example of a Feathers server that uses `feathers-solr`.
+Feathers Docs [Database Querying](https://docs.feathersjs.com/api/databases/querying.html)
 
-```javascript
+## Supportet Solr specific queries
 
-    const feathers = require('feathers');
-    const rest = require('feathers-rest');
-    const hooks = require('feathers-hooks');
-    const bodyParser = require('body-parser');
-    const errorHandler = require('feathers-errors/handler');
-    const solr = require('feathers-solr');
+This Adapter use the Solr [JSON Request API](https://lucene.apache.org/solr/guide/7_7/json-request-api.html).
 
-    const Service = new solr.Service({
-        host: 'http://localhost:8983/solr',
-        core: '/gettingstarted',
-        schema:{
-                name: 'text_general',
-                company: 'text_general',
-                email: 'text_general',
-                age:  'int',
-                gender: 'string',
-                color: {
-                    type: 'string',
-                    multiValued: true,
-                },
-                address: {
-                    type: 'string',
-                    default: 'Düsseldorf'
-                }
-        },
-        paginate: {
-            default: 10,
-            max: 100
-    });
+The following params passed in raw to Solr. This gives the **full** access to the Solr [JSON Request API](https://lucene.apache.org/solr/guide/7_7/json-request-api.html).
 
-    const app = feathers()
-      .configure(rest())
-      .configure(hooks())
-      .use(bodyParser.json())
-      .use(bodyParser.urlencoded({ extended: true }))
-      .use('/solr', Service())
-      .use(errorHandler());
+- \$search (alias to query)
+- \$params (alias to params)
+- \$facet (alias to facet)
+- \$filter (alias to filter)
 
+To avoid full query (read) access, just whitelist only `$search` and add your query startegy into a Hook.
 
-    app.listen(3030);
+### \$search
 
-    console.log('Feathers app started on 127.0.0.1:3030');
+An alias to Solr param `query` (string) - [Solr Schemaless Mode](https://lucene.apache.org/solr/guide/7_7/schemaless-mode.html)
 
-```
-
-
-### Run Demo App
-
-```
- node /example/app.js
-```
-
-## Support all Feathers Queries 
-See [Feathers querying](https://docs.feathersjs.com/api/databases/querying.html) for more detail
-
-## Supported Solr Queries
-
-### $search
-Simple query
+#### Simple Search in default field \_text\_.
 
 ```javascript
 query: {
-  $search: "John"
+  $search: 'John';
 }
 ```
 
-'$search' will try to match against Solr default search field '_text_' [Schemaless Mode](https://cwiki.apache.org/confluence/display/solr/Schemaless+Mode)
+[The Standard Query Parser](https://lucene.apache.org/solr/guide/7_7/the-standard-query-parser.html) - Some Search Examples:
 
+- Exact match: `{ $search: "John" }`
+- Fuzzy match: `{ $search: "John~" }`
+- Phrase match: `{ $search: "John Doe" }`
+- Starts with: `{ $search: "Jo*" }`
+- Ends with: `{ $search: "*n" }`
+- Contains: `{ $search: "(John AND Doe)" }`
+- Contain one: `{ $search: "(John OR Doe)" }`
 
+### \$params
 
-More complex query with a default Solr configuration. 
+An alias to Solr param `params`. Allows you to access all solr query (read) features like:
+
+- [The Extended DisMax (eDismax) Query Parser](https://lucene.apache.org/solr/guide/7_7/the-extended-dismax-query-parser.html)
+- [Facet & Analytics Module](https://lucene.apache.org/solr/guide/7_7/json-facet-api.html)
+- [Spell Checking](https://lucene.apache.org/solr/guide/7_7/spell-checking.html)
+- [Highlighting](https://lucene.apache.org/solr/guide/7_7/highlighting.html)
+- [Suggester](https://lucene.apache.org/solr/guide/7_7/suggester.html)
+- [MoreLikeThis](https://lucene.apache.org/solr/guide/7_7/morelikethis.html)
+
+#### Advanced Search accessing all Solr Params via `$params`.
 
 ```javascript
 query: {
-  
-  $search: "John !Doe +age:[80 TO *]", // Search in default field _text_. See Solr copy field `copy:* to _text_`
-  // $params: {
-  //   qf: "name^10 friends" define explicit fields to query and boost
-  // }
-  // or $search: "name:John^10 AND !name:Doe AND age:[80 TO *]", 
-  // or $search: "joh*", 
-  // or $search: '"john doe"', 
-  // or $search: 'jon~', 
-  
-}
-```
+  $search: "John !Doe +age:[80 TO *]",
+  $params: {
+      "defType": "edismax",
+      "qf": "name^10 city^5 age",
+      "mm": "2<99% 7<80% 10<50%",
+      "q.op": "OR",
+      "sow": true,
+      "spellcheck": true,
+      "spellcheck.accuracy": 0.7,
+      "spellcheck.extendedResults": true,
+      "spellcheck.collate": true,
+      "spellcheck.count": 10,
+      "spellcheck.maxCollations": 1,
+      "spellcheck.maxCollationTries": 10,
+      "spellcheck.collateExtendedResults": true,
+      "spellcheck.onlyMorePopular": true,
+      "spellcheck.dictionary": "LANG_X_text_spell_token",
 
-### $params
-Add all kind of Solr query params! 
-Combine huge Solr Features like *facets*, *stats*, *ranges*, *grouping* and more with the default response.
-This example will group the result.
-
-```javascript
-query: {
-    $params: {
-        group : true,
-        "group.field" : "country",
-        "group.format" : "simple",
-    }
-}
-```
-
-Feathers Rest query
-
-```
-http://localhost:3030/solr?$params[group]=true&$params[group.field]=gender&$params[group.field]=age&$params[group.limit]=1&$params[group.format]=grouped&$select=id,age,gender
-```
-
-Feathers Result
-
-```javascript
-{
-  "QTime": 0,
-  "total": 0,
-  "limit": 10,
-  "skip": 0,
-  "data": {
-    "gender": {
-      "matches": 50,
-      "groups": [
-        {
-          "groupValue": "male",
-          "doclist": {
-            "numFound": 24,
-            "start": 0,
-            "docs": [
-              {
-                "id": "59501959f2786e0207a8b29f",
-                "age": "45",
-                "gender": "male"
-              }
-            ]
-          }
-        },
-        {
-          "groupValue": "female",
-          "doclist": {
-            "numFound": 26,
-            "start": 0,
-            "docs": [
-              {
-                "id": "595019590a8632fecd292592",
-                "age": "51",
-                "gender": "female"
-              }
-            ]
-          }
-        }
-      ]
-    },
-    "age": {
-      "matches": 50,
-      "groups": [
-        {
-          "groupValue": "45",
-          "doclist": {
-            "numFound": 3,
-            "start": 0,
-            "docs": [
-              {
-                "id": "59501959f2786e0207a8b29f",
-                "age": "45",
-                "gender": "male"
-              }
-            ]
-          }
-        },
-        {
-          "groupValue": "51",
-          "doclist": {
-            "numFound": 2,
-            "start": 0,
-            "docs": [
-              {
-                "id": "595019590a8632fecd292592",
-                "age": "51",
-                "gender": "female"
-              }
-            ]
-          }
-        }
-      ]
-    }
   }
 }
-
 ```
 
+Solr param `params`
 
-### $facet Functions and Analytics
-See [Solr Facet Functions and Analytics](http://yonik.com/solr-facet-functions/)
+### \$facet
 
-|Aggregation|Example|Effect|
-|--- |--- |--- |
-|sum|sum(sales)|summation of numeric values|
-|avg|avg(popularity)|average of numeric values|
-|sumsq|sumsq(rent)|sum of squares|
-|min|min(salary)|minimum value|
-|max|max(mul(price,popularity))|maximum value|
-|unique|unique(state)|number of unique values (count distinct)|
-|hll|hll(state)|number of unique values using the HyperLogLog algorithm|
-|percentile|percentile(salary,50,75,99,99.9)|calculates percentiles|
+A alias to Solr param `facet`
 
+- [Solr Facet Functions and Analytics](http://yonik.com/solr-facet-functions/)
+- [Multi Select Faceting](http://yonik.com/multi-select-faceting/)
+
+#### Get Min, Max and a Range Facet
 
 ```javascript
 query: {
     $facet: {
-        age_avg : "avg(age)",
-        age_sum : "sum(age)"
-    }
-}
-
-```
-
-### $facet Ranges
-Add a facet type range
-
-```javascript
-query: {
-    $facet: {
+        age_min : "min(age)",
+        age_max : "max(age)",
         age_ranges: {
             type: "range",
             field: "age",
             start: 0,
             end: 100,
-            gap: 25
+            gap: 10
         }
     }
 }
 ```
 
-Feathers Rest query
-
-```
-http://localhost:3030/solr?&$facet[age_ranges][type]=range&$facet[age_ranges][field]=age&$facet[age_ranges][start]=0&$facet[age_ranges][end]=100&$facet[age_ranges][gap]=25&$facet[age_avg]=avg(age)&$facet[age_sum]=sum(age)
-```
-
-Feathers Result
+The response should look like this:
 
 ```javascript
 {
@@ -327,8 +205,8 @@ Feathers Result
     skip: 0,
     data: [...],
     facet: {
-        age_avg: 29.44,
-        age_sum: 1472,
+        age_min: 1,
+        age_max: 104,
         count: 54,
         age_ranges: {
             buckets: [{
@@ -350,192 +228,154 @@ Feathers Result
 
 ```
 
-See more query variants [JSON Facet API](http://yonik.com/json-facet-api/),[Solr Facet Functions and Analytics](http://yonik.com/solr-facet-functions/), [Solr Subfacets](http://yonik.com/solr-subfacets/), [Multi-Select Faceting](http://yonik.com/multi-select-faceting/)
+#### Get a Range Multi Facet
 
-
-
-### $suggest
-A custom response object for autocompleter suggestions.
-See example *app.js* for creating a custom searchcomponent and requesthandler including a spellcheck component
-```
-query: {
-    $suggest: 'Handmake',
-    $params: {} // to plain solr parameter
-}
-```
-
-Feathers Rest query
-
-```
-http://localhost:3030/solr?&$suggest=Handmake
-```
-
-Feathers Result 
-This is a plain solr response
-
-```javascript
-{
-    {
-        "responseHeader": {
-            "status": 0,
-            "QTime": 1
-        },
-        "spellcheck": {
-            "suggestions": [
-                "handmake", {
-                    "numFound": 1,
-                    "startOffset": 0,
-                    "endOffset": 8,
-                    "origFreq": 0,
-                    "suggestion": [{
-                        "word": "handmade",
-                        "freq": 1
-                    }]
-                }
-            ],
-            "correctlySpelled": false,
-            "collations": [
-                "collation",
-                "handmade"
-            ]
-        },
-        "suggest": {
-            "suggest": {
-                "Handmake": {
-                    "numFound": 1,
-                    "suggestions": [{
-                        "term": "Handmade Wooden Keyboard",
-                        "weight": 0,
-                        "payload": ""
-                    }]
-                }
-            }
-        }
-    }
+```Javascript
+query:{
+  $search:'blue',
+  '{!tag=COLOR}color':'Blue',
+  $facet:{
+      sizes:{type:terms, field:size},
+      colors:{type:terms, field:color, domain:{excludeTags:COLOR} },
+      brands:{type:terms, field:brand, domain:{excludeTags:BRAND}
+  }
 }
 
 ```
 
-### $spellcheck
-This feature add a spellcheck component to the default find result
-```
-query: {
-    $search: "Handmake",
-    $spellcheck:1,
-    color: "sky blue",
-    $limit: 10,
+### \$filter
 
-}
-```
+An alias to Solr `filter` passed in raw. It's recomanded to go with the common [Querying](https://docs.feathersjs.com/api/databases/querying.html).
 
-Feathers Rest query
+> See more query variants [JSON Facet API](http://yonik.com/json-facet-api/),[Solr Facet Functions and Analytics](http://yonik.com/solr-facet-functions/), [Solr Subfacets](http://yonik.com/solr-subfacets/), [Multi-Select Faceting](http://yonik.com/multi-select-faceting/)
 
-```
-http://localhost:3030/solr?$search=Handmake&color=Handmke&color="sky blue"&$limit=10&$spellcheck
-```
+## Service Methods
 
-Feathers Result 
-```javascript
-{
-    "QTime": 0,
-    "total": 6,
-    "limit": 10,
-    "skip": 0,
-    "data": [...],
-    "spellcheck": {
-            "suggestions": [
-                "handmake", {
-                    "numFound": 1,
-                    "startOffset": 0,
-                    "endOffset": 8,
-                    "origFreq": 0,
-                    "suggestion": [{
-                        "word": "handmade",
-                        "freq": 1
-                    }]
-                }
-            ],
-            "correctlySpelled": false,
-            "collations": [
-                "collation",
-                "handmade"
-            ]
-        },
+All service methods provide the `multi` options.
+
+### Service.create
+
+The `options.commitStrategy.override` is true in default. This allow to override an existing `id` by `service.create`.
+Add the field `_version_` to the `$select` params will return the document content with it's version. Create with an existing `id` and `_version_` for [optimistic concurrency](https://lucene.apache.org/solr/guide/6_6/updating-parts-of-documents.html#UpdatingPartsofDocuments-OptimisticConcurrency)
+
+### Service.update
+
+Will overide the complete Document. If the `_version_` field is part of update content, it will be removed.
+
+### Service.patch
+
+Use the Solr [Updating Parts of Documents](https://lucene.apache.org/solr/guide/7_7/updating-parts-of-documents.html)
+
+Simple usage
+
+```Javascript
+service.patch(id, {age: 30});
 ```
 
-### Adapter.patch
+[Atomic Updates](https://lucene.apache.org/solr/guide/7_7/updating-parts-of-documents.html#atomic-updates) - Increment field `age + 1`
 
-Support simple usage [Feathers Docs](https://docs.feathersjs.com/api/services.html#patchid-data-params) 
-
-```
-data: {views: 1};
-Adapter.patch(id, data, params);
+```Javascript
+service.patch(id, {age: {inc:1}});
 ```
 
-Support also advanced Solr Atomic Field Update [Solr Docs](https://lucene.apache.org/solr/guide/6_6/updating-parts-of-documents.html) 
+All Solr methods provided:
 
+- `set` - Set or replace the field value(s) with the specified value(s), or remove the values if 'null' or empty list is specified as the new value. May be specified as a single value, or as a list for multiValued fields.
+- `add` - Adds the specified values to a multiValued field. May be specified as a single value, or as a list.
+- `add-distinct` - Adds the specified values to a multiValued field, only if not already present. May be specified as a single value, or as a list.
+- `remove` - Removes (all occurrences of) the specified values from a multiValued field. May be specified as a single value, or as a list.
+- `removeregex` - Removes all occurrences of the specified regex from a multiValued field. May be specified as a single value, or as a list.
+- `inc` - Increments a numeric value by a specific amount. Must be specified as a single numeric value.
+
+### Service.remove
+
+Provide delete by `id` ans `query`
+Delete all documents at once:
+
+```Javascript
+service.remove(null, {query: {id:'*'}});
 ```
-data: {views: {inc:1}}; // inc, set, add, remove, removeregex
-Adapter.patch(id, data, params);
+
+### Performance considerations
+
+Most of the data mutating operations in Solr (create, update, remove) do not return the full resulting document, therefore I had to resolve to using get as well in order to return complete data. This solution is of course adding a bit of an overhead, although it is also compliant with the standard behaviour expected of a feathers database adapter.
+
+> Use Raw Query `service.Model.post('update/json', data)` to avoid this overhead. The response is native Solr.
+
+## Raw Solr Queries
+
+You can access all Solr API endpoints by using a direct model usage.
+
+Ping the Solr core/collection:
+
+```Javascript
+service.Model.get('admin/ping');
 ```
- 
 
+Get Solr schema information:
 
-| ------
+```Javascript
+service.Model.get('schema');
+```
 
-## Additional Client Methods
+Modify Solr schema:
 
+```Javascript
+service.Model.post('schema',{"add-field":{name:"age",type:"pint"}});
+```
 
-| Solr Api's                                                                                                                                                     | Returns a Promise                                  | ./client/requestHandler/  |
-| -------------------------------------------------------------------------------------------------------------------------------------------------------------  | -------------------------------------------------- | ------------------------- |
-| Ping                                                                                                                                                           | Adapter.client().ping()                            | Ping.js                   |
-| [JSON Request API](https://cwiki.apache.org/confluence/display/solr/JSON+Request+API)                                                                          | Used by Adapter .find() .get()                     | JsonRequestApi.js         |
-| [Update](https://cwiki.apache.org/confluence/display/solr/Uploading+Data+with+Index+Handlers#UploadingDatawithIndexHandlers-UpdateRequestHandlerConfiguration) | Used by Adapter .create(), .update() and  .patch() | UpdateRequestHandlers.js  |
-| [SearchHandlers]()                                                                                                                                             | Adapter.client().search()                          | SearchHandlers.js         |
-| [Schema API](https://cwiki.apache.org/confluence/display/solr/Managed+Resources)                                                                               | Adapter.client().schema.method                     | SchemaApi.js              |
-| [Config API](https://cwiki.apache.org/confluence/display/solr/Config+API#ConfigAPI-CreatingandUpdatingRequestHandlers)                                         |                                                    | ConfigApi.js              |
-| [CoreAdmin API](https://cwiki.apache.org/confluence/display/solr/CoreAdmin+API)                                                                                | Adapter.client().coreAdmin.method                  | CoreAdminApi.js           |
-| [Solr ConfigSets API](https://cwiki.apache.org/confluence/display/solr/ConfigSets+API)                                                                         | Adapter.client().configSets.method                 | ConfigSetsApi.js          |
-| [Solr Collections API](https://cwiki.apache.org/confluence/display/solr/Collections+API)                                                                       | Adapter.client().collections.method                | CollectionsApi.js         |
-| [Solr Managed Resources](https://cwiki.apache.org/confluence/display/solr/Managed+Resources)                                                                   | Adapter.client().resources.method                  | ManagedResources.js       |
-| [Request Parameters API](https://cwiki.apache.org/confluence/display/solr/Request+Parameters+API)                                                              | Adapter.client().requestParameters.method          | RequestParametersAPI.js   |
-| ~~[Parallel SQL Interface](https://cwiki.apache.org/confluence/display/solr/Parallel+SQL+Interface)~~                                                          |                                                    | ParalellSQL.js            |
-| ~~[ReplicationHandlers](ReplicationHandlers)~~                                                                                                                 |                                                    | ReplicationHandlers.js    |
-| ~~[RealTime Get](https://cwiki.apache.org/confluence/display/solr/RealTime+Get)~~                                                                              |                                                    | RealTime.js               |
-| ~~[ShardHandlers](https://cwiki.apache.org/confluence/display/solr/RequestHandlers+and+SearchComponents+in+SolrConfig)~~                                       |                                                    | ShardHandlers.js          |
-| ~~[Solr BolbStore API](https://cwiki.apache.org/confluence/display/solr/Blob+Store+API)~~                                                                      |                                                    | BlobStoreApi.js           |
+Get Solr config information:
 
-Not all Solr API's implemented at the moment
+```Javascript
+service.Model.get('config');
+```
+
+Modify Solr config:
+
+```Javascript
+service.Model.post('schema',{"add-field":{name:"age",type:"pint"}});
+```
+
+## Use a different HTTP Client
+
+This Adapter offers a `node-fetch` interface for a maximum on HTTP Client comfort and `undici` for maximum (100% compared to node-fetch) in performance.
+If you like to go with your favorite one:
+
+```Javascript
+class CustomClient {
+  constructor(HTTPModule, conn) {}
+  get(api, params = {}) {}
+  post(api, data, params = {}) {}
+};
+
+const options = {
+    Model: CustomClient(HTTPModule, solrServer),
+    paginate: {},
+    events: ['testing']
+  };
+
+app.service('solr', new Service(options))
+```
+
+## Contributing
+
+If you find a bug or something to improve i will be happy to see your PR!
+
+When adding a new feature, please make sure you write tests for it with decent coverage as well.
 
 ## TODO
-* Write more Tests
-* Write more Docs
-* Implement Parallel SQL Interface
-* Implement ReplicationHandlers
-* Implement RealTime Get
-* Implement ShardHandlers
-* Implement Solr BolbStore API
+
+- Hook Examples
+  - Schema Migration Hook (drop,alter,safe)
+  - Json Hook Store Data as JSON
+  - Validation Hook
 
 ## Changelog
 
-__1.1.15__
-- add support $between param
-- add support for auth
+**2.2.0**
 
-__1.1.14__
-- ...
-
-__1.1.13__
-- refactor describe
-- refactor define
-- add schema tests
-- edit docs
-
-__1.1.12__
-- refactor patch method
-
-
-...
+- complete refactoring
+- implement @feathers/adapter-tests
 
 ## License
 
