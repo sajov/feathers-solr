@@ -1,0 +1,4 @@
+{
+  "delete-field": [{ "name": "name" }, { "name": "age" }, { "name": "gender" }, { "name": "autocomplete" }],
+  "delete-field-type": { "name": "text_auto" }
+}
