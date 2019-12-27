@@ -300,7 +300,7 @@ service.remove(null, {query: {id:'*'}});
 
 Most of the data mutating operations in Solr (create, update, remove) do not return the full resulting document, therefore I had to resolve to using get as well in order to return complete data. This solution is of course adding a bit of an overhead, although it is also compliant with the standard behaviour expected of a feathers database adapter.
 
-> Use `$raw:true` to avoid this overhead. The response is native Solr.
+> Use Raw Query `service.Model.post('update/json', data)` to avoid this overhead. The response is native Solr.
 
 ## Raw Solr Queries
 
