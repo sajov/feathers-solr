@@ -38,8 +38,6 @@ app.use('/gettingstarted', service({ id, Model, events, paginate }));
 - `name` - The name of the Solr Core / Colelction.
 - `defaultParams` - This params added to all Solr request.
 - `commitStrategy` - (_optional_, default: `{ softCommit: true, commitWithin: 10000, overwrite: true }`) - Define how Index changes are stored [Solr Commits](https://lucene.apache.org/solr/guide/7_7/updatehandlers-in-solrconfig.html#UpdateHandlersinSolrConfig-commitandsoftCommit).
-- `schema` (_optional_) - .
-- `migrate` (_optional_) - .
 - `id` (_optional_, default: `'id'`) - The name of the id field property.
 - `events` (_optional_) - A list of [custom service events](https://docs.feathersjs.com/api/events.html#custom-events) sent by this service
 - `paginate` (_optional_) - A [pagination object](https://docs.feathersjs.com/api/databases/common.html#pagination) containing a `default` and `max` page size
@@ -369,8 +367,13 @@ When adding a new feature, please make sure you write tests for it with decent c
   - Schema Migration Hook (drop,alter,safe)
   - Json Hook Store Data as JSON
   - Validation Hook
+  - Spellcheck
+  - Suggester
+  - MoreLikeThis
 
 ## Changelog
+
+**2.3.0**
 
 **2.2.0**
 
