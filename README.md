@@ -331,7 +331,7 @@ service.Model.get('config');
 Modify Solr config:
 
 ```Javascript
-service.Model.post('schema',{"add-field":{name:"age",type:"pint"}});
+service.Model.post('config',{"add-requesthandler":{...}});
 ```
 
 ## Use a different HTTP Client
