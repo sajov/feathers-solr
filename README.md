@@ -131,44 +131,22 @@ query: {
 - Contains: `{ $search: "(John AND Doe)" }`
 - Contain one: `{ $search: "(John OR Doe)" }`
 
-### \$params
-
-An alias to Solr param `params`. Allows you to access all solr query (read) features like:
-
-- [The Extended DisMax (eDismax) Query Parser](https://lucene.apache.org/solr/guide/7_7/the-extended-dismax-query-parser.html)
-- [Facet & Analytics Module](https://lucene.apache.org/solr/guide/7_7/json-facet-api.html)
-- [Spell Checking](https://lucene.apache.org/solr/guide/7_7/spell-checking.html)
-- [Highlighting](https://lucene.apache.org/solr/guide/7_7/highlighting.html)
-- [Suggester](https://lucene.apache.org/solr/guide/7_7/suggester.html)
-- [MoreLikeThis](https://lucene.apache.org/solr/guide/7_7/morelikethis.html)
-
-#### Advanced Search accessing all Solr Params via `$params`.
+#### Define a default search query.
 
 ```javascript
-query: {
-  $search: "John !Doe +age:[80 TO *]",
-  $params: {
-      "defType": "edismax",
-      "qf": "name^10 city^5 age",
-      "mm": "2<99% 7<80% 10<50%",
-      "q.op": "OR",
-      "sow": true,
-      "spellcheck": true,
-      "spellcheck.accuracy": 0.7,
-      "spellcheck.extendedResults": true,
-      "spellcheck.collate": true,
-      "spellcheck.count": 10,
-      "spellcheck.maxCollations": 1,
-      "spellcheck.maxCollationTries": 10,
-      "spellcheck.collateExtendedResults": true,
-      "spellcheck.onlyMorePopular": true,
-      "spellcheck.dictionary": "LANG_X_text_spell_token",
+service.options.defaultSearch = {
+  defType: 'edismax',
+  qf: 'name^10 age^1 gender'
+};
 
+const response = await service.find({
+  query: {
+    $search: 'Doug 20 male'
   }
-}
+});
 ```
 
-Solr param `params`
+> See `$parmas` example how query advanced search
 
 ### \$facet
 
@@ -241,6 +219,143 @@ query:{
   }
 }
 
+```
+
+### \$params
+
+An alias to Solr param `params`. Allows you to access all solr query (read) features like:
+
+- [The Extended DisMax (eDismax) Query Parser](https://lucene.apache.org/solr/guide/7_7/the-extended-dismax-query-parser.html)
+- [Facet & Analytics Module](https://lucene.apache.org/solr/guide/7_7/json-facet-api.html)
+- [Spell Checking](https://lucene.apache.org/solr/guide/7_7/spell-checking.html)
+- [Highlighting](https://lucene.apache.org/solr/guide/7_7/highlighting.html)
+- [Suggester](https://lucene.apache.org/solr/guide/7_7/suggester.html)
+- [MoreLikeThis](https://lucene.apache.org/solr/guide/7_7/morelikethis.html)
+
+#### Advanced Search accessing all Solr Params via `$params`.
+
+```javascript
+query: {
+  $search: "John !Doe +age:[80 TO *]",
+  $params: {
+      "defType": "edismax",
+      "qf": "name^10 city^5 age",
+      "mm": "2<99% 7<80% 10<50%",
+      "q.op": "OR",
+      "sow": true,
+      "spellcheck": true,
+      "spellcheck.accuracy": 0.7,
+      "spellcheck.extendedResults": true,
+      "spellcheck.collate": true,
+      "spellcheck.count": 10,
+      "spellcheck.maxCollations": 1,
+      "spellcheck.maxCollationTries": 10,
+      "spellcheck.collateExtendedResults": true,
+      "spellcheck.onlyMorePopular": true,
+      "spellcheck.dictionary": "LANG_X_text_spell_token",
+
+  }
+}
+```
+
+#### Spellchecker - [Solr Spell Checking](https://lucene.apache.org/solr/guide/7_7/spell-checking.html)
+
+```javascript
+const response = await service.find({
+  query: {
+    $search: 'John !Doe +age:[80 TO *]',
+    $params: {
+      'defType': 'edismax',
+      'qf': 'name^10 city^5 age',
+      'mm': '2<99% 7<80% 10<50%',
+      'q.op': 'OR',
+      'sow': true,
+      'spellcheck': true,
+      'spellcheck.accuracy': 0.7,
+      'spellcheck.extendedResults': true,
+      'spellcheck.collate': true,
+      'spellcheck.count': 10,
+      'spellcheck.maxCollations': 1,
+      'spellcheck.maxCollationTries': 10,
+      'spellcheck.collateExtendedResults': true,
+      'spellcheck.onlyMorePopular': true,
+      'spellcheck.dictionary': 'LANG_X_text_spell_token'
+    }
+  }
+});
+```
+
+#### Suggester - [Solr Suggester](https://lucene.apache.org/solr/guide/7_7/suggester.html)
+
+```javascript
+const response = await service.find({
+  query: {
+    $suggest: 'john'
+  }
+});
+```
+
+#### Grouping - [Solr Result Grouping](https://lucene.apache.org/solr/guide/7_7/result-grouping.html)
+
+```javascript
+const response = await service.find({
+  query: {
+    $params: {
+      'group': true,
+      'group.field': 'gender',
+      'group.format': 'simple'
+    }
+  }
+});
+```
+
+#### Highlight - [Solr Highlighting](https://lucene.apache.org/solr/guide/7_7/highlighting.html)
+
+```Javascript
+const response = await service.find({
+  query: {
+    $search: 'doug',
+    $params: {
+      'hl': true,
+      'hl.field': 'name'
+    }
+  },
+  paginate: { max: 10, default: 3 }
+});
+
+```
+
+#### MoreLikeThis - [Solr MoreLikeThis](https://lucene.apache.org/solr/guide/7_7/morelikethis.html)
+
+```Javascript
+const response = await service.find({
+  query: {
+    $search: 'male',
+    $params: {
+      'mlt': true,
+      'mlt.fl': 'gender'
+    }
+  },
+  paginate: { max: 10, default: 3 }
+});
+```
+
+#### Spartial - [Solr Spatial Search](https://lucene.apache.org/solr/guide/7_7/spatial-search.html)
+
+```Javascript
+const response = await service.find({
+  query: {
+    $select: ['*', 'score', '_dist_:geodist()'],
+    $params: {
+      'sfield': 'location_p',
+      'pt': '40.649558, -73.991815',
+      d: 50,
+      distanceUnits: 'kilometers',
+      sort: 'geodist() asc'
+    }
+  },
+  paginate: { max: 10, default: 3 }
+});
 ```
 
 ### \$filter
