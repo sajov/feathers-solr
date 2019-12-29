@@ -37,8 +37,10 @@ app.use('/gettingstarted', service({ id, Model, events, paginate }));
 - `Model` (**required**) - HTTP Client (fetch, undici, or your custom).
 - `name` - The name of the Solr Core / Colelction.
 - `defaultParams` - This params added to all Solr request.
-- `commitStrategy` - (_optional_, default: `{ softCommit: true, commitWithin: 10000, overwrite: true }`) - Define how Index changes are stored [Solr Commits](https://lucene.apache.org/solr/guide/7_7/updatehandlers-in-solrconfig.html#UpdateHandlersinSolrConfig-commitandsoftCommit).
 - `id` (_optional_, default: `'id'`) - The name of the id field property.
+- `commitStrategy` - (_optional_, default: `{ softCommit: true, commitWithin: 10000, overwrite: true }`) - Define how Index changes are stored [Solr Commits](https://lucene.apache.org/solr/guide/7_7/updatehandlers-in-solrconfig.html#UpdateHandlersinSolrConfig-commitandsoftCommit).
+- `defaultSearch` - (_optional_, default: `{ defType: 'edismax', qf: 'name^10 age^1 gender' }`) - Search strategy if query contains the param `$search` [The Extended DisMax Query Parser](https://lucene.apache.org/solr/guide/6_6/the-extended-dismax-query-parser.html).
+- `suggestHandler` - (_optional_, default: `suggest`) - Search strategy if query contains the param `$search` [Suggester](https://lucene.apache.org/solr/guide/7_7/suggester.html).
 - `events` (_optional_) - A list of [custom service events](https://docs.feathersjs.com/api/events.html#custom-events) sent by this service
 - `paginate` (_optional_) - A [pagination object](https://docs.feathersjs.com/api/databases/common.html#pagination) containing a `default` and `max` page size
 - `whitelist` (default: `['$search', '$params', '$facet', '$filter']`) [optional] - The list of additional non-standard query parameters to allow, by default populated with all Solr specific ones. You can override, for example in order to restrict access to some queries (see the [options documentation](https://docs.feathersjs.com/api/databases/common.html#serviceoptions)).

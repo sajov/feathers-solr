@@ -1,4 +1,5 @@
 const assert = require('assert');
+const { _ } = require('@feathersjs/commons');
 const feathers = require('@feathersjs/feathers');
 const fetch = require('node-fetch');
 const undici = require('undici');
@@ -347,30 +348,92 @@ describe('Additional Adapter Tests', () => {
       });
     });
 
+    // https://lucene.apache.org/solr/guide/7_7/transforming-result-documents.html#TransformingResultDocuments-_child_-ChildDocTransformerFactory
     describe('$params', () => {
-      // describe('Search', () => {
-      //   it('Should search by dismax', async () => {});
-      //   it('Should search by edismax', async () => {});
-      // });
-      // describe('Spellchecker', () => {
-      //   it('Should have spellcheck', async () => {});
-      // });
-      // describe('Suggester', () => {
-      //   it('Should have Suggest', async () => {});
-      // });
-      // describe('Grouping', () => {
-      //   it('Should gropup by simple', async () => {});
-      //   it('Should gropup by stats', async () => {});
-      // });
-      // describe('Highlight', () => {
-      //   it('Should highlight', async () => {});
-      // });
-      // describe('MoreLikeThis', () => {
-      //   it('Should have moreLikeThis', async () => {});
-      // });
-      // describe('Spartial', () => {
-      //   it('Should have distance', async () => {});
-      // });
+      describe('Spellchecker', () => {
+        it('Should have spellcheck', async () => {
+          // const response = await service.find({
+          //   query: {
+          //     $search: 'Doug 20 male'
+          //   }
+          // });
+          // console.log(response);
+          // assert.ok(response);
+        });
+      });
+      describe('Suggester', () => {
+        it('Should have Suggest', async () => {});
+      });
+
+      // https://lucene.apache.org/solr/guide/7_7/result-grouping.html
+      describe('Grouping', () => {
+        it('Should gropup by gender fromat simple', async () => {
+          const response = await service.find({
+            query: {
+              $params: {
+                'group': true,
+                'group.field': 'gender',
+                'group.format': 'simple'
+              }
+            }
+          });
+          assert.ok(response);
+          assert.strictEqual(response.gender.matches, 3);
+          assert.strictEqual(response.gender.doclist.numFound, 3, 'Got grouped doclist with numFound');
+          assert.strictEqual(response.gender.doclist.docs.length, 2);
+        });
+        it('Should gropup by gender format grouped', async () => {
+          const response = await service.find({
+            query: {
+              $params: {
+                'group': true,
+                'group.field': 'gender'
+              }
+            }
+          });
+          assert.ok(response);
+          assert.strictEqual(response.gender.matches, 3);
+          assert.strictEqual(response.gender.groups.length, 2, 'Got grouped doclist with numFound');
+        });
+      });
+      describe('Highlight', () => {
+        it('Should highlight', async () => {
+          const response = await service.find({
+            query: {
+              $search: 'doug',
+              $params: {
+                'hl': true,
+                'hl.field': 'name'
+              }
+            },
+            paginate: { max: 3, default: 4 }
+          });
+          assert.ok(response);
+          assert.strictEqual(typeof response.highlighting, 'object');
+        });
+      });
+
+      // https://lucene.apache.org/solr/guide/7_7/morelikethis.html
+      describe('MoreLikeThis', () => {
+        it('Should have moreLikeThis', async () => {
+          const response = await service.find({
+            query: {
+              $search: 'male',
+              $params: {
+                'mlt': true,
+                'mlt.fl': 'gender'
+              }
+            },
+            paginate: { max: 3, default: 4 }
+          });
+          // console.log(response);
+          assert.ok(response);
+          assert.strictEqual(typeof response.moreLikeThis, 'object');
+        });
+      });
+      describe('Spartial', () => {
+        it('Should have distance', async () => {});
+      });
     });
   });
 });
