@@ -20,6 +20,8 @@ Install a supported HTTP Client [Fetch](https://github.com/bitinn/node-fetch), [
 $ npm install node-fetch --save
 ```
 
+> See this adapter in action [online demo](https://feathers.better-search-box.com)
+
 ## API
 
 ### `service([options])`
