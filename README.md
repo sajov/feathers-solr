@@ -232,32 +232,6 @@ An alias to Solr param `params`. Allows you to access all solr query (read) feat
 - [Suggester](https://lucene.apache.org/solr/guide/7_7/suggester.html)
 - [MoreLikeThis](https://lucene.apache.org/solr/guide/7_7/morelikethis.html)
 
-#### Advanced Search accessing all Solr Params via `$params`.
-
-```javascript
-query: {
-  $search: "John !Doe +age:[80 TO *]",
-  $params: {
-      "defType": "edismax",
-      "qf": "name^10 city^5 age",
-      "mm": "2<99% 7<80% 10<50%",
-      "q.op": "OR",
-      "sow": true,
-      "spellcheck": true,
-      "spellcheck.accuracy": 0.7,
-      "spellcheck.extendedResults": true,
-      "spellcheck.collate": true,
-      "spellcheck.count": 10,
-      "spellcheck.maxCollations": 1,
-      "spellcheck.maxCollationTries": 10,
-      "spellcheck.collateExtendedResults": true,
-      "spellcheck.onlyMorePopular": true,
-      "spellcheck.dictionary": "LANG_X_text_spell_token",
-
-  }
-}
-```
-
 #### Spellchecker - [Solr Spell Checking](https://lucene.apache.org/solr/guide/7_7/spell-checking.html)
 
 ```javascript
