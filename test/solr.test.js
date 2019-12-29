@@ -105,7 +105,7 @@ describe('Additional Adapter Tests', () => {
     it('.find simple ', async () => {
       const response = await service.find({
         query: {},
-        paginate: { max: 3, default: 4 }
+        paginate: { max: 10, default: 3 }
       });
       assert.ok(response);
     });
@@ -114,7 +114,7 @@ describe('Additional Adapter Tests', () => {
       try {
         const response = await service.find({
           query: { $unknown: 1 },
-          paginate: { max: 3, default: 4 }
+          paginate: { max: 10, default: 3 }
         });
 
         throw new Error('Should never get here');
@@ -218,17 +218,20 @@ describe('Additional Adapter Tests', () => {
           {
             name: 'Alice',
             age: 20,
-            gender: 'female'
+            gender: 'female',
+            location_p: '40.659500,-73.948141'
           },
           {
             name: 'Junior',
             age: 10,
-            gender: 'male'
+            gender: 'male',
+            location_p: '40.624978,-73.955815'
           },
           {
             name: 'Doug',
             age: 30,
-            gender: 'male'
+            gender: 'male',
+            location_p: '40.648952,-74.010661'
           }
         ],
         { commit: true }
@@ -350,6 +353,7 @@ describe('Additional Adapter Tests', () => {
 
     // https://lucene.apache.org/solr/guide/7_7/transforming-result-documents.html#TransformingResultDocuments-_child_-ChildDocTransformerFactory
     describe('$params', () => {
+      // https://lucene.apache.org/solr/guide/7_7/spell-checking.html
       describe('Spellchecker', () => {
         it('Should have spellcheck', async () => {
           // const response = await service.find({
@@ -361,6 +365,8 @@ describe('Additional Adapter Tests', () => {
           // assert.ok(response);
         });
       });
+
+      // https://lucene.apache.org/solr/guide/7_7/suggester.html
       describe('Suggester', () => {
         it('Should have Suggest', async () => {});
       });
@@ -396,6 +402,8 @@ describe('Additional Adapter Tests', () => {
           assert.strictEqual(response.gender.groups.length, 2, 'Got grouped doclist with numFound');
         });
       });
+
+      // https://lucene.apache.org/solr/guide/7_7/highlighting.html
       describe('Highlight', () => {
         it('Should highlight', async () => {
           const response = await service.find({
@@ -406,7 +414,7 @@ describe('Additional Adapter Tests', () => {
                 'hl.field': 'name'
               }
             },
-            paginate: { max: 3, default: 4 }
+            paginate: { max: 10, default: 3 }
           });
           assert.ok(response);
           assert.strictEqual(typeof response.highlighting, 'object');
@@ -424,15 +432,34 @@ describe('Additional Adapter Tests', () => {
                 'mlt.fl': 'gender'
               }
             },
-            paginate: { max: 3, default: 4 }
+            paginate: { max: 10, default: 3 }
           });
-          // console.log(response);
           assert.ok(response);
           assert.strictEqual(typeof response.moreLikeThis, 'object');
         });
       });
+
+      // https://lucene.apache.org/solr/guide/7_7/spatial-search.html
       describe('Spartial', () => {
-        it('Should have distance', async () => {});
+        it('Should have distance', async () => {
+          const response = await service.find({
+            query: {
+              $select: ['*', 'score', '_dist_:geodist()'],
+              $params: {
+                'sfield': 'location_p',
+                'pt': '40.649558, -73.991815',
+                d: 50,
+                distanceUnits: 'kilometers',
+                sort: 'geodist() asc'
+              }
+            },
+            paginate: { max: 10, default: 3 }
+          });
+          assert.ok(response);
+          assert.strictEqual(response.data[0]._dist_ < 2, true, 'object');
+          assert.strictEqual(response.data[1]._dist_ < 4, true, 'object');
+          assert.strictEqual(response.data[2]._dist_ < 5, true, 'object');
+        });
       });
     });
   });
