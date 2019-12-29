@@ -426,11 +426,12 @@ describe('Additional Adapter Tests', () => {
             },
             paginate: { max: 3, default: 4 }
           });
-          // console.log(response);
           assert.ok(response);
           assert.strictEqual(typeof response.moreLikeThis, 'object');
         });
       });
+
+      // https://lucene.apache.org/solr/guide/7_7/spatial-search.html
       describe('Spartial', () => {
         it('Should have distance', async () => {});
       });
