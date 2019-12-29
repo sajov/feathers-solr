@@ -50,6 +50,23 @@ describe('Feathers Solr Setup Tests', () => {
         assert.strictEqual(error.name, 'Error', 'Got a NotFound Feathers Error');
       }
     });
+    // it('Should throw an Error 500', async () => {
+    //   try {
+    //     const response = await app.service('fetch').find({
+    //       query: {
+    //         $search: 'Doug',
+    //         $params: {
+    //           defType: 'edismax',
+    //           qf: 'name^10,age^1,gender'
+    //         }
+    //       }
+    //     });
+    //     console.log(response);
+    //     throw new Error('Should never get here');
+    //   } catch (error) {
+    //     assert.strictEqual(error.name, 'Error', 'Got a NotFound Feathers Error');
+    //   }
+    // });
   });
 
   describe('Client has methods GET and POST', () => {
@@ -64,6 +81,40 @@ describe('Feathers Solr Setup Tests', () => {
     });
     it('Fetch has POST', () => {
       assert.strictEqual(typeof app.service('fetch').Model.post, 'function', 'Error', 'Got not a response status');
+    });
+  });
+
+  describe('Client response status', () => {
+    const query = {
+      $search: 'Doug 20',
+      $params: {
+        defType: 'edismax',
+        qf: 'name^10,age^1,gender'
+      }
+    };
+
+    it('Fetch get 500', async () => {
+      try {
+        const response = await app.service('fetch').find({
+          query: query
+        });
+
+        throw new Error('Should never get here');
+      } catch (error) {
+        assert.strictEqual(error.name, 'Server Error', 'Got a NotFound Feathers Error');
+      }
+    });
+
+    it('Undici get 500', async () => {
+      try {
+        const response = await app.service('fetch').find({
+          query: query
+        });
+
+        throw new Error('Should never get here');
+      } catch (error) {
+        assert.strictEqual(error.name, 'Server Error', 'Got a NotFound Feathers Error');
+      }
     });
   });
 
@@ -83,30 +134,16 @@ describe('Feathers Solr Setup Tests', () => {
   });
 
   describe('Client can POST', () => {
-    const data = { 'test_s': 'sajo' };
-    // it('Undici POST', async () => {
-    //   const response = await app.service('undici').Model.post('update/json', data);
-    //   assert.ok(1);
-    //   console.log(response);
-    // });
-    // it('Fetch POST', async () => {
-    //   const response = await app.service('fetch').Model.post('update/json', data);
-    //   assert.ok(response);
-    //   console.log(response);
-    // });
+    const data = [{ 'test_s': 'sajo' }];
+    it('Undici POST', async () => {
+      const response = await app.service('undici').Model.post('update/json', data);
+      assert.ok(response);
+      assert.strictEqual(response.responseHeader.status, 0, 'Got Status 0');
+    });
+    it('Fetch POST', async () => {
+      const response = await app.service('fetch').Model.post('update/json', data);
+      assert.ok(response);
+      assert.strictEqual(response.responseHeader.status, 0, 'Got Status 0');
+    });
   });
-
-  // describe('Client post', () => {
-  // it('Unidici should post', async () => {
-  //   const response = await app.service('undici').Model.post('query', { query: '*:*' });
-  //   assert.ok(response, 'Error', 'Got a NotFound Feathers error');
-  //   assert.strictEqual(response.response.numFound, 0, 'Error', 'Got a NotFound Feathers error');
-  // });
-
-  // it('Fetch should post', async () => {
-  //   const response = await app.service('fetch').Model.post('query', { query: '*:*' });
-  //   assert.ok(response, 'Error', 'Got a NotFound Feathers error');
-  //   assert.strictEqual(response.response.numFound, 0, 'Error', 'Got a NotFound Feathers error');
-  // });
-  // });
 });
