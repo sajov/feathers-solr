@@ -1,7 +1,7 @@
 {
   "name": "feathers-solr",
   "description": "A service plugin for Solr",
-  "version": "2.3.1",
+  "version": "2.5.0",
   "homepage": "https://github.com/sajov/feathers-solr",
   "keywords": [
     "feathers",
@@ -32,7 +32,7 @@
   "main": "lib/",
   "types": "types",
   "scripts": {
-    "publish": "git push origin --tags && npm run changelog && git push origin",
+    "publish": "git push origin --tags && git push origin",
     "changelog": "github_changelog_generator && git add CHANGELOG.md && git commit -am \"Updating changelog\"",
     "release:patch": "npm version patch && npm publish",
     "release:minor": "npm version minor && npm publish",

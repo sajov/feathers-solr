@@ -137,6 +137,7 @@ describe('Feathers Solr Service Common Adapter Tests', () => {
 
   afterEach(async () => {});
 });
+
 describe('Feathers Solr Service Common Adapter Tests', () => {
   before(async () => {
     service.options.multi = ['create', 'remove'];
