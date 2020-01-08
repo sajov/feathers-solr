@@ -6,7 +6,11 @@
 [![Known Vulnerabilities](https://snyk.io/test/npm/feathers-solr/badge.svg)](https://snyk.io/test/npm/feathers-solr)
 [![Download Status](https://img.shields.io/npm/dm/feathers-solr.svg?style=flat-square)](https://www.npmjs.com/package/feathers-solr)
 
-A [Feathers](https://feathersjs.com/) Solr Adapter. Require >= Solr 5.x
+A [Feathers](https://feathersjs.com/) Solr Adapter. Require >= Solr 5.x.
+
+> See this [adapter in action](https://feathers.better-search-box.com)
+
+## Installation
 
 ```
 $ npm install feathers-solr --save
@@ -19,6 +23,7 @@ Install a supported HTTP Client [Fetch](https://github.com/bitinn/node-fetch), [
 ```
 $ npm install node-fetch --save
 ```
+
 
 ## API
 
