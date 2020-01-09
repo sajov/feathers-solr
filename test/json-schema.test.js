@@ -53,15 +53,18 @@ const schema = {
 const aliasMap = {
   name: 'name_EN',
   price: 'price_EUR',
-  color: 'attr_1_EN'
+  color: 'attr_1_EN',
+  maxQty: 'max_qty'
 };
 
 const jsonFields = ['attributes'];
 
 const query = {
-  name: 'Shirt',
-  price: 19,
-  color: 'red'
+  $or: {
+    name: 'Shirt',
+    price: 19,
+    color: 'red'
+  }
 };
 
 describe('Feathers Solr Service Common Adapter Tests', () => {
@@ -90,15 +93,21 @@ describe('Feathers Solr Service Common Adapter Tests', () => {
     assert.strictEqual(typeof this.schema.query, 'function');
   });
 
-  it('.rename', () => {
+  it('.rename is a function', () => {
     assert.strictEqual(typeof this.schema._rename, 'function');
   });
 
-  it('.rename', () => {
+  it('.rename schema', () => {
     const renamedSchema = this.schema._rename(schema, aliasMap);
-    console.log(renamedSchema);
-    console.log(renamedSchema.properties.attributes);
+    // console.log(renamedSchema);
+    // console.log(renamedSchema.properties.attributes);
+    // console.log(renamedSchema.properties.attributes.properties.stock);
     assert.strictEqual(typeof this.schema._rename, 'function');
   });
-  // { firstName: 'Bobo', passion: 'Front-End Master' }
+
+  it('.rename query', () => {
+    const renamedQuery = this.schema._rename(query, aliasMap);
+    // console.log(renamedQuery);
+    assert.strictEqual(typeof this.schema._rename, 'function');
+  });
 });
