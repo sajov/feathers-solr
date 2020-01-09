@@ -62,7 +62,9 @@
     "@feathersjs/commons": "^4.4.3",
     "@feathersjs/errors": "^4.4.3",
     "debug": "^4.1.1",
+    "deep-rename-keys": "^0.2.1",
     "qs": "^6.9.1",
+    "rename-keys": "^2.0.1",
     "uuid": "^3.3.3"
   },
   "devDependencies": {
