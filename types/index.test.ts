@@ -1,4 +1,4 @@
-import { default as createService, Service } from 'feathers-solr-ts';
+import { default as createService, Service } from 'feathers-solr';
 
 const service1 = createService();
 const service2 = new Service({
