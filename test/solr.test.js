@@ -38,7 +38,7 @@ const schemaDelete = require('./solr/schema-delete.json');
 describe('Additional Adapter Tests', () => {
   // beforeEach(done => setTimeout(done, 10));
 
-  before(async function() {});
+  before(async function () {});
 
   describe('Service setup with out a Model', () => {
     it('Should throw an error', async () => {
@@ -205,7 +205,7 @@ describe('Additional Adapter Tests', () => {
     });
   });
 
-  describe('Special query params', function() {
+  describe('Special query params', function () {
     // beforeEach(done => setTimeout(done, 100));
 
     before(async () => {
@@ -244,7 +244,7 @@ describe('Additional Adapter Tests', () => {
       await service.Model.post('schema', schemaDelete);
     });
 
-    describe('$suggest', function() {
+    describe('$suggest', function () {
       it('Get Documents', async () => {
         const response1 = await service.find({});
         // console.log(response1);
@@ -377,7 +377,7 @@ describe('Additional Adapter Tests', () => {
           const response = await service.find({
             query: {
               $params: {
-                'group': true,
+                group: true,
                 'group.field': 'gender',
                 'group.format': 'simple'
               }
@@ -392,7 +392,7 @@ describe('Additional Adapter Tests', () => {
           const response = await service.find({
             query: {
               $params: {
-                'group': true,
+                group: true,
                 'group.field': 'gender'
               }
             }
@@ -410,7 +410,7 @@ describe('Additional Adapter Tests', () => {
             query: {
               $search: 'doug',
               $params: {
-                'hl': true,
+                hl: true,
                 'hl.field': 'name'
               }
             },
@@ -428,7 +428,7 @@ describe('Additional Adapter Tests', () => {
             query: {
               $search: 'male',
               $params: {
-                'mlt': true,
+                mlt: true,
                 'mlt.fl': 'gender'
               }
             },
@@ -446,8 +446,8 @@ describe('Additional Adapter Tests', () => {
             query: {
               $select: ['*', 'score', '_dist_:geodist()'],
               $params: {
-                'sfield': 'location_p',
-                'pt': '40.649558, -73.991815',
+                sfield: 'location_p',
+                pt: '40.649558, -73.991815',
                 d: 50,
                 distanceUnits: 'kilometers',
                 sort: 'geodist() asc'

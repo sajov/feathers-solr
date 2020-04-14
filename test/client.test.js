@@ -134,7 +134,7 @@ describe('Feathers Solr Setup Tests', () => {
   });
 
   describe('Client can POST', () => {
-    const data = [{ 'test_s': 'sajo' }];
+    const data = [{ test_s: 'sajo' }];
     it('Undici POST', async () => {
       const response = await app.service('undici').Model.post('update/json', data);
       assert.ok(response);
