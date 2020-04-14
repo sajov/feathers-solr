@@ -1,7 +1,7 @@
 {
   "name": "feathers-solr",
   "description": "A service plugin for Solr",
-  "version": "2.7.1",
+  "version": "2.7.4",
   "homepage": "https://github.com/sajov/feathers-solr",
   "keywords": [
     "feathers",
@@ -62,7 +62,8 @@
     "@feathersjs/commons": "^4.5.2",
     "@feathersjs/errors": "^4.5.2",
     "debug": "^4.1.1",
-    "qs": "^6.9.1",
+    "npm-check-updates": "^4.1.0",
+    "qs": "^6.9.3",
     "uuid": "^7.0.2"
   },
   "devDependencies": {
@@ -75,11 +76,11 @@
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "clinic": "^5.0.0",
-    "coveralls": "^3.0.9",
-    "dtslint": "^3.3.0",
+    "coveralls": "^3.0.11",
+    "dtslint": "^3.4.0",
     "istanbul": "^1.1.0-alpha.1",
     "loud-rejection": "^2.2.0",
-    "mocha": "^7.1.0",
+    "mocha": "^7.1.1",
     "semistandard": "^14.2.0"
   }
 }
