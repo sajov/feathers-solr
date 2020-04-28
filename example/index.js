@@ -22,7 +22,8 @@ app.use(
   new Service({
     Model: SolrClient(fetch, solrServer),
     paginate: {},
-    events: ['testing']
+    events: ['testing'],
+    multi: true
   })
 );
 // init Adapter witch Undici
@@ -31,20 +32,30 @@ app.use(
   new Service({
     Model: SolrClient(undici, solrServer),
     paginate: {},
-    events: ['testing']
+    events: ['testing'],
+    multi: true
   })
 );
 
-app.service('fetch').create({
-  id: 'TWINX2048-3200PRO',
-  name: 'Product One'
-});
+// add some docs
+app.service('fetch').create([
+  {
+    id: 'TWINX2048-3200PRO',
+    name: 'Product One'
+  },
+  {
+    id: 'HELIX1015-1800SL',
+    name: 'Product Two'
+  }
+]);
+
+// add a doc ....
 app.service('undici').create({
-  id: 'HELIX1015-1800SL',
-  name: 'Product Two'
+  id: 'delete-test',
+  name: 'Product to delete'
 });
-// Set up default error handler
-// app.use(express.errorHandler());
+// and delete it
+app.service('undici').remove(null, { query: { id: 'delete-test' } });
 
 // Start the server.
 const port = 3030;
@@ -53,7 +64,7 @@ var server = app.listen(port, () => {
   console.log(`Feathers server listening on port http://127.0.0.1:${port}`);
 });
 
-process.on('SIGINT', function() {
+process.on('SIGINT', function () {
   console.error('Caught SIGINT, shutting down.');
   server.close();
 });
