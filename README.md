@@ -53,16 +53,14 @@ app.use('/gettingstarted', service({ id, Model, events, paginate }));
 
 ## Getting Started
 
-The following example will create a Service with the name and endpoint `solr`.
+The following example will create a Service with the name and endpoint `gettingstarted`.
 
 ```javascript
 const feathers = require('@feathersjs/feathers');
 const express = require('@feathersjs/express');
 const fetch = require('node-fetch');
-const undici = require('undici');
 const Service = require('feathers-solr');
-const { SolrClient } = require('feathers-solr');
-const solrServer = 'http://localhost:8983/solr/gettingstarted';
+const solrServer = 'http://localhost:8983/solr/'
 
 // Create an Express compatible Feathers application instance.
 const app = express(feathers());
@@ -76,7 +74,9 @@ app.configure(express.rest());
 
 // init Adapter witch Fetch or Undici
 const options = {
-  Model: SolrClient(fetch, solrServer),
+  Model: fetch,
+  host: solrServer,
+  core: "gettingstarted",
   paginate: {},
   events: ['testing']
 };
@@ -85,6 +85,7 @@ app.use('gettingstarted', new Service(options));
 app.listen(3030, () => {
   console.log(`Feathers server listening on port http://127.0.0.1:3030`);
 });
+
 ```
 
 Install Solr
