@@ -54,23 +54,23 @@
   },
   "dependencies": {
     "@feathersjs/adapter-commons": "^4.5.2",
-    "@feathersjs/commons": "^4.5.2",
-    "@feathersjs/errors": "^4.5.2",
+    "@feathersjs/commons": "^4.5.3",
+    "@feathersjs/errors": "^4.5.3",
     "debug": "^4.1.1",
-    "qs": "^6.9.3",
-    "uuid": "^7.0.3"
+    "qs": "^6.9.4",
+    "uuid": "^8.1.0"
   },
   "devDependencies": {
     "@feathersjs/adapter-tests": "^4.5.2",
-    "@feathersjs/express": "^4.5.2",
-    "@feathersjs/feathers": "^4.5.2",
-    "dtslint": "^3.4.1",
+    "@feathersjs/express": "^4.5.4",
+    "@feathersjs/feathers": "^4.5.3",
+    "dtslint": "^3.6.9",
     "istanbul": "^1.1.0-alpha.1",
-    "mocha": "^7.1.1",
+    "mocha": "^7.2.0",
     "node-fetch": "^2.6.0",
     "semistandard": "^14.2.0",
-    "tslint": "^6.1.1",
+    "tslint": "^6.1.2",
     "undici": "^0.5.0",
-    "minimist": ">=1.2.3"
+    "minimist": ">=1.2.5"
   }
 }
