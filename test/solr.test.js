@@ -61,17 +61,6 @@ describe('Additional Adapter Tests', () => {
     });
   });
 
-  describe('Client setup with out a connection', () => {
-    // it('Unidici should throw an error', async () => {
-    //   try {
-    //     new undiciClient();
-    //     throw new Error('Should never get here');
-    //   } catch (error) {
-    //     assert.strictEqual(error.name, 'Error', 'Got a NotFound Feathers error');
-    //   }
-    // });
-  });
-
   describe('Client get', () => {
     it('Unidici should get', async () => {
       const response = await app.service('undici').Model.get('admin/ping');
