@@ -131,10 +131,6 @@ describe('Feathers Solr Service Common Adapter Tests', () => {
     await service.Model.post('config', configDelete);
     await service.Model.post('schema', schemaDelete);
   });
-
-  beforeEach(async () => {});
-
-  afterEach(async () => {});
 });
 
 describe('Feathers Solr Service Common Adapter Tests', () => {
