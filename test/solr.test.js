@@ -1,9 +1,8 @@
 const assert = require('assert');
-const { _ } = require('@feathersjs/commons');
 const feathers = require('@feathersjs/feathers');
 const fetch = require('node-fetch');
 const undici = require('undici');
-const solr = require('../lib');
+const Solr = require('../lib');
 const { SolrClient } = require('../lib');
 const solrServer = 'http://localhost:8983/solr/gettingstarted';
 
@@ -12,7 +11,7 @@ const app = feathers();
 // Http Client Fetch
 app.use(
   'fetch',
-  new solr({
+  new Solr({
     Model: SolrClient(fetch, solrServer),
     paginate: {},
     events: ['testing']
@@ -23,7 +22,7 @@ const service = app.service('fetch');
 // Http Client Undici
 app.use(
   'undici',
-  new solr({
+  new Solr({
     Model: SolrClient(undici, solrServer),
     paginate: {},
     events: ['testing']
@@ -47,7 +46,8 @@ describe('Additional Adapter Tests', () => {
         events: ['testing']
       };
       try {
-        const client = new solr(options);
+        // eslint-disable-next-line no-unused-vars
+        const client = new Solr(options);
 
         throw new Error('Should never get here');
       } catch (error) {
@@ -112,6 +112,7 @@ describe('Additional Adapter Tests', () => {
 
     it('.find not whitelisted param ', async () => {
       try {
+        // eslint-disable-next-line no-unused-vars
         const response = await service.find({
           query: { $unknown: 1 },
           paginate: { max: 10, default: 3 }
@@ -246,12 +247,8 @@ describe('Additional Adapter Tests', () => {
 
     describe('$suggest', function () {
       it('Get Documents', async () => {
-        const response1 = await service.find({});
-        // console.log(response1);
+        // eslint-disable-next-line no-unused-vars
         const response = await service.find({ query: { $suggest: 'alice' } });
-        // console.log(response);
-        // console.log();
-        // console.log(response.suggest.suggest.alice);
         // assert.ok(response);
         // assert.strictEqual(response.length, 3, 'Got 3 documents');
       });

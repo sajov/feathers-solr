@@ -2,14 +2,14 @@ const assert = require('assert');
 const feathers = require('@feathersjs/feathers');
 const fetch = require('node-fetch');
 const undici = require('undici');
-const solr = require('../lib');
+const Solr = require('../lib');
 const { SolrClient } = require('../lib');
 const solrServer = 'http://localhost:8983/solr/gettingstarted';
 const app = feathers();
 // init Adapter witch Fetch
 app.use(
   'fetch',
-  new solr({
+  new Solr({
     Model: SolrClient(fetch, solrServer),
     paginate: {},
     events: ['testing']
@@ -18,7 +18,7 @@ app.use(
 // init Adapter witch Undici
 app.use(
   'undici',
-  new solr({
+  new Solr({
     Model: SolrClient(undici, solrServer),
     paginate: {},
     events: ['testing']
@@ -33,7 +33,8 @@ describe('Feathers Solr Setup Tests', () => {
         events: ['testing']
       };
       try {
-        const client = new solr(options);
+        // eslint-disable-next-line no-unused-vars
+        const client = new Solr(options);
         throw new Error('Should never get here');
       } catch (error) {
         assert.strictEqual(error.name, 'Error', 'Got a NotFound Feathers Error');
@@ -44,6 +45,7 @@ describe('Feathers Solr Setup Tests', () => {
   describe('Client setup with out a connection', () => {
     it('Should throw an Error', async () => {
       try {
+        // eslint-disable-next-line no-unused-vars
         const client = SolrClient();
         throw new Error('Should never get here');
       } catch (error) {
@@ -95,6 +97,7 @@ describe('Feathers Solr Setup Tests', () => {
 
     it('Fetch get 500', async () => {
       try {
+        // eslint-disable-next-line no-unused-vars
         const response = await app.service('fetch').find({
           query: query
         });
@@ -107,6 +110,7 @@ describe('Feathers Solr Setup Tests', () => {
 
     it('Undici get 500', async () => {
       try {
+        // eslint-disable-next-line no-unused-vars
         const response = await app.service('fetch').find({
           query: query
         });

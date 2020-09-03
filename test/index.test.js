@@ -1,10 +1,9 @@
-const assert = require('assert');
 const adapterTests = require('@feathersjs/adapter-tests');
 const errors = require('@feathersjs/errors');
 const feathers = require('@feathersjs/feathers');
 const fetch = require('node-fetch');
 const undici = require('undici');
-const solr = require('../lib');
+const Solr = require('../lib');
 const { SolrClient } = require('../lib');
 const configAdd = require('./solr/config-add.json');
 const configDelete = require('./solr/config-delete.json');
@@ -17,7 +16,7 @@ const app = feathers();
 // Http Client Fetch
 app.use(
   'fetch',
-  new solr({
+  new Solr({
     Model: SolrClient(fetch, solrServer),
     paginate: {},
     events: ['testing']
@@ -28,7 +27,7 @@ const service = app.service('fetch');
 // Http Client Undici
 app.use(
   'undici',
-  new solr({
+  new Solr({
     Model: SolrClient(undici, solrServer),
     paginate: {},
     events: ['testing']
