@@ -52,23 +52,6 @@ describe('Feathers Solr Setup Tests', () => {
         assert.strictEqual(error.name, 'Error', 'Got a NotFound Feathers Error');
       }
     });
-    // it('Should throw an Error 500', async () => {
-    //   try {
-    //     const response = await app.service('fetch').find({
-    //       query: {
-    //         $search: 'Doug',
-    //         $params: {
-    //           defType: 'edismax',
-    //           qf: 'name^10,age^1,gender'
-    //         }
-    //       }
-    //     });
-    //     console.log(response);
-    //     throw new Error('Should never get here');
-    //   } catch (error) {
-    //     assert.strictEqual(error.name, 'Error', 'Got a NotFound Feathers Error');
-    //   }
-    // });
   });
 
   describe('Client has methods GET and POST', () => {
