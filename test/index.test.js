@@ -103,7 +103,7 @@ const testSuite = adapterTests(tests);
 describe('Feathers Solr Service Common Adapter Tests', () => {
   beforeEach(done => setTimeout(done, 100));
 
-  before(async () => {
+  beforeAll(async () => {
     service.options.multi = ['create', 'remove'];
     await service.Model.post('config', configAdd);
     await service.Model.post('schema', schemaAdd);
@@ -126,7 +126,7 @@ describe('Feathers Solr Service Common Adapter Tests', () => {
     ]);
   });
 
-  after(async () => {
+  afterAll(async () => {
     await service.remove(null, { query: { id: '*' } });
     await service.Model.post('config', configDelete);
     await service.Model.post('schema', schemaDelete);
@@ -138,14 +138,14 @@ describe('Feathers Solr Service Common Adapter Tests', () => {
 });
 
 describe('Feathers Solr Service Common Adapter Tests', () => {
-  before(async () => {
+  beforeAll(async () => {
     service.options.multi = ['create', 'remove'];
     await service.Model.post('config', configAdd);
     await service.Model.post('schema', schemaAdd);
     await service.remove(null, { query: { id: '*' } });
   });
 
-  after(async () => {
+  afterAll(async () => {
     await service.Model.post('config', configDelete);
     await service.Model.post('schema', schemaDelete);
   });

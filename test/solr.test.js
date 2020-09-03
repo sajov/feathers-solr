@@ -37,7 +37,7 @@ const schemaDelete = require('./solr/schema-delete.json');
 describe('Additional Adapter Tests', () => {
   // beforeEach(done => setTimeout(done, 10));
 
-  before(async function () {});
+  beforeAll(async () => {});
 
   describe('Service setup with out a Model', () => {
     it('Should throw an error', async () => {
@@ -115,12 +115,12 @@ describe('Additional Adapter Tests', () => {
   });
 
   describe('Service whitelisted params', () => {
-    before(async () => {
+    beforeAll(async () => {
       service.options.multi = ['create', 'remove'];
       await service.Model.post('config', configAdd);
     });
 
-    after(async () => {
+    afterAll(async () => {
       await service.Model.post('config', configDelete);
     });
     it('should accept $search', async () => {
@@ -195,10 +195,10 @@ describe('Additional Adapter Tests', () => {
     });
   });
 
-  describe('Special query params', function () {
+  describe('Special query params', () => {
     // beforeEach(done => setTimeout(done, 100));
 
-    before(async () => {
+    beforeAll(async () => {
       service.options.multi = ['create', 'remove'];
       await service.remove(null, { query: { id: '*' } });
       await service.Model.post('config', configAdd);
@@ -228,13 +228,13 @@ describe('Additional Adapter Tests', () => {
       );
     });
 
-    after(async () => {
+    afterAll(async () => {
       service.options.multi = ['create', 'remove'];
       await service.Model.post('config', configDelete);
       await service.Model.post('schema', schemaDelete);
     });
 
-    describe('$suggest', function () {
+    describe('$suggest', () => {
       it('Get Documents', async () => {
         // eslint-disable-next-line no-unused-vars
         const response = await service.find({ query: { $suggest: 'alice' } });
