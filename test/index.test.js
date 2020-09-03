@@ -101,9 +101,9 @@ const tests = [
 const testSuite = adapterTests(tests);
 
 describe('Feathers Solr Service Common Adapter Tests', () => {
-  beforeEach(done => setTimeout(done, 100));
+  beforeEach(done => setTimeout(done, 200));
 
-  beforeAll(async () => {
+  beforeAll(async (done) => {
     service.options.multi = ['create', 'remove'];
     await service.Model.post('config', configAdd);
     await service.Model.post('schema', schemaAdd);
@@ -124,26 +124,30 @@ describe('Feathers Solr Service Common Adapter Tests', () => {
         gender: 'male'
       }
     ]);
+    done();
   });
 
-  afterAll(async () => {
+  afterAll(async (done) => {
     await service.remove(null, { query: { id: '*' } });
     await service.Model.post('config', configDelete);
     await service.Model.post('schema', schemaDelete);
+    done();
   });
 });
 
 describe('Feathers Solr Service Common Adapter Tests', () => {
-  beforeAll(async () => {
+  beforeAll(async (done) => {
     service.options.multi = ['create', 'remove'];
     await service.Model.post('config', configAdd);
     await service.Model.post('schema', schemaAdd);
     await service.remove(null, { query: { id: '*' } });
+    done();
   });
 
-  afterAll(async () => {
+  afterAll(async (done) => {
     await service.Model.post('config', configDelete);
     await service.Model.post('schema', schemaDelete);
+    done();
   });
   testSuite(app, errors, 'fetch');
   testSuite(app, errors, 'undici');
