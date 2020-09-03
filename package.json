@@ -39,7 +39,7 @@
     "test": "jest",
     "example": "babel-node example/index",
     "coverage": "istanbul cover node_modules/mocha/bin/_mocha -- --opts mocha.opts",
-    "travis": "node_modules/.bin/istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --colors --reporter spec test/",
+    "travis": "jest test/**/*.test.js --coverage",
     "start": "nodemon example -w example -w lib -w test",
     "benchmark:fetch": "ab -n 1000 -c 10 http://localhost:3030/fetch/TWINX2048-3200PRO",
     "benchmark:undici": "ab -n 1000 -c 10 http://localhost:3030/undici/TWINX2048-3200PRO"
@@ -67,7 +67,6 @@
     "dtslint": "^4.0.0",
     "istanbul": "^1.1.0-alpha.1",
     "jest": "^26.4.2",
-    "minimist": ">=1.2.5",
     "mocha": "^8.1.3",
     "node-fetch": "^2.6.0",
     "semistandard": "^14.2.3",

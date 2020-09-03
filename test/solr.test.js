@@ -1,4 +1,3 @@
-const assert = require('assert');
 const feathers = require('@feathersjs/feathers');
 const fetch = require('node-fetch');
 const undici = require('undici');
@@ -37,7 +36,6 @@ const schemaDelete = require('./solr/schema-delete.json');
 describe('Additional Adapter Tests', () => {
   // beforeEach(done => setTimeout(done, 10));
 
-  beforeAll(async () => {});
 
   describe('Service setup with out a Model', () => {
     it('Should throw an error', async () => {
@@ -51,42 +49,42 @@ describe('Additional Adapter Tests', () => {
 
         throw new Error('Should never get here');
       } catch (error) {
-        assert.strictEqual(error.name, 'Error', 'Got a NotFound Feathers error');
+        expect(error.name).toBe('Error');
       }
     });
 
     it('Should be pingable', async () => {
       const response = await service.Model.get('admin/ping');
-      assert.ok(response);
+      expect(response).toBeTruthy();
     });
   });
 
   describe('Client get', () => {
     it('Unidici should get', async () => {
       const response = await app.service('undici').Model.get('admin/ping');
-      assert.ok(response, 'Error', 'Got no ping result');
-      assert.strictEqual(response.status, 'OK', 'Error', 'Got not a response status');
+      expect(response).toBeTruthy();
+      expect(response.status).toBe('OK');
     });
 
     it('Fetch should get', async () => {
       const response = await app.service('fetch').Model.get('admin/ping');
-      assert.ok(response, 'Error', 'Got no ping result');
-      assert.strictEqual(response.status, 'OK', 'Error', 'Got not a response status');
+      expect(response).toBeTruthy();
+      expect(response.status).toBe('OK');
     });
   });
 
   describe('Client post', () => {
     it('Unidici should post', async () => {
       const response = await app.service('undici').Model.post('query', { query: '*:*' });
-      assert.ok(response, 'Error', 'Got a NotFound Feathers error');
-      assert.strictEqual(typeof response.response.numFound, 'number', 'Error', 'Got a NotFound Feathers error');
-      assert.strictEqual(typeof response.response.start, 'number', 'Error', 'Got a NotFound Feathers error');
+      expect(response).toBeTruthy();
+      expect(typeof response.response.numFound).toBe('number');
+      expect(typeof response.response.start).toBe('number');
     });
     it('Fetch should post', async () => {
       const response = await app.service('fetch').Model.post('query', { query: '*:*' });
-      assert.ok(response, 'Error', 'Got a NotFound Feathers error');
-      assert.strictEqual(typeof response.response.numFound, 'number', 'Error', 'Got a NotFound Feathers error');
-      assert.strictEqual(typeof response.response.start, 'number', 'Error', 'Got a NotFound Feathers error');
+      expect(response).toBeTruthy();
+      expect(typeof response.response.numFound).toBe('number');
+      expect(typeof response.response.start).toBe('number');
     });
   });
 
@@ -96,7 +94,7 @@ describe('Additional Adapter Tests', () => {
         query: {},
         paginate: { max: 10, default: 3 }
       });
-      assert.ok(response);
+      expect(response).toBeTruthy();
     });
 
     it('.find not whitelisted param ', async () => {
@@ -109,7 +107,7 @@ describe('Additional Adapter Tests', () => {
 
         throw new Error('Should never get here');
       } catch (error) {
-        assert.strictEqual(error.name, 'BadRequest', 'Got a NotFound Feathers error');
+        expect(error.name).toBe('BadRequest');
       }
     });
   });
@@ -125,73 +123,73 @@ describe('Additional Adapter Tests', () => {
     });
     it('should accept $search', async () => {
       const result = await service.find({ query: { $search: true } });
-      assert.ok(Array.isArray(result), 'result is array');
+      expect(Array.isArray(result)).toBeTruthy();
     });
     it('should accept $suggest', async () => {
       const result = await service.find({ query: { $suggest: 'max' } });
-      assert.ok(result, 'result is array');
-      assert.ok(result.suggest.suggest.max, 'result is array');
-      assert.strictEqual(result.spellcheck.suggestions.length, 0, 'result is array');
+      expect(result).toBeTruthy();
+      expect(result.suggest.suggest.max).toBeTruthy();
+      expect(result.spellcheck.suggestions.length).toBe(0);
     });
     it('should accept $params', async () => {
       const result = await service.find({ query: { $params: {} } });
-      assert.ok(Array.isArray(result), 'result is array');
+      expect(Array.isArray(result)).toBeTruthy();
     });
     it('should accept $facet', async () => {
       const result = await service.find({ query: { $facet: {} } });
-      assert.ok(Array.isArray(result), 'result is array');
+      expect(Array.isArray(result)).toBeTruthy();
     });
     it('should accept $populate', async () => {
       const result = await service.find({ query: { $populate: true } });
-      assert.ok(Array.isArray(result), 'result is array');
+      expect(Array.isArray(result)).toBeTruthy();
     });
   });
 
   describe('Solr Schema Api', () => {
     it('Schema - add fields', async () => {
       const response = await service.Model.post('schema', schemaAdd);
-      assert.ok(response);
+      expect(response).toBeTruthy();
     });
 
     it('Schema has a field type `text_auto`', async () => {
       const response = await service.Model.get('schema/fieldtypes/text_auto');
-      assert.ok(response);
-      assert.strictEqual(response.fieldType.name, 'text_auto', 'Got a field named text_auto');
+      expect(response).toBeTruthy();
+      expect(response.fieldType.name).toBe('text_auto');
     });
 
     it('Schema has a field `autocomplete`', async () => {
       const response = await service.Model.get('schema/fields/autocomplete');
-      assert.ok(response);
-      assert.strictEqual(response.field.name, 'autocomplete', 'Got a field named autocomplete');
+      expect(response).toBeTruthy();
+      expect(response.field.name).toBe('autocomplete');
     });
 
     it('Schema - remove fields', async () => {
       const response = await service.Model.post('schema', schemaDelete);
-      assert.ok(response);
+      expect(response).toBeTruthy();
     });
   });
 
   describe('Solr Config Api', () => {
     it('Config - add RequestHandler and SuggestComponent', async () => {
       const response = await service.Model.post('config', configAdd);
-      assert.ok(response);
+      expect(response).toBeTruthy();
     });
 
     it('Config has a searchComponent `suggest`', async () => {
       const response = await service.Model.get('config/searchComponent');
-      assert.ok(response);
-      assert.strictEqual(response.config.searchComponent.suggest.name, 'suggest', 'Got a field named autocomplete');
+      expect(response).toBeTruthy();
+      expect(response.config.searchComponent.suggest.name).toBe('suggest');
     });
 
     it('Config has a requestHandler `suggest`', async () => {
       const response = await service.Model.get('config/requestHandler');
-      assert.ok(response);
-      assert.strictEqual(response.config.requestHandler['/suggest'].name, '/suggest', 'Got a field named autocomplete');
+      expect(response).toBeTruthy();
+      expect(response.config.requestHandler['/suggest'].name).toBe('/suggest');
     });
 
     it('Config - remove RequestHandler and SuggestComponent', async () => {
       const response = await service.Model.post('config', configDelete);
-      assert.ok(response);
+      expect(response).toBeTruthy();
     });
   });
 
@@ -260,10 +258,10 @@ describe('Additional Adapter Tests', () => {
             }
           }
         });
-        assert.ok(response);
-        assert.strictEqual(response.length, 2, 'Got two results');
-        assert.strictEqual(response[0].name, 'Doug', 'Doug first');
-        assert.strictEqual(response[1].name, 'Alice', 'Alice second');
+        expect(response).toBeTruthy();
+        expect(response.length).toBe(2);
+        expect(response[0].name).toBe('Doug');
+        expect(response[1].name).toBe('Alice');
       });
 
       it('Should find by `age` and then by `name`', async () => {
@@ -276,10 +274,10 @@ describe('Additional Adapter Tests', () => {
             }
           }
         });
-        assert.ok(response);
-        assert.strictEqual(response.length, 2, 'Got two results');
-        assert.strictEqual(response[0].name, 'Alice', 'Alice second');
-        assert.strictEqual(response[1].name, 'Doug', 'Doug first');
+        expect(response).toBeTruthy();
+        expect(response.length).toBe(2);
+        expect(response[0].name).toBe('Alice');
+        expect(response[1].name).toBe('Doug');
       });
 
       it('Should find with default search', async () => {
@@ -293,10 +291,10 @@ describe('Additional Adapter Tests', () => {
             $search: 'Doug 20 male'
           }
         });
-        assert.ok(response);
-        assert.strictEqual(response.length, 3, 'Got two results');
-        assert.strictEqual(response[0].name, 'Doug', 'Doug first');
-        assert.strictEqual(response[1].name, 'Alice', 'Alice second');
+        expect(response).toBeTruthy();
+        expect(response.length).toBe(3);
+        expect(response[0].name).toBe('Doug');
+        expect(response[1].name).toBe('Alice');
       });
     });
 
@@ -313,11 +311,11 @@ describe('Additional Adapter Tests', () => {
           },
           paginate: { max: 10, default: 1 }
         });
-        assert.ok(response);
-        assert.strictEqual(response.total, 3, 'Got 3 entries');
-        assert.strictEqual(response.data.length, 1, 'Got one entry');
-        assert.strictEqual(response.facets.count, 3, 'Got 3 entries');
-        assert.strictEqual(response.facets.gender.buckets.length, 2, 'Got 2 entries');
+        expect(response).toBeTruthy();
+        expect(response.total).toBe(3);
+        expect(response.data.length).toBe(1);
+        expect(response.facets.count).toBe(3);
+        expect(response.facets.gender.buckets.length).toBe(2);
       });
       it('$facet - aggresgation', async () => {
         const response = await service.find({
@@ -329,11 +327,11 @@ describe('Additional Adapter Tests', () => {
           },
           paginate: { max: 10, default: 1 }
         });
-        assert.strictEqual(response.total, 3, 'Got 3 entries');
-        assert.strictEqual(response.data.length, 1, 'Got one entry');
-        assert.strictEqual(response.facets.count, 3, 'Got 3 entries');
-        assert.ok((response.facets.ageAvg = 20), 'age AGV is 20');
-        assert.ok((response.facets.ageSum = 60), 'age SUM is 60');
+        expect(response.total).toBe(3);
+        expect(response.data.length).toBe(1);
+        expect(response.facets.count).toBe(3);
+        expect(response.facets.ageAvg = 20).toBeTruthy();
+        expect(response.facets.ageSum = 60).toBeTruthy();
       });
     });
 
@@ -369,10 +367,10 @@ describe('Additional Adapter Tests', () => {
               }
             }
           });
-          assert.ok(response);
-          assert.strictEqual(response.gender.matches, 3);
-          assert.strictEqual(response.gender.doclist.numFound, 3, 'Got grouped doclist with numFound');
-          assert.strictEqual(response.gender.doclist.docs.length, 2);
+          expect(response).toBeTruthy();
+          expect(response.gender.matches).toBe(3);
+          expect(response.gender.doclist.numFound).toBe(3);
+          expect(response.gender.doclist.docs.length).toBe(2);
         });
         it('Should gropup by gender format grouped', async () => {
           const response = await service.find({
@@ -383,9 +381,9 @@ describe('Additional Adapter Tests', () => {
               }
             }
           });
-          assert.ok(response);
-          assert.strictEqual(response.gender.matches, 3);
-          assert.strictEqual(response.gender.groups.length, 2, 'Got grouped doclist with numFound');
+          expect(response).toBeTruthy();
+          expect(response.gender.matches).toBe(3);
+          expect(response.gender.groups.length).toBe(2);
         });
       });
 
@@ -402,8 +400,8 @@ describe('Additional Adapter Tests', () => {
             },
             paginate: { max: 10, default: 3 }
           });
-          assert.ok(response);
-          assert.strictEqual(typeof response.highlighting, 'object');
+          expect(response).toBeTruthy();
+          expect(typeof response.highlighting).toBe('object');
         });
       });
 
@@ -420,8 +418,8 @@ describe('Additional Adapter Tests', () => {
             },
             paginate: { max: 10, default: 3 }
           });
-          assert.ok(response);
-          assert.strictEqual(typeof response.moreLikeThis, 'object');
+          expect(response).toBeTruthy();
+          expect(typeof response.moreLikeThis).toBe('object');
         });
       });
 
@@ -441,10 +439,10 @@ describe('Additional Adapter Tests', () => {
             },
             paginate: { max: 10, default: 3 }
           });
-          assert.ok(response);
-          assert.strictEqual(response.data[0]._dist_ < 2, true, 'object');
-          assert.strictEqual(response.data[1]._dist_ < 4, true, 'object');
-          assert.strictEqual(response.data[2]._dist_ < 5, true, 'object');
+          expect(response).toBeTruthy();
+          expect(response.data[0]._dist_ < 2).toBe(true);
+          expect(response.data[1]._dist_ < 4).toBe(true);
+          expect(response.data[2]._dist_ < 5).toBe(true);
         });
       });
     });

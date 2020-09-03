@@ -1,4 +1,3 @@
-const assert = require('assert');
 const feathers = require('@feathersjs/feathers');
 const fetch = require('node-fetch');
 const undici = require('undici');
@@ -37,7 +36,7 @@ describe('Feathers Solr Setup Tests', () => {
         const client = new Solr(options);
         throw new Error('Should never get here');
       } catch (error) {
-        assert.strictEqual(error.name, 'Error', 'Got a NotFound Feathers Error');
+        expect(error.name).toBe('Error');
       }
     });
   });
@@ -49,23 +48,23 @@ describe('Feathers Solr Setup Tests', () => {
         const client = SolrClient();
         throw new Error('Should never get here');
       } catch (error) {
-        assert.strictEqual(error.name, 'Error', 'Got a NotFound Feathers Error');
+        expect(error.name).toBe('Error');
       }
     });
   });
 
   describe('Client has methods GET and POST', () => {
     it('Unidici has GET', () => {
-      assert.strictEqual(typeof app.service('undici').Model.get, 'function', 'Error', 'Got not a response status');
+      expect(typeof app.service('undici').Model.get).toBe('function');
     });
     it('Unidici has POST', () => {
-      assert.strictEqual(typeof app.service('undici').Model.post, 'function', 'Error', 'Got not a response status');
+      expect(typeof app.service('undici').Model.post).toBe('function');
     });
     it('Fetch has GET', () => {
-      assert.strictEqual(typeof app.service('fetch').Model.get, 'function', 'Error', 'Got not a response status');
+      expect(typeof app.service('fetch').Model.get).toBe('function');
     });
     it('Fetch has POST', () => {
-      assert.strictEqual(typeof app.service('fetch').Model.post, 'function', 'Error', 'Got not a response status');
+      expect(typeof app.service('fetch').Model.post).toBe('function');
     });
   });
 
@@ -87,7 +86,7 @@ describe('Feathers Solr Setup Tests', () => {
 
         throw new Error('Should never get here');
       } catch (error) {
-        assert.strictEqual(error.name, 'Server Error', 'Got a NotFound Feathers Error');
+        expect(error.name).toBe('Server Error');
       }
     });
 
@@ -100,7 +99,7 @@ describe('Feathers Solr Setup Tests', () => {
 
         throw new Error('Should never get here');
       } catch (error) {
-        assert.strictEqual(error.name, 'Server Error', 'Got a NotFound Feathers Error');
+        expect(error.name).toBe('Server Error');
       }
     });
   });
@@ -108,15 +107,15 @@ describe('Feathers Solr Setup Tests', () => {
   describe('Client can GET', () => {
     it('Undici GET', async () => {
       const response = await app.service('undici').Model.get('admin/ping');
-      assert.ok(response);
-      assert.strictEqual(response.status, 'OK', 'Got Status 0');
-      assert.strictEqual(response.responseHeader.status, 0, 'Got QTime 0');
+      expect(response).toBeTruthy();
+      expect(response.status).toBe('OK');
+      expect(response.responseHeader.status).toBe(0);
     });
     it('Fetch GET', async () => {
       const response = await app.service('fetch').Model.get('admin/ping');
-      assert.ok(response);
-      assert.strictEqual(response.status, 'OK', 'Got Status 0');
-      assert.strictEqual(response.responseHeader.status, 0, 'Got QTime 0');
+      expect(response).toBeTruthy();
+      expect(response.status).toBe('OK');
+      expect(response.responseHeader.status).toBe(0);
     });
   });
 
@@ -124,13 +123,13 @@ describe('Feathers Solr Setup Tests', () => {
     const data = [{ test_s: 'sajo' }];
     it('Undici POST', async () => {
       const response = await app.service('undici').Model.post('update/json', data);
-      assert.ok(response);
-      assert.strictEqual(response.responseHeader.status, 0, 'Got Status 0');
+      expect(response).toBeTruthy();
+      expect(response.responseHeader.status).toBe(0);
     });
     it('Fetch POST', async () => {
       const response = await app.service('fetch').Model.post('update/json', data);
-      assert.ok(response);
-      assert.strictEqual(response.responseHeader.status, 0, 'Got Status 0');
+      expect(response).toBeTruthy();
+      expect(response.responseHeader.status).toBe(0);
     });
   });
 });
