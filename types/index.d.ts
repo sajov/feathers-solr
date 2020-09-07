@@ -1,4 +1,3 @@
-// TypeScript Version: 3.0
 import { Params, Paginated, Id, NullableId } from '@feathersjs/feathers';
 import { AdapterService, ServiceOptions, InternalServiceMethods } from '@feathersjs/adapter-commons';
 import fetch from 'node-fetch';
@@ -18,6 +17,7 @@ export interface SolrServiceOptions extends ServiceOptions {
   startId: number;
   matcher?: (query: any) => any;
   sorter?: (sort: any) => any;
+  Model: FetchClient | UndiciClient;
 }
 
 export class Service<T = any> extends AdapterService<T> implements InternalServiceMethods<T> {
