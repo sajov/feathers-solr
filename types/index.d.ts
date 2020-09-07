@@ -1,11 +1,18 @@
 // TypeScript Version: 3.0
 import { Params, Paginated, Id, NullableId } from '@feathersjs/feathers';
 import { AdapterService, ServiceOptions, InternalServiceMethods } from '@feathersjs/adapter-commons';
+import fetch from 'node-fetch';
+declare function undici(url: any, opts: object): any;
+
+export class FetchClient { }
+export class UndiciClient { }
 
 export interface solrService {
   [key: number]: any;
 }
 
+export declare function SolrClient(fn: typeof undici, host: string, opts: object): UndiciClient;
+export declare function SolrClient(fn: typeof fetch, host: string): FetchClient;
 export interface SolrServiceOptions extends ServiceOptions {
   store: solrService;
   startId: number;
