@@ -50,7 +50,7 @@ export const Query = {
       }
       this.query.filter.push(field + ':' + param);
     } else {
-      this.query.filter.push(field + ':' + param);
+      this.query.filter.push(field + ':"' + param + '"');
     }
   },
 
