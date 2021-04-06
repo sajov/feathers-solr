@@ -3,7 +3,6 @@
   "description": "Solr Adapter for Feathersjs",
   "version": "1.1.15",
   "homepage": "https://github.com/sajov/feathers-solr",
-  "main": "src/",
   "keywords": [
     "solr",
     "client",
@@ -34,7 +33,7 @@
     "release:patch": "npm version patch && npm publish",
     "release:minor": "npm version minor && npm publish",
     "release:major": "npm version major && npm publish",
-    "compile": "rimraf lib/ && babel -d lib/ src/",
+    "compile": "babel -d lib/ src/",
     "watch": "babel --watch -d lib/ src/",
     "jshint": "jshint src/. test/. --config",
     "mocha": "mocha --recursive test/ --require babel-core/register",
