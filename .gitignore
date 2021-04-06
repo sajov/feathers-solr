@@ -1,6 +1,6 @@
 .DS_Store
 
-#lib
+lib
 # Logs
 logs
 *.log

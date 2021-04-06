@@ -27,13 +27,14 @@
   "engines": {
     "node": ">= 4.6.0"
   },
+  "main": "lib/",
   "scripts": {
     "prepublish": "npm run compile",
     "NOpublish": "git push origin && git push origin --tags",
     "release:patch": "npm version patch && npm publish",
     "release:minor": "npm version minor && npm publish",
     "release:major": "npm version major && npm publish",
-    "compile": "babel -d lib/ src/",
+    "compile": "rimraf lib/ && babel -d lib/ src/",
     "watch": "babel --watch -d lib/ src/",
     "jshint": "jshint src/. test/. --config",
     "mocha": "mocha --recursive test/ --require babel-core/register",
@@ -48,7 +49,7 @@
     "travis": "node_modules/.bin/istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --require babel-core/register --colors --reporter spec test/"
   },
   "directories": {
-    "lib": "src"
+    "lib": "lib"
   },
   "dependencies": {
     "debug": "^4.1.1",
