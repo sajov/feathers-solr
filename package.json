@@ -49,7 +49,7 @@
     "travis": "node_modules/.bin/istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --require babel-core/register --colors --reporter spec test/"
   },
   "directories": {
-    "lib": "lib"
+    "lib": "src"
   },
   "dependencies": {
     "debug": "^4.1.1",
