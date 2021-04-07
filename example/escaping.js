@@ -21,11 +21,6 @@ function escapeFn(key, value) {
     return typeof val === 'string' ? `"${val}"` : val
   };
 
-  // console.log('escapeFn', key, value,
-  // {
-  //   key,
-  //   value: Array.isArray(value) ? value.map(v => qoutes(v)) : qoutes(value)
-  // })
   return {
     key,
     value: Array.isArray(value) ? value.map(v => qoutes(v)) : qoutes(value)
