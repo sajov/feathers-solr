@@ -1,7 +1,6 @@
 const feathers = require('@feathersjs/feathers');
 const express = require('@feathersjs/express');
 const fetch = require('node-fetch');
-const undici = require('undici');
 const Service = require('../lib');
 const { SolrClient } = require('../lib');
 const solrServer = 'http://localhost:8983/solr/gettingstarted';
@@ -38,19 +37,6 @@ app.use(
     multi: true
   })
 );
-
-
-// add some docs
-// app.service('gettingstarted').create([
-//   {
-//     id: 'TWINX2048-3200PRO',
-//     name: 'Product One'
-//   },
-//   {
-//     id: 'HELIX1015-1800SL',
-//     name: 'Product Two'
-//   }
-// ]);
 
 app.service('gettingstarted').find({
   query: {
@@ -95,7 +81,7 @@ app.service('gettingstarted').find({
 // Start the server.
 const port = 3030;
 
-var server = app.listen(port, () => {
+const server = app.listen(port, () => {
   console.log(`Feathers server listening on port http://127.0.0.1:${port}`);
 });
 
