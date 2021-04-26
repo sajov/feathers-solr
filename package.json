@@ -1,7 +1,7 @@
 {
   "name": "feathers-solr",
   "description": "A service plugin for Solr",
-  "version": "2.9.0",
+  "version": "2.9.1",
   "homepage": "https://github.com/sajov/feathers-solr",
   "keywords": [
     "feathers",
