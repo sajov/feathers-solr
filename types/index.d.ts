@@ -18,6 +18,7 @@ export interface SolrServiceOptions extends ServiceOptions {
   matcher?: (query: any) => any;
   sorter?: (sort: any) => any;
   Model: FetchClient | UndiciClient;
+  escapeFn: <TF extends string, TV extends any>(field: TF, value: TV) => { key: TF; value: TV }
 }
 
 export class Service<T = any> extends AdapterService<T> implements InternalServiceMethods<T> {
