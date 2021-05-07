@@ -66,6 +66,7 @@
     "@feathersjs/feathers": "^4.5.11",
     "@types/node-fetch": "^2.5.10",
     "dtslint": "^4.0.9",
+    "hosted-git-info": "^4.0.2",
     "istanbul": "^1.1.0-alpha.1",
     "lodash": "^4.17.21",
     "minimist": ">=1.2.5",
