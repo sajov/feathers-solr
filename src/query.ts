@@ -1,7 +1,15 @@
-const { _ } = require('@feathersjs/commons');
-const debug = require('debug')('feathers-solr-query');
-const { v4: uuidv4 } = require('uuid');
-_.has = function has (obj, key) {
+//@ts-ignore
+import { randomUUID } from 'crypto';
+import { _ } from '@feathersjs/commons';
+
+export const addIds = (data: any, key = 'id') => {
+  return data.map((d: any) => {
+    if(!d[key]) d[key] = randomUUID();
+    return d;
+  })
+}
+
+export const  _has = (obj: any, key: string) =>  {
   return key.split('.').every(function (x) {
     if (typeof obj !== 'object' || obj === null || !(x in obj)) {
       return false;
@@ -10,54 +18,55 @@ _.has = function has (obj, key) {
     return true;
   });
 };
-_.get = function get (obj, key) {
+export const _get = (obj: any, key: string) => {
   return key.split('.').reduce(function (o, x) {
     return typeof o === 'undefined' || o === null ? o : o[x];
   }, obj);
 };
-const whitelist = ['$search', '$suggest', '$params', '$facet', '$populate'];
 
-const Operators = {
-  $in: (key, value) => {
+export const whitelist = ['$search', '$suggest', '$params', '$facet', '$populate'];
+
+export const Operators: any = {
+  $in: (key: string, value: any) => {
     return Array.isArray(value) ? `${key}:(${value.join(' OR ')})` : `${key}:${value}`;
   },
-  $or: (key, value) => {
+  $or: (key: string, value: any) => {
     return Array.isArray(value) ? `(${value.join(' OR ')})` : `${key}:${value}`;
   },
-  $lt: (key, value) => {
+  $lt: (key: string, value: any) => {
     return `${key}:[* TO ${value}}`;
   },
-  $lte: (key, value) => {
+  $lte: (key: string, value: any) => {
     return `${key}:[* TO ${value}]`;
   },
-  $gt: (key, value) => {
+  $gt: (key: string, value: any) => {
     return `${key}:{${value} TO *]`;
   },
-  $gte: (key, value) => {
+  $gte: (key: string, value: any) => {
     return `${key}:[${value} TO *]`;
   },
-  $like: (key, value) => {
+  $like: (key: string, value: any) => {
     return `${key}:{${value}`;
   },
-  $notlike: (key, value) => {
+  $notlike: (key: string, value: any) => {
     return `!${key}:{${value}`;
   },
-  $eq: (key, value) => {
+  $eq: (key: string, value: any) => {
     return Array.isArray(value) ? `(${value.join(' AND ')})` : `${key}:${value}`;
   },
-  $ne: (key, value) => {
+  $ne: (key: string, value: any) => {
     return `!${key}:${value}`;
   },
-  $and: (key, value) => {
+  $and: (value: any) => {
     return `(${value.join(' AND ')})`;
   },
-  $nin (key, value) {
+  $nin (key: string, value: any) {
     return Array.isArray(value) ? `!${key}:(${value.join(' OR ')})` : `!${key}:${value}`;
   },
-  $limit (filters, paginate) {
-    const result = {};
+  $limit (filters: any, paginate: any) {
+    let result: any = {};
     if (typeof filters.$limit !== 'undefined') {
-      if (_.has(paginate, 'max') && parseInt(filters.$limit) > parseInt(paginate.max)) {
+      if (_has(paginate, 'max') && parseInt(filters.$limit) > parseInt(paginate.max)) {
         return;
       }
       result.limit = parseInt(filters.$limit);
@@ -65,14 +74,14 @@ const Operators = {
     return result;
   },
   // eslint-disable-next-line no-unused-vars
-  $skip (filters, paginate) {
+  $skip (filters: any) {
     return filters.$skip ? { offset: filters.$skip } : {};
   },
   // eslint-disable-next-line no-unused-vars
-  $sort (filters, paginate) {
-    const result = {};
+  $sort (filters: any) {
+    let result: any = {};
     if (filters.$sort) {
-      const sort = [];
+      let sort: any = [];
       Object.keys(filters.$sort).forEach(name => {
         sort.push(name + (parseInt(filters.$sort[name]) === 1 ? ' asc' : ' desc'));
       });
@@ -80,21 +89,21 @@ const Operators = {
     }
     return result;
   },
-  $params (filters, query) {
+  $params (query: any) {
     if (query.$params) return { params: query.$params };
     return {};
   },
-  $facet (filters, query) {
+  $facet (query: any) {
     if (query.$facet) return { facet: query.$facet };
     return {};
   },
-  $filter (filters, query) {
+  $filter (query: any) {
     if (query.$filter) return { filter: Array.isArray(query.$filter) ? query.$filter : [query.$filter] };
     return {};
   }
 };
 
-function jsonQuery (id, filters, query, paginate, escapeFn) {
+export function jsonQuery (id: any, filters: any, query: any, paginate: any, escapeFn: any) {
   const adapterQuery = Object.assign({}, query);
   const result = Object.assign(
     {
@@ -103,16 +112,16 @@ function jsonQuery (id, filters, query, paginate, escapeFn) {
       limit: paginate.max || paginate.default || 10,
       offset: 0
     },
-    Operators.$params(filters, adapterQuery),
-    Operators.$facet(filters, adapterQuery),
-    Operators.$sort(filters, paginate),
-    Operators.$skip(filters, paginate),
+    Operators.$sort(filters),
+    Operators.$skip(filters),
     Operators.$limit(filters, paginate),
-    Operators.$filter(filters, adapterQuery)
+    Operators.$params(adapterQuery),
+    Operators.$facet(adapterQuery),
+    Operators.$filter(adapterQuery)
   );
 
   // merge id and query // TODO: Fix if query.id has operators
-  if (id && _.has(adapterQuery, 'id')) {
+  if (id && _has(adapterQuery, 'id')) {
     adapterQuery.id = `(${id} AND ${adapterQuery.id})`;
   } else if (id) {
     adapterQuery.id = id;
@@ -127,11 +136,11 @@ function jsonQuery (id, filters, query, paginate, escapeFn) {
   if (!_.isEmpty(adapterQuery)) {
     result.filter = convertOperators(adapterQuery, escapeFn);
   }
-  debug(result);
+
   return result;
 }
 
-function convertOperators (query, escapeFn, root = '') {
+function convertOperators (query:any, escapeFn: any, root: string = ''): any {
 
   if (Array.isArray(query)) {
     return query.map(q => {
@@ -143,14 +152,14 @@ function convertOperators (query, escapeFn, root = '') {
     return query;
   }
 
-  const converted = Object.keys(query).reduce((res, prop) => {
+  const converted = Object.keys(query).reduce((res: any, prop: any) => {
     const value = query[prop];
     let queryString;
 
     if (prop === '$or') {
       const o = [].concat.apply([], convertOperators(value, escapeFn));
       queryString = Operators.$or(root || prop, o);
-    } else if (_.has(Operators, prop)) {
+    } else if (_has(Operators, prop)) {
       const escapedResult = escapeFn(root || prop, value);
       queryString = Operators[prop](escapedResult.key, escapedResult.value);
     } else if (typeof prop === 'string') {
@@ -167,6 +176,7 @@ function convertOperators (query, escapeFn, root = '') {
       }
       return res.concat(queryString);
     }
+
     res.push(queryString);
     return res;
   }, []);
@@ -174,7 +184,7 @@ function convertOperators (query, escapeFn, root = '') {
   return converted;
 }
 
-function deleteQuery (id, params) {
+export function deleteQuery (id: any, params: any) {
   if (id) {
     if (id === '*' || id === '*:*') {
       return { delete: { query: '*:*' } };
@@ -182,7 +192,7 @@ function deleteQuery (id, params) {
 
     return { delete: id };
   } else if (_.isObject(params)) {
-    const crit = [];
+    let crit: any = [];
 
     Object.keys(params.query).forEach(function (name) {
       crit.push(name + ':' + params.query[name]);
@@ -194,11 +204,11 @@ function deleteQuery (id, params) {
   return { delete: { query: '*:*' } };
 }
 
-function patchQuery (toPatch, patch, idField) {
+export function patchQuery (toPatch: any, patch: any, idField: any) {
   toPatch = Array.isArray(toPatch) ? toPatch : [toPatch];
 
-  const ids = toPatch.map(current => current[idField]);
-  const atomicFieldUpdate = {};
+  const ids = toPatch.map((current: any) => current[idField]);
+  const atomicFieldUpdate: any = {};
   const actions = ['set', 'add', 'remove', 'removeregex', 'inc'];
 
   Object.keys(patch).forEach(field => {
@@ -215,39 +225,17 @@ function patchQuery (toPatch, patch, idField) {
       }
     }
   });
-  const patchData = toPatch.map(current => {
+  const patchData = toPatch.map((current:any) => {
     return Object.assign({ [idField]: current[idField] }, atomicFieldUpdate);
   });
 
   return { ids, patchData };
 }
 
-const addId = (item, id) => {
-  if (item[id] === undefined) {
-    return Object.assign(
-      {
-        [id]: uuidv4()
-      },
-      item
-    );
-  }
-  return item;
-};
-
-const getIds = (data, id) => {
+export const getIds = (data:any, id: any) => {
   if (!Array.isArray(data) && data[id]) return [data[id]];
 
-  return data.map(d => {
+  return data.map((d: any) => {
     return d[id];
   });
-};
-
-module.exports = {
-  addId,
-  getIds,
-  jsonQuery,
-  patchQuery,
-  deleteQuery,
-  whitelist,
-  defaultOperators: Operators
 };
