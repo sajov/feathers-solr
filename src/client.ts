@@ -96,14 +96,14 @@ export const solrClient = (options: SolrClientOptions): SolrClient => {
     get: async (resource: string, params: any = {}) => {
       let url = `${options.host}${resource}`;
       if(Object.keys(params).length > 0) url += `?${new URLSearchParams(params)}`
-      console.log(url)
+      // debug(url)
       return await _get(url)
     },
     post: async (resource: string, data: any = {}, params: any = {}) => {
       let url = `${options.host}${resource}`;
       if(Object.keys(params).length > 0) url += `?${new URLSearchParams(params)}`
       const body = JSON.stringify(data);
-      console.log(url, body, params)
+      // console.log(url, body, params)
       return await _post(url, body)
     }
   }

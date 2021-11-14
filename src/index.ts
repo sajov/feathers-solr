@@ -1,15 +1,16 @@
-import { NotFound } from '@feathersjs/errors';
-import { _ } from '@feathersjs/commons';
-import { AdapterService, ServiceOptions, InternalServiceMethods, AdapterParams } from '@feathersjs/adapter-commons';
+import { NotFound, MethodNotAllowed } from '@feathersjs/errors';
 import { NullableId, Id } from '@feathersjs/feathers';
+import { _ } from '@feathersjs/commons';
+import { AdapterService, ServiceOptions, InternalServiceMethods, AdapterParams, select } from '@feathersjs/adapter-commons';
 import { solrClient, SolrClient } from './client';
-import { responseFind } from './response';
-import { addIds, jsonQuery } from './query';
+import { responseFind, responseGet } from './response';
+import { addIds, jsonQuery, patchQuery, deleteQuery } from './query';
 export const escapeFn = (key: string, value: any) => {
   return {key, value}
 }
 
-export interface SolrServiceOptions extends ServiceOptions {
+//@ts-ignore
+export interface SolrServiceOptions<T = any> extends ServiceOptions {
   host: string
   core: string;
   commit?: {
@@ -25,12 +26,12 @@ export interface SolrServiceOptions extends ServiceOptions {
 }
 
 export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> implements InternalServiceMethods<T> {
-  options!: SolrServiceOptions;
+  options: SolrServiceOptions;
   client: SolrClient;
   queryHandler: string;
   updateHandler: string;
 
-  constructor (options: Partial<SolrServiceOptions> = {}) {
+  constructor (options: Partial<SolrServiceOptions<T>> = {}) {
     super(_.extend({
       id: 'id',
       commit: {
@@ -56,6 +57,17 @@ export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> imple
     this.client = solrClient({host, core})
   }
 
+  _getOrFind (id: Id, params: AdapterParams = {}) {
+    if (id === null) {
+      return this._find(
+        Object.assign(params, {
+          paginate: false
+        })
+      );
+    }
+    return this._get(id, params);
+  }
+
   async _find (params: AdapterParams = {}) {
     const { query, filters, paginate } = this.filterQuery(params);
 
@@ -70,7 +82,7 @@ export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> imple
 
     try {
       const solrQuery = jsonQuery(null, filters, query, paginate, this.options.escapeFn);
-      console.log(solrQuery,'solrQuerysolrQuerysolrQuerysolrQuerysolrQuery')
+
       const response = await this.client.post(this.queryHandler, solrQuery)
        // const result = {
       //   total,
@@ -93,15 +105,22 @@ export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> imple
     }
 
   }
+
   //@ts-ignore
   async _get (id: Id, params: AdapterParams = {}) {
     //@ts-ignore
-    const { query } = this.filterQuery(params);
+    const { query, filters, paginate } = this.filterQuery(params);
     try {
-      const result = { email: 'john@gmail.com', id: 'LYjqYywedn7C5gnB' }
+      const solrQuery = jsonQuery(id, filters, query, paginate, this.options.escapeFn);
+
+      const response = await this.client.post(this.queryHandler, solrQuery)
+
+      if(response.response.numFound === 0) throw new NotFound(`No record found for id '${id}'`);
+
+      const result = responseGet(response, false);
+
       return  result;
     } catch (error) {
-
       throw new NotFound(`No record found for id '${id}'`);
     }
   }
@@ -109,32 +128,64 @@ export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> imple
   //@ts-ignore
   async _create (data: Partial<T> | Partial<T>[], params: AdapterParams = {}): Promise<T | T[]> {
 
-    let dataToCreate = Array.isArray(data) ? data : [data];
+    if (_.isEmpty(data)) throw new MethodNotAllowed('Data is empty');
+
+    let dataToCreate: any | any[] = Array.isArray(data) ? data : [data];
 
     if(this.options.createUUID) {
       dataToCreate = addIds(dataToCreate, this.options.id);
     }
 
-    const result = await this.client.post(this.updateHandler, dataToCreate, this.options.commit)
+    await this.client.post(this.updateHandler, dataToCreate, this.options.commit);
 
-    return result;
+    return Array.isArray(data) ? dataToCreate : dataToCreate[0];
   }
 
   //@ts-ignore
   async _update (id: NullableId, data: T, params: AdapterParams = {}) {
+    const sel = select(params, this.id);
 
-    return data;
+    const referenceData: any | any[] = await this._getOrFind(id, params);
+
+    if (_.isEmpty(referenceData)) throw new NotFound('No record found');
+
+    const dataToUpdate: any = id && !Array.isArray(data) ? [{id, ...data}] : data;
+
+    await this.client.post(this.updateHandler, dataToUpdate, this.options.commit);
+
+    return this._getOrFind(id, params).then(res => sel(_.omit(res, 'score', '_version_')));
   }
 
   //@ts-ignore
   async _patch (id: NullableId, data: Partial<T>, params: AdapterParams = {}) {
-    return data;// Will throw an error if not found
+    const sel = select(params, this.id);
+
+    const dataToPatch = await this._getOrFind(id, params);
+
+    const { ids, patchData } = patchQuery(dataToPatch, data, this.id);
+
+    await this.client.post(this.updateHandler, patchData, this.options.commit);
+
+    return this._find({ query: { id: { $in: ids } } }).then(res => sel(ids.length === 1 ? res[0] : res));
   }
 
   //@ts-ignore
   async _remove (id: NullableId, params: AdapterParams = {}): Promise<T|T[]> {
-    //@ts-ignore
-    return {};
+    if (!id && _.isEmpty(params)) {
+      throw new MethodNotAllowed('Delete with out id and query is not allowed');
+    }
+
+    const { paginate, ...query } = this.filterQuery(params);
+
+    const sel = select(params, this.id);
+
+    const dataToDelete = await this._getOrFind(id, params);
+
+    const queryToDelete = deleteQuery(id, query, this.options.escapeFn);
+
+    await this.client.post(this.updateHandler, queryToDelete, this.options.commit);
+
+    return sel(dataToDelete);
   }
 }
 

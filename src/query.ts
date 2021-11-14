@@ -178,27 +178,21 @@ function convertOperators (query:any, escapeFn: any, root: string = ''): any {
     }
 
     res.push(queryString);
+
     return res;
   }, []);
 
   return converted;
 }
 
-export function deleteQuery (id: any, params: any) {
+export function deleteQuery (id: any, params: any, escapeFn: any) {
   if (id) {
     if (id === '*' || id === '*:*') {
       return { delete: { query: '*:*' } };
     }
-
     return { delete: id };
   } else if (_.isObject(params)) {
-    let crit: any = [];
-
-    Object.keys(params.query).forEach(function (name) {
-      crit.push(name + ':' + params.query[name]);
-    });
-
-    return { delete: { query: crit.join(' AND ') } };
+    return { delete: { query: convertOperators(params, escapeFn).join(' AND ') } };
   }
 
   return { delete: { query: '*:*' } };

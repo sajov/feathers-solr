@@ -30,6 +30,7 @@ export function responseFind (filters, query, paginate, res) {
  */
 // @ts-ignore
 export function responseGet (res, allDocs = false) {
+  const  { response } = res;
   //@ts-ignore
   // if (!_.has(res, 'response.docs') && !_.has(res, 'grouped')) {
   //   return allDocs === false ? {} : [];
@@ -37,5 +38,5 @@ export function responseGet (res, allDocs = false) {
 
   // const docs = _.get(res, 'response.docs') || _.get(res, 'grouped') || [];
 
-  return allDocs === false ? res.docs[0] : res.docs;
+  return allDocs === false ? response.docs[0] : response.docs;
 }

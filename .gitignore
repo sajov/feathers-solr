@@ -40,4 +40,4 @@ dist/
 .mocha-puppeteer
 
 # TypeScript compiled files
-packages/**/lib
+lib
