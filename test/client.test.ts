@@ -171,7 +171,6 @@ describe('Service', () => {
       const test = await Service._find({query: {id: mockData[0].id}});
       assert.strictEqual(Array.isArray(test), true);
       assert.strictEqual(test.length, 0);
-
     });
 
     it('`delete` by query', async () => {
@@ -192,5 +191,16 @@ describe('Service', () => {
       assert.strictEqual(test.length, 0);
     });
 
+    it('`delete` all', async () => {
+      const Service = Solr({
+        ...options,
+        multi: true
+      });
+      await Service._create(mockData);
+      await Service._remove('*');
+      const test = await Service._find({});
+      assert.strictEqual(Array.isArray(test), true);
+      assert.strictEqual(test.length, 0);
+    });
   });
 })
