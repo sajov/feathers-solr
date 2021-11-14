@@ -1,10 +1,6 @@
 import http from 'http';
 // import https from 'https';
 // import url from 'url';
-import querystring from 'querystring';
-import { createDebug } from '@feathersjs/commons';
-
-const debug = createDebug('solr');
 
 
 // https://nodejs.org/api/querystring.html
@@ -46,8 +42,8 @@ export const solrClient = (options: SolrClientOptions): SolrClient => {
         let body: any = [];
         res.on('data', (chunk: any) => body.push(chunk))
         res.on('end', () => {
-          const resString = Buffer.concat(body).toString()
-          resolve(resString)
+          const response = Buffer.concat(body).toString('utf8')
+          resolve(JSON.parse(response))
         })
       })
 
@@ -99,15 +95,15 @@ export const solrClient = (options: SolrClientOptions): SolrClient => {
   return {
     get: async (resource: string, params: any = {}) => {
       let url = `${options.host}${resource}`;
-      if(Object.keys(params).length > 0) url += `?${querystring.stringify(params)}`
-      debug(url)
+      if(Object.keys(params).length > 0) url += `?${new URLSearchParams(params)}`
+      console.log(url)
       return await _get(url)
     },
-    post: async (resource: string, data: any = {}, params: any = {}, ) => {
+    post: async (resource: string, data: any = {}, params: any = {}) => {
       let url = `${options.host}${resource}`;
-      if(Object.keys(params).length > 0) url += `?${querystring.stringify(params)}`
+      if(Object.keys(params).length > 0) url += `?${new URLSearchParams(params)}`
       const body = JSON.stringify(data);
-      debug(url, body, params)
+      console.log(url, body, params)
       return await _post(url, body)
     }
   }
