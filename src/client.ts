@@ -92,6 +92,56 @@ export const solrClient = (options: SolrClientOptions): SolrClient => {
     })
   }
 
+  //@ts-ignore
+  const request = async (options: any) => {
+
+    const {url, method, params, data} = options;
+
+    const requestOptions = {
+      hostname: options.host,
+      method: method,
+      timeout: opts.timeout,
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(data)
+      }
+    };
+
+    if(method === 'POST') {
+      requestOptions.headers['Content-Length'] = Buffer.byteLength(data);
+    } else {
+
+    }
+
+    if(Object.keys(params).length) {
+      // create url
+    }
+
+    return new Promise((resolve, reject) => {
+      const request = transport.request(url, requestOptions, (res: any) => {
+        if (res.statusCode < 200 || res.statusCode > 299) {
+          return reject(new Error(`HTTP status code ${res.statusCode}`))
+        }
+        let body: any = [];
+        res.on('data', (chunk: any) => body.push(chunk))
+        res.on('end', () => {
+          const response = Buffer.concat(body).toString('utf8')
+          resolve(JSON.parse(response))
+        })
+      })
+
+      request.on('error', (err) => {
+        reject(err)
+      })
+      request.on('timeout', () => {
+        request.destroy()
+        reject(new Error('timed out'))
+      })
+      request.write(data);
+      request.end();
+    })
+  }
+
   return {
     get: async (resource: string, params: any = {}) => {
       let url = `${options.host}${resource}`;
@@ -99,7 +149,7 @@ export const solrClient = (options: SolrClientOptions): SolrClient => {
       // debug(url)
       return await _get(url)
     },
-    post: async (resource: string, data: any = {}, params: any = {}) => {
+    post: async (resource: string, params: any = {}, data: any = {}) => {
       let url = `${options.host}${resource}`;
       if(Object.keys(params).length > 0) url += `?${new URLSearchParams(params)}`
       const body = JSON.stringify(data);

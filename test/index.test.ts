@@ -1,8 +1,11 @@
 import assert from 'assert';
-// import adapterTests from '@feathersjs/adapter-tests';
-// import errors from '@feathersjs/errors';
+//@ts-ignore
+import adapterTests from '@feathersjs/adapter-tests';
+//@ts-ignore
+import errors from '@feathersjs/errors';
+import { solrClient } from '../src/client';
 import { feathers } from '@feathersjs/feathers';
-
+import { addSchema } from './seed';
 import Solr from '../src';
 
 const options = {
@@ -10,78 +13,91 @@ const options = {
   core: 'gettingstarted'
 }
 
-// const testSuite = adapterTests([
-//   '.options',
-//   '.events',
-//   '._get',
-//   '._find',
-//   '._create',
-//   '._update',
-//   '._patch',
-//   '._remove',
-//   '.get',
-//   '.get + $select',
-//   '.get + id + query',
-//   '.get + NotFound',
-//   '.get + id + query id',
-//   '.find',
-//   '.find + paginate + query',
-//   '.remove',
-//   '.remove + $select',
-//   '.remove + id + query',
-//   '.remove + multi',
-//   '.remove + id + query id',
-//   '.update',
-//   '.update + $select',
-//   '.update + id + query',
-//   '.update + NotFound',
-//   '.update + id + query id',
-//   '.update + query + NotFound',
-//   '.patch',
-//   '.patch + $select',
-//   '.patch + id + query',
-//   '.patch multiple',
-//   '.patch multi query same',
-//   '.patch multi query changed',
-//   '.patch + query + NotFound',
-//   '.patch + NotFound',
-//   '.patch + id + query id',
-//   '.create',
-//   '.create + $select',
-//   '.create multi',
-//   'internal .find',
-//   'internal .get',
-//   'internal .create',
-//   'internal .update',
-//   'internal .patch',
-//   'internal .remove',
-//   '.find + equal',
-//   '.find + equal multiple',
-//   '.find + $sort',
-//   '.find + $sort + string',
-//   '.find + $limit',
-//   '.find + $limit 0',
-//   '.find + $skip',
-//   '.find + $select',
-//   '.find + $or',
-//   '.find + $in',
-//   '.find + $nin',
-//   '.find + $lt',
-//   '.find + $lte',
-//   '.find + $gt',
-//   '.find + $gte',
-//   '.find + $ne',
-//   '.find + $gt + $lt + $sort',
-//   '.find + $or nested + $sort',
-//   '.find + paginate',
-//   '.find + paginate + $limit + $skip',
-//   '.find + paginate + $limit 0',
-//   '.find + paginate + params',
-//   'params.adapter + paginate',
-//   'params.adapter + multi'
-// ]);
+//@ts-ignore
+const Client = solrClient(options);
+//@ts-ignore
+const Service = Solr(options);
+
+
+//@ts-ignore
+const testSuite = adapterTests([
+  '.options',
+  '.events',
+  '._get',
+  '._find',
+  '._create',
+  '._update',
+  '._patch',
+  '._remove',
+  '.get',
+  '.get + $select',
+  '.get + id + query',
+  '.get + NotFound',
+  '.get + id + query id',
+  '.find',
+  '.find + paginate + query',
+  '.remove',
+  '.remove + $select',
+  '.remove + id + query',
+  '.remove + multi',
+  '.remove + id + query id',
+  '.update',
+  '.update + $select',
+  '.update + id + query',
+  '.update + NotFound',
+  '.update + id + query id',
+  '.update + query + NotFound',
+  '.patch',
+  '.patch + $select',
+  '.patch + id + query',
+  '.patch multiple',
+  '.patch multi query same',
+  '.patch multi query changed',
+  '.patch + query + NotFound',
+  '.patch + NotFound',
+  '.patch + id + query id',
+  '.create',
+  '.create + $select',
+  '.create multi',
+  'internal .find',
+  'internal .get',
+  'internal .create',
+  'internal .update',
+  'internal .patch',
+  'internal .remove',
+  '.find + equal',
+  '.find + equal multiple',
+  '.find + $sort',
+  '.find + $sort + string',
+  '.find + $limit',
+  '.find + $limit 0',
+  '.find + $skip',
+  '.find + $select',
+  '.find + $or',
+  '.find + $in',
+  '.find + $nin',
+  '.find + $lt',
+  '.find + $lte',
+  '.find + $gt',
+  '.find + $gte',
+  '.find + $ne',
+  '.find + $gt + $lt + $sort',
+  '.find + $or nested + $sort',
+  '.find + paginate',
+  '.find + paginate + $limit + $skip',
+  '.find + paginate + $limit 0',
+  '.find + paginate + params',
+  'params.adapter + paginate',
+  'params.adapter + multi'
+]);
 
 describe('Feathers Solr Service', () => {
+  beforeEach(done => setTimeout(done, 100));
+
+  before(async () => {
+    await Client.post(`/${options.core}/schema`, addSchema);
+  });
+
   const events = [ 'testing' ];
   const app = feathers()
     .use('/people', Solr({ events, ...options }))
