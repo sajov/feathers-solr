@@ -1,6 +1,6 @@
 import assert from 'assert';
 import { solrClient } from '../src/client';
-import Solr from '../src/';
+import Solr from '../src';
 
 const options = {
   host: 'http://localhost:8983/solr',
@@ -198,6 +198,18 @@ describe('Service', () => {
       });
       await Service._create(mockData);
       await Service._remove('*');
+      const test = await Service._find({});
+      assert.strictEqual(Array.isArray(test), true);
+      assert.strictEqual(test.length, 0);
+    });
+
+    it('`delete` all', async () => {
+      const Service = Solr({
+        ...options,
+        multi: true
+      });
+      await Service._create(mockData);
+      await Service._remove(null, {});
       const test = await Service._find({});
       assert.strictEqual(Array.isArray(test), true);
       assert.strictEqual(test.length, 0);

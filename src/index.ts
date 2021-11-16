@@ -171,11 +171,8 @@ export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> imple
 
   //@ts-ignore
   async _remove (id: NullableId, params: AdapterParams = {}): Promise<T|T[]> {
-    if (!id && _.isEmpty(params)) {
-      throw new MethodNotAllowed('Delete with out id and query is not allowed');
-    }
 
-    const { paginate, ...query } = this.filterQuery(params);
+    const { query } = this.filterQuery(params);
 
     const sel = select(params, this.id);
 

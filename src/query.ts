@@ -186,13 +186,16 @@ function convertOperators (query:any, escapeFn: any, root: string = ''): any {
 }
 
 export function deleteQuery (id: any, params: any, escapeFn: any) {
+
   if (id) {
     if (id === '*' || id === '*:*') {
       return { delete: { query: '*:*' } };
     }
     return { delete: id };
-  } else if (_.isObject(params)) {
+  } else if (_.isObject(params) && !_.isEmpty(params)) {
     return { delete: { query: convertOperators(params, escapeFn).join(' AND ') } };
+  } else if (!id && _.isEmpty(params)) {
+    return { delete: { query: '*:*' } };
   }
 
   return { delete: { query: '*:*' } };
