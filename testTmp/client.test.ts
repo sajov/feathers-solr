@@ -2,17 +2,15 @@ import assert from 'assert';
 import { solrClient } from '../src/client';
 import Solr from '../src';
 
+const Client = solrClient('http://localhost:8983/solr', { });
+
 const options = {
   host: 'http://localhost:8983/solr',
   core: 'gettingstarted'
 }
 
-//@ts-ignore
-const Client = solrClient('http://localhost:8983/solr', { });
-//@ts-ignore
 const Service = Solr(options);
 
-//@ts-ignore
 const mockData = [
   {
     id:"1",
