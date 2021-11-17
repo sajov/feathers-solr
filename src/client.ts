@@ -7,9 +7,14 @@ import http from 'http';
 // https://www.digitalocean.com/community/tutorials/how-to-create-an-http-client-with-core-http-in-node-js
 // https://stackoverflow.com/questions/45778474/proper-request-with-async-await-in-node-js
 
+export interface RequestOptions extends http.RequestOptions {
+  params?: any;
+  data?: any;
+}
+
 export interface SolrClient {
-  get: (resource: string, params?: any) => Promise<any>;
-  post: (resource: string, params?: any, data?: any) => Promise<any>;
+  get: (resource: string, options: RequestOptions) => Promise<any>;
+  post: (resource: string, options: RequestOptions) => Promise<any>;
 }
 
 export interface SolrClientOptions {
@@ -17,7 +22,7 @@ export interface SolrClientOptions {
   core: string;
 }
 
-export const solrClient = (options: SolrClientOptions): SolrClient => {
+export const solrClient = (requestOptions: SolrClientOptions): SolrClient => {
 
 
   // const { schema } = url.UrlWithStringQuery(options.host);
@@ -27,9 +32,9 @@ export const solrClient = (options: SolrClientOptions): SolrClient => {
 
   const opts = {
     timeout: 1000,
-    ...options
+    ...requestOptions
   }
-
+  console.log('!!', opts)
 
   const _get = async (url: string) => {
 
@@ -143,17 +148,22 @@ export const solrClient = (options: SolrClientOptions): SolrClient => {
   }
 
   return {
-    get: async (resource: string, params: any = {}) => {
-      let url = `${options.host}${resource}`;
-      if(Object.keys(params).length > 0) url += `?${new URLSearchParams(params)}`
+    get: async (resource: string, options: RequestOptions) => {
+      // const { params } = options;
+      console.log(options)
+      let url = `${opts.host}${resource}`;
+      console.log(url)
+      // if(Object.keys(params).length > 0) url += `?${new URLSearchParams(params)}`
       // debug(url)
       return await _get(url)
     },
-    post: async (resource: string, params: any = {}, data: any = {}) => {
-      let url = `${options.host}${resource}`;
+    post: async (resource: string, options: RequestOptions) => {
+      const { params, data } = options;
+      console.log(options)
+      let url = `${opts.host}${resource}`;
       if(Object.keys(params).length > 0) url += `?${new URLSearchParams(params)}`
       const body = JSON.stringify(data);
-      // console.log(url, body, params)
+      console.log(url, body, params)
       return await _post(url, body)
     }
   }

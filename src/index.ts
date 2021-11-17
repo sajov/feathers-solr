@@ -136,7 +136,7 @@ export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> imple
       dataToCreate = addIds(dataToCreate, this.options.id);
     }
 
-    await this.client.post(this.updateHandler, dataToCreate, this.options.commit);
+    await this.client.post(this.updateHandler, {data: dataToCreate, params: this.options.commit});
 
     return Array.isArray(data) ? dataToCreate : dataToCreate[0];
   }
@@ -151,7 +151,7 @@ export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> imple
 
     const dataToUpdate: any = id && !Array.isArray(data) ? [{id, ...data}] : data;
 
-    await this.client.post(this.updateHandler, dataToUpdate, this.options.commit);
+    await this.client.post(this.updateHandler, {data: dataToUpdate, params: this.options.commit});
 
     return this._getOrFind(id, params).then(res => sel(_.omit(res, 'score', '_version_')));
   }
@@ -164,7 +164,7 @@ export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> imple
 
     const { ids, patchData } = patchQuery(dataToPatch, data, this.id);
 
-    await this.client.post(this.updateHandler, patchData, this.options.commit);
+    await this.client.post(this.updateHandler, {data: patchData, params: this.options.commit});
 
     return this._find({ query: { id: { $in: ids } } }).then(res => sel(ids.length === 1 ? res[0] : res));
   }
@@ -180,7 +180,7 @@ export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> imple
 
     const queryToDelete = deleteQuery(id, query, this.options.escapeFn);
 
-    await this.client.post(this.updateHandler, queryToDelete, this.options.commit);
+    await this.client.post(this.updateHandler, {data: queryToDelete, params: this.options.commit});
 
     return sel(dataToDelete);
   }

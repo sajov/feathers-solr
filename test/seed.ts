@@ -101,30 +101,18 @@ export const deleteConfig = { "delete-requesthandler": "/suggest", "delete-searc
 
 export const mochData = [
   {
-    id:"1",
-    name:"Shirt",
-    brand:"MAGA",
-    price:10.95,
-    size:"M",
-    color:"red",
-    gender:"unisex",
+    name: 'Alice',
+    age: 20,
+    gender: 'female'
   },
   {
-    id:"2",
-    name:"Short",
-    brand:"STYLE",
-    price:19.00,
-    size:"XXL",
-    color:"black",
-    gender:"male",
+    name: 'Junior',
+    age: 10,
+    gender: 'male'
   },
   {
-    id:"3",
-    name:"Sneaker",
-    brand:"RUNNER",
-    price:99.00,
-    size:"10",
-    color:"white",
-    gender:"Unisex",
+    name: 'Doug',
+    age: 30,
+    gender: 'male'
   }
 ];
