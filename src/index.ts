@@ -23,6 +23,7 @@ export interface SolrServiceOptions<T = any> extends ServiceOptions {
   defaultParams?: any,
   createUUID?: boolean;
   escapeFn?: (key: string, value: any) => {key: string, value: any};
+  requestOptions: {timeout: 10}
 }
 
 export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> implements InternalServiceMethods<T> {
@@ -49,12 +50,12 @@ export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> imple
       escapeFn
     }, options));
 
-    const {host, core} = options;
+    const {host, core, requestOptions} = options;
     this.queryHandler = `/${core}/query`
     this.updateHandler = `/${core}/update/json`
 
     //@ts-ignore  SolrClientOptions ??
-    this.client = solrClient({host, core})
+    this.client = solrClient(host, requestOptions)
   }
 
   _getOrFind (id: Id, params: AdapterParams = {}) {
@@ -83,7 +84,7 @@ export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> imple
     try {
       const solrQuery = jsonQuery(null, filters, query, paginate, this.options.escapeFn);
 
-      const response = await this.client.post(this.queryHandler, solrQuery)
+      const response = await this.client.post(this.queryHandler, {data: solrQuery})
        // const result = {
       //   total,
       //   limit: filters.$limit,
@@ -113,7 +114,7 @@ export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> imple
     try {
       const solrQuery = jsonQuery(id, filters, query, paginate, this.options.escapeFn);
 
-      const response = await this.client.post(this.queryHandler, solrQuery)
+      const response = await this.client.post(this.queryHandler, { data: solrQuery })
 
       if(response.response.numFound === 0) throw new NotFound(`No record found for id '${id}'`);
 
