@@ -16,7 +16,7 @@ const options = {
 //@ts-ignore
 const Client = solrClient(options);
 //@ts-ignore
-const Service = Solr(options);
+const Service = Solr(options.host);
 
 
 //@ts-ignore
@@ -95,7 +95,7 @@ describe('Feathers Solr Service', () => {
   beforeEach(done => setTimeout(done, 100));
 
   before(async () => {
-    await Client.post(`/${options.core}/schema`, addSchema);
+    await Client.post(`/${options.core}/schema`, {data: addSchema});
   });
 
   const events = [ 'testing' ];

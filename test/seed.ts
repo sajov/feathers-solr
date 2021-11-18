@@ -56,8 +56,11 @@ export const addSchema = {
 };
 
 export const deleteSchema = {
-  "delete-field": [{ "name": "name" }, { "name": "age" }, { "name": "gender" }, { "name": "autocomplete" }],
-  "delete-field-type": { "name": "text_auto" }
+  "delete-copy-field": [{ "source": "name", "dest": "name_str" }, { "source": "gender" , "dest": "gender_str"}],
+  "delete-field": [{ "name": "name" }, { "name": "age" }, { "name": "gender" },
+  //  { "name": "autocomplete" }
+  ],
+  // "delete-field-type": { "name": "text_auto" }
 };
 
 export const addConfig = {
