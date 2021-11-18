@@ -1,28 +1,28 @@
 export const addSchema = {
-  "add-field-type": {
-    "name": "text_auto",
-    "class": "solr.TextField",
-    "positionIncrementGap": "100",
-    "analyzer": {
-      "tokenizer": {
-        "class": "solr.WhitespaceTokenizerFactory"
-      },
-      "filters": [
-        {
-          "class": "solr.WordDelimiterFilterFactory",
-          "generateWordParts": "1",
-          "generateNumberParts": "1",
-          "catenateWords": "1",
-          "catenateNumbers": "1",
-          "catenateAll": "1",
-          "splitOnCaseChange": "1"
-        },
-        {
-          "class": "solr.LowerCaseFilterFactory"
-        }
-      ]
-    }
-  },
+  // "add-field-type": {
+  //   "name": "text_auto",
+  //   "class": "solr.TextField",
+  //   "positionIncrementGap": "100",
+  //   "analyzer": {
+  //     "tokenizer": {
+  //       "class": "solr.WhitespaceTokenizerFactory"
+  //     },
+  //     "filters": [
+  //       {
+  //         "class": "solr.WordDelimiterFilterFactory",
+  //         "generateWordParts": "1",
+  //         "generateNumberParts": "1",
+  //         "catenateWords": "1",
+  //         "catenateNumbers": "1",
+  //         "catenateAll": "1",
+  //         "splitOnCaseChange": "1"
+  //       },
+  //       {
+  //         "class": "solr.LowerCaseFilterFactory"
+  //       }
+  //     ]
+  //   }
+  // },
   "add-field": [
     {
       "name": "name",
@@ -31,13 +31,13 @@ export const addSchema = {
       "indexed": true,
       "stored": true
     },
-    {
-      "name": "autocomplete",
-      "type": "text_auto",
-      "multiValued": false,
-      "indexed": true,
-      "stored": true
-    },
+    // {
+    //   "name": "autocomplete",
+    //   "type": "text_auto",
+    //   "multiValued": false,
+    //   "indexed": true,
+    //   "stored": true
+    // },
     {
       "name": "age",
       "type": "pint",
@@ -55,8 +55,15 @@ export const addSchema = {
   ]
 };
 
+
+// Herr Balknight,
+
+
 export const deleteSchema = {
-  "delete-copy-field": [{ "source": "name", "dest": "name_str" }, { "source": "gender" , "dest": "gender_str"}],
+  // "delete-copy-field": [
+  //   // { "source": "name", "dest": "name_str" },
+  //   { "source": "gender" , "dest": "gender_str"}
+  // ],
   "delete-field": [{ "name": "name" }, { "name": "age" }, { "name": "gender" },
   //  { "name": "autocomplete" }
   ],

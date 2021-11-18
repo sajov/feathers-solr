@@ -54,12 +54,12 @@ describe('Schema', () => {
       console.log(error)
     }
 
-    // try {
-    //   const res2 = await Client.post(`/${options.core}/schema`, {data: deleteSchema});
-    //   console.log(res2)
-    // } catch (error) {
-    //   console.log(error)
-    // }
+    try {
+      const res2 = await Client.post(`/${options.core}/schema`, {data: deleteSchema});
+      console.log(res2)
+    } catch (error) {
+      console.log(error)
+    }
   });
 
   it('get `select`', async () => {
