@@ -26,18 +26,11 @@ export const addSchema = {
   "add-field": [
     {
       "name": "name",
-      "type": "text_auto",
+      "type": "string",
       "multiValued": false,
       "indexed": true,
       "stored": true
     },
-    // {
-    //   "name": "autocomplete",
-    //   "type": "text_auto",
-    //   "multiValued": false,
-    //   "indexed": true,
-    //   "stored": true
-    // },
     {
       "name": "age",
       "type": "pint",
@@ -46,8 +39,8 @@ export const addSchema = {
       "stored": true
     },
     {
-      "name": "gender",
-      "type": "text_general",
+      "name": "created",
+      "type": "boolean",
       "multiValued": false,
       "indexed": true,
       "stored": true
@@ -61,13 +54,15 @@ export const addSchema = {
 
 export const deleteSchema = {
   // "delete-copy-field": [
-  //   // { "source": "name", "dest": "name_str" },
   //   { "source": "gender" , "dest": "gender_str"}
   // ],
-  "delete-field": [{ "name": "name" }, { "name": "age" }, { "name": "gender" },
-  //  { "name": "autocomplete" }
-  ],
-  // "delete-field-type": { "name": "text_auto" }
+  "delete-field": [
+    { "name": "name" },
+    { "name": "age" },
+    { "name": "created" }
+
+  ]
+
 };
 
 export const addConfig = {
