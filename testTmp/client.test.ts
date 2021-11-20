@@ -3,7 +3,7 @@ import assert from 'assert';
 import { solrClient } from '../src/client';
 import Solr from '../src';
 //@ts-ignore
-import { addSchema, deleteSchema } from '../test/seed';
+import { addSchema, deleteSchema, mockData } from '../test/seed';
 const Client = solrClient('http://localhost:8983/solr');
 
 const options = {
@@ -12,47 +12,17 @@ const options = {
 }
 //@ts-ignore
 const Service = Solr(options);
-//@ts-ignore
-const mockData = [
-  {
-    id:"1",
-    name:"Shirt",
-    brand:"MAGA",
-    price:10.95,
-    size:"M",
-    color:"red",
-    gender:"unisex",
-  },
-  {
-    id:"2",
-    name:"Short",
-    brand:"STYLE",
-    price:19.00,
-    size:"XXL",
-    color:"black",
-    gender:"male",
-  },
-  {
-    id:"3",
-    name:"Sneaker",
-    brand:"RUNNER",
-    price:99.00,
-    size:"10",
-    color:"white",
-    gender:"Unisex",
-  }
-];
 
 describe('Schema', () => {
   beforeEach(done => setTimeout(done, 100));
 
-  before(async () => {
-    try {
-      await Client.post(`/${options.core}/schema`, {data: addSchema});
-    } catch (error) {
-      console.log(error)
-    }
-  });
+  // before(async () => {
+  //   try {
+  //     await Client.post(`/${options.core}/schema`, {data: addSchema});
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // });
 
   after(async () => {
     try {

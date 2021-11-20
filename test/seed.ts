@@ -60,7 +60,6 @@ export const deleteSchema = {
     { "name": "name" },
     { "name": "age" },
     { "name": "created" }
-
   ]
 
 };
@@ -104,20 +103,20 @@ export const addConfig = {
 
 export const deleteConfig = { "delete-requesthandler": "/suggest", "delete-searchcomponent": "suggest" };
 
-export const mochData = [
+export const mockData = [
   {
-    name: 'Alice',
-    age: 20,
-    gender: 'female'
+    id:"1",
+    name:"Mike",
+    age:10
   },
   {
-    name: 'Junior',
-    age: 10,
-    gender: 'male'
+    id:"2",
+    name:"Alice",
+    age:19
   },
   {
-    name: 'Doug',
-    age: 30,
-    gender: 'male'
+    id:"3",
+    name:"John",
+    age:99
   }
 ];
