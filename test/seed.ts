@@ -1,3 +1,21 @@
+//http://localhost:8983/solr/admin/cores?action=CREATE&name=test&config=solrconfig.xml&dataDir=data&configSet=_default
+export const createCore = {
+  "action":"CREATE",
+  "name":"test",
+  "config":"solrconfig.xml",
+  "dataDir":"data",
+  "configSet":"_default"
+}
+
+// http://localhost:8983/solr/admin/cores?action=UNLOAD&core=test&deleteIndex=true&deleteDataDir=true&deleteInstanceDir=true
+export const deleteCore = {
+  "action":"UNLOAD",
+  "core":"test",
+  "deleteIndex": true,
+  "deleteDataDir": true,
+  "deleteInstanceDir": true
+}
+
 export const addSchema = {
   // "add-field-type": {
   //   "name": "text_auto",
@@ -47,10 +65,6 @@ export const addSchema = {
     }
   ]
 };
-
-
-// Herr Balknight,
-
 
 export const deleteSchema = {
   // "delete-copy-field": [

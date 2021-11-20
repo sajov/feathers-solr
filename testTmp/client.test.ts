@@ -3,7 +3,7 @@ import assert from 'assert';
 import { solrClient } from '../src/client';
 import Solr from '../src';
 //@ts-ignore
-import { addSchema, deleteSchema, mockData } from '../test/seed';
+import { createCore, deleteCore, addSchema, deleteSchema, mockData } from '../test/seed';
 const Client = solrClient('http://localhost:8983/solr');
 
 const options = {
@@ -18,6 +18,7 @@ describe('Schema', () => {
 
   before(async () => {
     try {
+      await Client.post(`/admin/cores`, {data: createCore});
       await Client.post(`/${options.core}/schema`, {data: addSchema});
     } catch (error) {
       console.log(error)
@@ -27,6 +28,7 @@ describe('Schema', () => {
   after(async () => {
     try {
       await Client.post(`/${options.core}/schema`, {data: deleteSchema});
+      await Client.post(`/admin/cores`, {data: deleteCore});
     } catch (error) {
       console.log(error)
     }
