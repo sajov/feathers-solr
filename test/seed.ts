@@ -33,9 +33,9 @@ export const addSchema = {
     },
     {
       "name": "age",
-      "type": "pint",
+      "type": "plong",
       "multiValued": false,
-      "indexed": true,
+      "indexed": false,
       "stored": true
     },
     {
