@@ -10,7 +10,7 @@ export function responseFind (filters, query, paginate, res) {
   const  { numFound, start, docs, grouped, ...additionalResponse  } = response;
   const  { max, default: def  } = paginate;
   const {$limit, $skip} = filters;
-
+  console.log(filters,'filters???')
   if (!max && !def) {
     return docs || grouped;
   }

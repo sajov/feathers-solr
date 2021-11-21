@@ -71,41 +71,18 @@ export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> imple
 
   async _find (params: AdapterParams = {}) {
     const { query, filters, paginate } = this.filterQuery(params);
+    console.log('ADAPTER params')
+    console.log('params:',params)
+    console.log('filterQuery:',this.filterQuery(params))
+    console.log('-------------------------'    )
+    const solrQuery = jsonQuery(null, filters, query, paginate, this.options.escapeFn);
+    console.log('Adapter.solrQuery')
+    console.log(solrQuery,'solrQuery')
+    const response = await this.client.post(this.queryHandler, {data: solrQuery})
 
-    if (filters.$sort !== undefined) {
-    }
+    const result = responseFind(query, filters, paginate, response);
 
-    if (filters.$skip !== undefined) {
-    }
-
-    if (filters.$limit !== undefined) {
-    }
-
-    try {
-      const solrQuery = jsonQuery(null, filters, query, paginate, this.options.escapeFn);
-      // console.log(solrQuery,'????')
-      const response = await this.client.post(this.queryHandler, {data: solrQuery})
-      // const result = {
-        //   total,
-        //   limit: filters.$limit,
-        //   skip: filters.$skip || 0,
-        //   data: []
-        // };
-
-        const result = responseFind(query, filters, paginate, response);
-        // console.log(result,'!!!!')
-
-      // if (!(paginate && (paginate ).default)) {
-      //   //@ts-ignore
-      //   return result.data;
-      // }
-
-      return result;
-
-    } catch (error) {
-        console.log(error)
-    }
-
+    return result;
   }
 
   //@ts-ignore

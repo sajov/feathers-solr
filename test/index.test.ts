@@ -20,79 +20,77 @@ const options = {
 const Client = solrClient(options.host);
 //@ts-ignore
 const Service = Solr(options);
-
-
 //@ts-ignore
 const testSuite = adapterTests([
-  '.options',
-  '.events',
-  '._get',
-  '._find',
-  '._create',
-  '._update',
-  '._patch',
-  '._remove',
-  '.get',
-  '.get + $select',
-  '.get + id + query',
-  '.get + NotFound',
-  '.get + id + query id',
-  '.find',
-  '.find + paginate + query',
-  '.remove',
-  '.remove + $select',
-  '.remove + id + query',
-  '.remove + multi',
-  '.remove + id + query id',
-  '.update',
-  '.update + $select',
-  '.update + id + query',
-  '.update + NotFound',
-  '.update + id + query id',
-  '.update + query + NotFound',
-  '.patch',
-  '.patch + $select',
-  '.patch + id + query',
-  '.patch multiple',
-  '.patch multi query same',
-  '.patch multi query changed',
-  '.patch + query + NotFound',
-  '.patch + NotFound',
-  '.patch + id + query id',
-  '.create',
-  '.create + $select',
-  '.create multi',
-  'internal .find',
-  'internal .get',
-  'internal .create',
-  'internal .update',
-  'internal .patch',
-  'internal .remove',
-  '.find + equal',
-  '.find + equal multiple',
-  '.find + $sort',
-  '.find + $sort + string',
-  '.find + $limit',
-  '.find + $limit 0',
-  '.find + $skip',
-  '.find + $select',
-  '.find + $or',
-  '.find + $in',
-  '.find + $nin',
-  '.find + $lt',
-  '.find + $lte',
-  '.find + $gt',
-  // HERER
-  '.find + $gte',
-  '.find + $ne',
+  // '.options',
+  // '.events',
+  // '._get',
+  // '._find',
+  // '._create',
+  // '._update',
+  // '._patch',
+  // '._remove',
+  // '.get',
+  // '.get + $select',
+  // '.get + id + query',
+  // '.get + NotFound',
+  // '.get + id + query id',
+  // '.find',
+  // '.find + paginate + query',
+  // '.remove',
+  // '.remove + $select',
+  // '.remove + id + query',
+  // '.remove + multi',
+  // '.remove + id + query id',
+  // '.update',
+  // '.update + $select',
+  // '.update + id + query',
+  // '.update + NotFound',
+  // '.update + id + query id',
+  // '.update + query + NotFound',
+  // '.patch',
+  // '.patch + $select',
+  // '.patch + id + query',
+  // '.patch multiple',
+  // '.patch multi query same',
+  // '.patch multi query changed',
+  // '.patch + query + NotFound',
+  // '.patch + NotFound',
+  // '.patch + id + query id',
+  // '.create',
+  // '.create + $select',
+  // '.create multi',
+  // 'internal .find',
+  // 'internal .get',
+  // 'internal .create',
+  // 'internal .update',
+  // 'internal .patch',
+  // 'internal .remove',
+  // '.find + equal',
+  // '.find + equal multiple',
+  // '.find + $sort',
+  // '.find + $sort + string',
+  // '.find + $limit',
+  // '.find + $limit 0',
+  // '.find + $skip',
+  // '.find + $select',
+  // '.find + $or',
+  // '.find + $in',
+  // '.find + $nin',
+  // '.find + $lt',
+  // '.find + $lte',
+  // '.find + $gt',
+  // // HERER
+  // '.find + $gte',
+  // '.find + $ne',
   // '.find + $gt + $lt + $sort',
   // '.find + $or nested + $sort',
-  '.find + paginate',
-  // '.find + paginate + $limit + $skip',
-  '.find + paginate + $limit 0',
-  '.find + paginate + params',
-  'params.adapter + paginate',
-  'params.adapter + multi'
+  // '.find + paginate',
+  '.find + paginate + $limit + $skip',
+  // '.find + paginate + $limit 0',
+  // '.find + paginate + params',
+  // 'params.adapter + paginate',
+  // 'params.adapter + multi'
 ]);
 
 describe('Feathers Solr Service', () => {
@@ -100,16 +98,15 @@ describe('Feathers Solr Service', () => {
 
   before(async () => {
     try {
-      await Client.post(`/admin/cores`, {data: {
-        ...createCore,
-        name: options.core
-      }});
+      // await Client.post(`/admin/cores`, {data: {
+      //   ...createCore,
+      //   name: options.core
+      // }});
       await Client.post(`/${options.core}/schema`, {data: addSchema});
       await  Solr({
           ...options,
           multi: true
         })._remove('*');
-
     } catch (error) {
       console.log(error)
     }
@@ -118,10 +115,10 @@ describe('Feathers Solr Service', () => {
   after(async () => {
     try {
       await Client.post(`/${options.core}/schema`, {data: deleteSchema});
-      await Client.post(`/admin/cores`, {data: {
-        ...deleteCore,
-        core: options.core
-      }});
+      // await Client.post(`/admin/cores`, {data: {
+      //   ...deleteCore,
+      //   core: options.core
+      // }});
     } catch (error) {
       console.log(error)
     }
@@ -304,88 +301,89 @@ describe('Feathers Solr Service', () => {
   // })
 
   const events = [ 'testing' ];
+  //@ts-ignore
   const app = feathers()
     .use('/people', Solr({ events, ...options, multi: false }))
     // .use('/people-customid', Solr({
     //   id: 'customid', events, ...options
     // }));
 
-//     it('`delete` all', async () => {
-//       const Service = Solr({
-//         ...options,
-//         multi: true
-//       });
-//       await Service._remove(null, {});
-//       const test = await Service._find({});
-//       assert.strictEqual(Array.isArray(test), true);
-//       assert.strictEqual(test.length, 0);
-//     });
+  //     it('`delete` all', async () => {
+  //       const Service = Solr({
+  //         ...options,
+  //         multi: true
+  //       });
+  //       await Service._remove(null, {});
+  //       const test = await Service._find({});
+  //       assert.strictEqual(Array.isArray(test), true);
+  //       assert.strictEqual(test.length, 0);
+  //     });
 
 
-//   it('patch record with prop also in query', async () => {
-//     app.use('/animals', Solr({ multi: true, ...options }));
-//     const animals = app.service('animals');
-//     const t = await animals.create([{
-//       type: 'cat',
-//       age: 30
-//     }, {
-//       type: 'dog',
-//       age: 10
-//     }]);
-// console.log(t,'!!!!!!')
-// // const [updated] = await animals.patch(null, { age: 40 }, { query: { age: 30 } });
-// const find = await animals.find({ query: { age: 30 } });
+  //   it('patch record with prop also in query', async () => {
+  //     app.use('/animals', Solr({ multi: true, ...options }));
+  //     const animals = app.service('animals');
+  //     const t = await animals.create([{
+  //       type: 'cat',
+  //       age: 30
+  //     }, {
+  //       type: 'dog',
+  //       age: 10
+  //     }]);
+  // console.log(t,'!!!!!!')
+  // // const [updated] = await animals.patch(null, { age: 40 }, { query: { age: 30 } });
+  // const find = await animals.find({ query: { age: 30 } });
 
-// console.log(find,'????')
-//     // assert.strictEqual(updated.age, 40);
+  // console.log(find,'????')
+  //     // assert.strictEqual(updated.age, 40);
 
-//     await animals.remove(null, {});
-//   });
+  //     await animals.remove(null, {});
+  //   });
 
-//   it('does not modify the original data', async () => {
-//     const people = app.service('people');
+  //   it('does not modify the original data', async () => {
+  //     const people = app.service('people');
 
-//     const person = await people.create({
-//       name: 'Delete tester',
-//       age: 33
-//     });
+  //     const person = await people.create({
+  //       name: 'Delete tester',
+  //       age: 33
+  //     });
 
-//     delete person.age;
+  //     delete person.age;
 
-//     const otherPerson = await people.get(person.id);
+  //     const otherPerson = await people.get(person.id);
 
-//     assert.strictEqual(otherPerson.age, 33);
+  //     assert.strictEqual(otherPerson.age, 33);
 
-//     await people.remove(person.id);
-//   });
+  //     await people.remove(person.id);
+  //   });
 
-//   it('does not $select the id', async () => {
-//     const people = app.service('people');
-//     const person = await people.create({
-//       name: 'Tester'
-//     });
-//     const results = await people.find({
-//       query: {
-//         name: 'Tester',
-//         $select: ['name']
-//       }
-//     });
+  //   it('does not $select the id', async () => {
+  //     const people = app.service('people');
+  //     const person = await people.create({
+  //       name: 'Tester'
+  //     });
+  //     const results = await people.find({
+  //       query: {
+  //         name: 'Tester',
+  //         $select: ['name']
+  //       }
+  //     });
 
-//     assert.deepStrictEqual(results[0], { name: 'Tester' },
-//       'deepEquals the same'
-//     );
+  //     assert.deepStrictEqual(results[0], { name: 'Tester' },
+  //       'deepEquals the same'
+  //     );
 
-//     await people.remove(person.id);
-//   });
+  //     await people.remove(person.id);
+  //   });
 
-//   it('update with null throws error', async () => {
-//     try {
-//       await app.service('people').update(null, {});
-//       throw new Error('Should never get here');
-//     } catch (error: any) {
-//       assert.strictEqual(error.message, 'You can not replace multiple instances. Did you mean \'patch\'?');
-//     }
-//   });
+  //   it('update with null throws error', async () => {
+  //     try {
+  //       await app.service('people').update(null, {});
+  //       throw new Error('Should never get here');
+  //     } catch (error: any) {
+  //       assert.strictEqual(error.message, 'You can not replace multiple instances. Did you mean \'patch\'?');
+  //     }
+  //   });
 
 
 

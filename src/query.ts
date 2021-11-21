@@ -58,19 +58,18 @@ export const Operators: any = {
     return `!${key}:${value}`;
   },
   $and: (value: any) => {
+    console.log(value,'value???')
     return `(${value.join(' AND ')})`;
   },
   $nin (key: string, value: any) {
     return Array.isArray(value) ? `!${key}:(${value.join(' OR ')})` : `!${key}:${value}`;
   },
-  $limit (filters: any, paginate: any) {
+  $limit (filters: any) {
     let result: any = {};
     if (typeof filters.$limit !== 'undefined') {
-      if (_has(paginate, 'max') && parseInt(filters.$limit) > parseInt(paginate.max)) {
-        return;
-      }
       result.limit = parseInt(filters.$limit);
     }
+    console.log(result,'HEHEHEHEHEHEHEHE')
     return result;
   },
   // eslint-disable-next-line no-unused-vars
@@ -104,6 +103,8 @@ export const Operators: any = {
 };
 
 export function jsonQuery (id: any, filters: any, query: any, paginate: any, escapeFn: any) {
+  console.log('jsonQuery => ',id, filters, query, paginate,
+  '!!')
   const adapterQuery = Object.assign({}, query);
   const result = Object.assign(
     {
@@ -114,7 +115,7 @@ export function jsonQuery (id: any, filters: any, query: any, paginate: any, esc
     },
     Operators.$sort(filters),
     Operators.$skip(filters),
-    Operators.$limit(filters, paginate),
+    Operators.$limit(filters),
     Operators.$params(adapterQuery),
     Operators.$facet(adapterQuery),
     Operators.$filter(adapterQuery)
@@ -171,7 +172,7 @@ function convertOperators (query:any, escapeFn: any, root: string = ''): any {
       }
       if (Array.isArray(queryString)) {
         if (queryString.length > 1) {
-          queryString = Operators.$and(root || prop, queryString);
+          queryString = Operators.$and(queryString);
         }
       }
       return res.concat(queryString);
