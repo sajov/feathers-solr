@@ -8,7 +8,7 @@ const Client = solrClient('http://localhost:8983/solr');
 
 const options = {
   host: 'http://localhost:8983/solr',
-  core: 'gettingstarted'
+  core: 'test'
 }
 //@ts-ignore
 const Service = Solr(options);
@@ -18,7 +18,10 @@ describe('Schema', () => {
 
   before(async () => {
     try {
-      await Client.post(`/admin/cores`, {data: createCore});
+      await Client.post(`/admin/cores`, {data: {
+        ...createCore,
+        name: options.core
+      }});
       await Client.post(`/${options.core}/schema`, {data: addSchema});
     } catch (error) {
       console.log(error)
@@ -28,7 +31,10 @@ describe('Schema', () => {
   after(async () => {
     try {
       await Client.post(`/${options.core}/schema`, {data: deleteSchema});
-      await Client.post(`/admin/cores`, {data: deleteCore});
+      await Client.post(`/admin/cores`, {data: {
+        ...deleteCore,
+        core: options.core
+      }});
     } catch (error) {
       console.log(error)
     }

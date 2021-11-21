@@ -83,16 +83,17 @@ export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> imple
 
     try {
       const solrQuery = jsonQuery(null, filters, query, paginate, this.options.escapeFn);
-
+      // console.log(solrQuery,'????')
       const response = await this.client.post(this.queryHandler, {data: solrQuery})
-       // const result = {
-      //   total,
-      //   limit: filters.$limit,
-      //   skip: filters.$skip || 0,
-      //   data: []
-      // };
+      // const result = {
+        //   total,
+        //   limit: filters.$limit,
+        //   skip: filters.$skip || 0,
+        //   data: []
+        // };
 
-      const result = responseFind(query, filters, paginate, response);
+        const result = responseFind(query, filters, paginate, response);
+        // console.log(result,'!!!!')
 
       // if (!(paginate && (paginate ).default)) {
       //   //@ts-ignore
@@ -111,7 +112,6 @@ export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> imple
   async _get (id: Id, params: AdapterParams = {}) {
     //@ts-ignore
     const { query, filters, paginate } = this.filterQuery(params);
-    try {
       const solrQuery = jsonQuery(id, filters, query, paginate, this.options.escapeFn);
 
       const response = await this.client.post(this.queryHandler, { data: solrQuery })
@@ -121,17 +121,15 @@ export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> imple
       const result = responseGet(response, false);
 
       return  result;
-    } catch (error) {
-      throw new NotFound(`No record found for id '${id}'`);
-    }
   }
 
   //@ts-ignore
   async _create (data: Partial<T> | Partial<T>[], params: AdapterParams = {}): Promise<T | T[]> {
 
     if (_.isEmpty(data)) throw new MethodNotAllowed('Data is empty');
+    const sel = select(params, this.id);
 
-    let dataToCreate: any | any[] = Array.isArray(data) ? data : [data];
+    let dataToCreate: any | any[] = Array.isArray(data) ? [...data] : [{...data}];
 
     if(this.options.createUUID) {
       dataToCreate = addIds(dataToCreate, this.options.id);
@@ -139,7 +137,7 @@ export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> imple
 
     await this.client.post(this.updateHandler, {data: dataToCreate, params: this.options.commit});
 
-    return Array.isArray(data) ? dataToCreate : dataToCreate[0];
+    return sel(Array.isArray(data) ? dataToCreate : dataToCreate[0]);
   }
 
   //@ts-ignore
