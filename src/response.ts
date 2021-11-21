@@ -1,15 +1,21 @@
-// import { _ } from '@feathersjs/commons';
+interface SolrResponse {
+  responseHeader: {
+    QTime: number;
+  }
+  response: {
+    numFound: number;
+    start: number;
+    docs?: any [];
+    grouped?: any [];
+  }
+}
 
-/**
- * Response parser
- */
-
-// @ts-ignore
-export function responseFind (filters, query, paginate, res) {
-  const  { responseHeader, response } = res;
-  const  { numFound, start, docs, grouped, ...additionalResponse  } = response;
-  const  { max, default: def  } = paginate;
-  const {$limit, $skip} = filters;
+//@ts-ignore
+export function responseFind (filters, query, paginate, res: Partial<SolrResponse>) {
+  const { responseHeader, response } = res;
+  const { numFound, start, docs, grouped, ...additionalResponse  } = response;
+  const { max, default: def  } = paginate;
+  const { $limit, $skip } = filters;
 
   if (!max && !def) {
     return docs || grouped;
@@ -25,18 +31,8 @@ export function responseFind (filters, query, paginate, res) {
   };
 }
 
-/**
- * Response Docs parser
- */
-// @ts-ignore
-export function responseGet (res, allDocs = false) {
+export function responseGet (res: any, allDocs = false) {
   const  { response } = res;
-  //@ts-ignore
-  // if (!_.has(res, 'response.docs') && !_.has(res, 'grouped')) {
-  //   return allDocs === false ? {} : [];
-  // }
-
-  // const docs = _.get(res, 'response.docs') || _.get(res, 'grouped') || [];
 
   return allDocs === false ? response.docs[0] : response.docs;
 }

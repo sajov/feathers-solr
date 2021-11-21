@@ -42,10 +42,7 @@ export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> imple
       },
       suggestHandler: 'suggest',
       defaultSearch: {},
-      defaultParams: {
-        echoParams: 'none'
-        // debug:"all"
-      },
+      defaultParams: { echoParams: 'none'},
       createUUID: true,
       escapeFn
     }, options));
@@ -95,11 +92,10 @@ export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> imple
     return  result;
   }
 
-  //@ts-ignore
   async _create (data: Partial<T> | Partial<T>[], params: AdapterParams = {}): Promise<T | T[]> {
+    const sel = select(params, this.id);
 
     if (_.isEmpty(data)) throw new MethodNotAllowed('Data is empty');
-    const sel = select(params, this.id);
 
     let dataToCreate: any | any[] = Array.isArray(data) ? [...data] : [{...data}];
 
@@ -112,7 +108,6 @@ export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> imple
     return sel(Array.isArray(data) ? dataToCreate : dataToCreate[0]);
   }
 
-  //@ts-ignore
   async _update (id: NullableId, data: T, params: AdapterParams = {}) {
     const sel = select(params, this.id);
 
@@ -127,7 +122,6 @@ export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> imple
     return this._getOrFind(id, params).then(res => sel(_.omit(res, 'score', '_version_')));
   }
 
-  //@ts-ignore
   async _patch (id: NullableId, data: Partial<T>, params: AdapterParams = {}) {
     const sel = select(params, this.id);
 
@@ -137,12 +131,12 @@ export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> imple
 
     await this.client.post(this.updateHandler, {data: patchData, params: this.options.commit});
 
-    return this._find({ query: { id: { $in: ids } } }).then(res => sel(ids.length === 1 ? res[0] : res));
+    const result: any = await this._find({ query: { id: { $in: ids } } });
+
+    return sel(ids.length === 1 ? result[0] : result)
   }
 
-  //@ts-ignore
   async _remove (id: NullableId, params: AdapterParams = {}): Promise<T|T[]> {
-
     const { query } = this.filterQuery(params);
 
     const sel = select(params, this.id);

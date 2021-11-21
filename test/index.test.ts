@@ -219,7 +219,7 @@ describe('Feathers Solr Service', () => {
             max: 5
           }
         });
-        const response  = await Service._find({});
+        const response: any  = await Service._find({});
         assert.strictEqual(Array.isArray(response.data), true);
         assert.strictEqual(response.data.length, 3);
       });
@@ -247,7 +247,7 @@ describe('Feathers Solr Service', () => {
       it('`delete` by id', async () => {
         const response  = await Service._remove(mockData[0].id);
         assert.strictEqual(response.id, mockData[0].id);
-        const test = await Service._find({query: {id: mockData[0].id}});
+        const test: any = await Service._find({query: {id: mockData[0].id}});
         assert.strictEqual(Array.isArray(test), true);
         assert.strictEqual(test.length, 0);
       });
@@ -265,19 +265,7 @@ describe('Feathers Solr Service', () => {
         assert.strictEqual(Array.isArray(response), true);
         assert.strictEqual(response.length, 2);
 
-        const test = await Service._find({ query });
-        assert.strictEqual(Array.isArray(test), true);
-        assert.strictEqual(test.length, 0);
-      });
-
-      it('`delete` all', async () => {
-        const Service = Solr({
-          ...options,
-          multi: true
-        });
-        await Service._create(mockData);
-        await Service._remove('*');
-        const test = await Service._find({});
+        const test: any = await Service._find({ query });
         assert.strictEqual(Array.isArray(test), true);
         assert.strictEqual(test.length, 0);
       });
@@ -289,7 +277,19 @@ describe('Feathers Solr Service', () => {
         });
         await Service._create(mockData);
         await Service._remove(null, {});
-        const test = await Service._find({});
+        const test: any = await Service._find({});
+        assert.strictEqual(Array.isArray(test), true);
+        assert.strictEqual(test.length, 0);
+      });
+
+      it('`delete` all', async () => {
+        const Service = Solr({
+          ...options,
+          multi: true
+        });
+        await Service._create(mockData);
+        await Service._remove(null, {});
+        const test: any = await Service._find({});
         assert.strictEqual(Array.isArray(test), true);
         assert.strictEqual(test.length, 0);
       });
