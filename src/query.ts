@@ -58,25 +58,19 @@ export const Operators: any = {
     return `!${key}:${value}`;
   },
   $and: (value: any) => {
-    console.log(value,'value???')
     return `(${value.join(' AND ')})`;
   },
   $nin (key: string, value: any) {
     return Array.isArray(value) ? `!${key}:(${value.join(' OR ')})` : `!${key}:${value}`;
   },
   $limit (filters: any) {
-    let result: any = {};
-    if (typeof filters.$limit !== 'undefined') {
-      result.limit = parseInt(filters.$limit);
-    }
-    console.log(result,'HEHEHEHEHEHEHEHE')
-    return result;
+    return typeof filters.$limit === 'undefined' ?
+                  {} :
+                  { limit: parseInt(filters.$limit) };
   },
-  // eslint-disable-next-line no-unused-vars
   $skip (filters: any) {
     return filters.$skip ? { offset: filters.$skip } : {};
   },
-  // eslint-disable-next-line no-unused-vars
   $sort (filters: any) {
     let result: any = {};
     if (filters.$sort) {
@@ -103,8 +97,6 @@ export const Operators: any = {
 };
 
 export function jsonQuery (id: any, filters: any, query: any, paginate: any, escapeFn: any) {
-  console.log('jsonQuery => ',id, filters, query, paginate,
-  '!!')
   const adapterQuery = Object.assign({}, query);
   const result = Object.assign(
     {

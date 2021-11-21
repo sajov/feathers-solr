@@ -71,33 +71,28 @@ export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> imple
 
   async _find (params: AdapterParams = {}) {
     const { query, filters, paginate } = this.filterQuery(params);
-    console.log('ADAPTER params')
-    console.log('params:',params)
-    console.log('filterQuery:',this.filterQuery(params))
-    console.log('-------------------------'    )
+
     const solrQuery = jsonQuery(null, filters, query, paginate, this.options.escapeFn);
-    console.log('Adapter.solrQuery')
-    console.log(solrQuery,'solrQuery')
+
     const response = await this.client.post(this.queryHandler, {data: solrQuery})
 
-    const result = responseFind(query, filters, paginate, response);
+    const result = responseFind(filters, query, paginate, response);
 
     return result;
   }
 
-  //@ts-ignore
   async _get (id: Id, params: AdapterParams = {}) {
-    //@ts-ignore
     const { query, filters, paginate } = this.filterQuery(params);
-      const solrQuery = jsonQuery(id, filters, query, paginate, this.options.escapeFn);
 
-      const response = await this.client.post(this.queryHandler, { data: solrQuery })
+    const solrQuery = jsonQuery(id, filters, query, paginate, this.options.escapeFn);
 
-      if(response.response.numFound === 0) throw new NotFound(`No record found for id '${id}'`);
+    const response = await this.client.post(this.queryHandler, { data: solrQuery })
 
-      const result = responseGet(response, false);
+    if(response.response.numFound === 0) throw new NotFound(`No record found for id '${id}'`);
 
-      return  result;
+    const result = responseGet(response, false);
+
+    return  result;
   }
 
   //@ts-ignore
