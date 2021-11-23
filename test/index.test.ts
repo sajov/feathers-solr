@@ -97,7 +97,7 @@ describe('Feathers Solr Service', () => {
 
   before(async () => {
     try {
-      await Client.post(`/admin/cores`, {data: {
+      await Client.get(`/admin/cores`, {params: {
         ...createCore,
         name: options.core
       }});
@@ -110,8 +110,7 @@ describe('Feathers Solr Service', () => {
 
   after(async () => {
     try {
-      await Client.post(`/${options.core}/schema`, {data: deleteSchema});
-      await Client.post(`/admin/cores`, {data: {
+      await Client.get(`/admin/cores`, {params: {
         ...deleteCore,
         core: options.core
       }});
