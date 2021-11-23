@@ -46,7 +46,14 @@ export const addSchema = {
       "name": "name",
       "type": "string",
       "multiValued": false,
-      "indexed": true,
+      "indexed": false,
+      "stored": true
+    },
+    {
+      "name": "city",
+      "type": "string",
+      "multiValued": false,
+      "indexed": false,
       "stored": true
     },
     {
@@ -63,16 +70,22 @@ export const addSchema = {
       "indexed": true,
       "stored": true
     }
-  ]
+  ],
+  "add-copy-field": [
+    { "source": "city" , "dest": "_text_"},
+    { "source": "name" , "dest": "_text_"}
+  ],
 };
 
 export const deleteSchema = {
-  // "delete-copy-field": [
-  //   { "source": "gender" , "dest": "gender_str"}
-  // ],
+  "delete-copy-field": [
+    { "source": "city" , "dest": "_text_"},
+    { "source": "name" , "dest": "_text_"}
+  ],
   "delete-field": [
     { "name": "name" },
     { "name": "age" },
+    { "name": "city" },
     { "name": "created" }
   ]
 
@@ -121,16 +134,19 @@ export const mockData = [
   {
     id:"1",
     name:"Mike",
+    city:"New York",
     age:10
   },
   {
     id:"2",
     name:"Alice",
+    city:"London",
     age:19
   },
   {
     id:"3",
     name:"John",
+    city:"San Francisco",
     age:99
   }
 ];

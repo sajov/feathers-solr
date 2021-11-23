@@ -12,8 +12,8 @@ interface SolrResponse {
 
 //@ts-ignore
 export function responseFind (filters, query, paginate, res: Partial<SolrResponse>) {
-  const { responseHeader, response } = res;
-  const { numFound, start, docs, grouped, ...additionalResponse  } = response;
+  const { responseHeader, response, ...additionalResponse } = res;
+  const { numFound, start, docs, grouped } = response;
   const { max, default: def  } = paginate;
   const { $limit, $skip } = filters;
 
@@ -25,7 +25,7 @@ export function responseFind (filters, query, paginate, res: Partial<SolrRespons
     QTime: responseHeader.QTime || 0,
     total: numFound || 0,
     limit: $limit ? parseInt($limit) : paginate.default || paginate.max,
-    skip: $skip ? parseInt($skip) : 0,
+    skip: $skip ? parseInt($skip) : start,
     data: docs || grouped,
     ...additionalResponse
   };
