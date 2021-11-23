@@ -104,10 +104,10 @@ describe('Feathers Solr Service', () => {
 
   before(async () => {
     try {
-      // await Client.get(`/admin/cores`, {params: {
-      //   ...createCore,
-      //   name: options.core
-      // }});
+      await Client.get(`/admin/cores`, {params: {
+        ...createCore,
+        name: options.core
+      }});
       await Client.post(`/${options.core}/schema`, {data: addSchema});
       await  Solr({ ...options, multi: true })._remove(null, {});
     } catch (error) {
@@ -119,10 +119,10 @@ describe('Feathers Solr Service', () => {
     try {
       await  Solr({ ...options, multi: true })._remove(null, {});
       await Client.post(`/${options.core}/schema`, {data: deleteSchema});
-      // await Client.get(`/admin/cores`, {params: {
-      //   ...deleteCore,
-      //   core: options.core
-      // }});
+      await Client.get(`/admin/cores`, {params: {
+        ...deleteCore,
+        core: options.core
+      }});
     } catch (error) {
       console.log(error)
     }
@@ -248,7 +248,7 @@ describe('Feathers Solr Service', () => {
         assert.strictEqual(response.age, 999);
       });
 
-      it('update with null throws error', async () => {
+      it('`update` with null throws error', async () => {
         try {
           await app.service('people').update(null, {});
           throw new Error('Should never get here');
