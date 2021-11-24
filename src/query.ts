@@ -91,13 +91,13 @@ export const Operators: any = {
     return {};
   },
   $filter (query: any) {
-    if (query.$filter) return { filter: Array.isArray(query.$filter) ? query.$filter : [query.$filter] };
-    return {};
+    if(!query) return {filter: []};
+    return { filter: Array.isArray(query) ? query : [query] };
   }
 };
 
 export function jsonQuery (id: any, filters: any, query: any, paginate: any, escapeFn: any) {
-  const adapterQuery = Object.assign({}, query);
+  const { $filter, ...adapterQuery} = query;
   const result = Object.assign(
     {
       query: (adapterQuery.$search || '*:*').toString(),
@@ -110,7 +110,7 @@ export function jsonQuery (id: any, filters: any, query: any, paginate: any, esc
     Operators.$limit(filters),
     Operators.$params(adapterQuery),
     Operators.$facet(adapterQuery),
-    Operators.$filter(adapterQuery)
+    Operators.$filter($filter)
   );
 
   // merge id and query // TODO: Fix if query.id has operators
@@ -127,7 +127,10 @@ export function jsonQuery (id: any, filters: any, query: any, paginate: any, esc
 
   // convert adapterQuery
   if (!_.isEmpty(adapterQuery)) {
-    result.filter = convertOperators(adapterQuery, escapeFn);
+    result.filter = [
+      ...result.filter,
+      ...convertOperators(adapterQuery, escapeFn)
+    ]
   }
 
   return result;

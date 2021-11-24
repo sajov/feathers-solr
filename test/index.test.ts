@@ -115,6 +115,8 @@ describe('Feathers Solr Service', () => {
     }
   });
 
+
+
   after(async () => {
     try {
       await  Solr({ ...options, multi: true })._remove(null, {});
@@ -421,6 +423,20 @@ describe('Feathers Solr Service', () => {
         assert.strictEqual(response.facets.count, 3);
         assert.strictEqual(response.facets.age_min, 10);
         assert.deepStrictEqual(response.facets.age_ranges.buckets, [ { val: 0, count: 2 }, { val: 50, count: 1 } ]);
+      });
+
+      it('`$filter`', async () => {
+        const query = {
+          $filter: ['age:19', 'city:London'],
+          name: "Alice"
+        }
+        const response: any = await app.service('search').find({ query });
+
+        assert.strictEqual(Array.isArray(response.data), true);
+        assert.strictEqual(response.data.length, 1);
+        assert.strictEqual(response.data[0].name, 'Alice');
+        assert.strictEqual(response.data[0].city, 'London');
+        assert.strictEqual(response.data[0].age, 19);
       });
     });
   })
