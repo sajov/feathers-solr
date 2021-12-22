@@ -1,4 +1,4 @@
-//@ts-ignore
+// @ts-ignore
 import { randomUUID } from 'crypto';
 import { _ } from '@feathersjs/commons';
 
@@ -66,17 +66,17 @@ export const Operators: any = {
   $limit (filters: any) {
     return typeof filters.$limit === 'undefined' ?
                   {} :
-                  { limit: parseInt(filters.$limit) };
+                  { limit: parseInt(filters.$limit, 10) };
   },
   $skip (filters: any) {
     return filters.$skip ? { offset: filters.$skip } : {};
   },
   $sort (filters: any) {
-    let result: any = {};
+    const result: any = {};
     if (filters.$sort) {
-      let sort: any = [];
+      const sort: any = [];
       Object.keys(filters.$sort).forEach(name => {
-        sort.push(name + (parseInt(filters.$sort[name]) === 1 ? ' asc' : ' desc'));
+        sort.push(name + (parseInt(filters.$sort[name], 10) === 1 ? ' asc' : ' desc'));
       });
       result.sort = sort.join(',');
     }
@@ -136,7 +136,7 @@ export function jsonQuery (id: any, filters: any, query: any, paginate: any, esc
   return result;
 }
 
-function convertOperators (query:any, escapeFn: any, root: string = ''): any {
+function convertOperators (query:any, escapeFn: any, root = ''): any {
 
   if (Array.isArray(query)) {
     return query.map(q => {

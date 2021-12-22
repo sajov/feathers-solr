@@ -93,7 +93,7 @@ describe('feathers adapter tests', () => {
 
   before(async () => {
     try {
-      await Client.get(`/admin/cores`, {params: {
+      await Client.get('/admin/cores', {params: {
         ...createCore,
         name: options.core
       }});
@@ -108,7 +108,7 @@ describe('feathers adapter tests', () => {
     try {
       await  Solr({ ...options, multi: true })._remove(null, {});
       await Client.post(`/${options.core}/schema`, {data: deleteSchema});
-      await Client.get(`/admin/cores`, {params: {
+      await Client.get('/admin/cores', {params: {
         ...deleteCore,
         core: options.core
       }});

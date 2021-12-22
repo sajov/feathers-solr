@@ -30,7 +30,7 @@ describe('special adapter methods', () => {
 
   before(async () => {
     try {
-      await Client.get(`/admin/cores`, {params: {
+      await Client.get('/admin/cores', {params: {
         ...createCore,
         name: options.core
       }});
@@ -47,7 +47,7 @@ describe('special adapter methods', () => {
     try {
       await  Solr({ ...options, multi: true })._remove(null, {});
       await Client.post(`/${options.core}/schema`, {data: deleteSchema});
-      await Client.get(`/admin/cores`, {params: {
+      await Client.get('/admin/cores', {params: {
         ...deleteCore,
         core: options.core
       }});
@@ -58,7 +58,7 @@ describe('special adapter methods', () => {
 
     describe('\'client\' ', () => {
       it('get `query`', async () => {
-        const {responseHeader, response}  = await Service.client.get(`/${options.core}/query`, {params: { "q": "*:*" }});
+        const {responseHeader, response}  = await Service.client.get(`/${options.core}/query`, {params: { 'q': '*:*' }});
         assert.strictEqual(typeof responseHeader.status, 'number');
         assert.strictEqual(typeof responseHeader.QTime, 'number');
         assert.strictEqual(typeof response.numFound, 'number');
@@ -67,7 +67,7 @@ describe('special adapter methods', () => {
       })
 
       it('get `select`', async () => {
-        const {responseHeader, response}  = await Service.client.get(`/${options.core}/select`, {params: { "q": "*:*" }});
+        const {responseHeader, response}  = await Service.client.get(`/${options.core}/select`, {params: { 'q': '*:*' }});
         assert.strictEqual(typeof responseHeader.status, 'number');
         assert.strictEqual(typeof responseHeader.QTime, 'number');
         assert.strictEqual(typeof response.numFound, 'number');
@@ -76,7 +76,7 @@ describe('special adapter methods', () => {
       })
 
       it('post `query`', async () => {
-        const {responseHeader, response}  = await Service.client.post(`/${options.core}/query`, {data: { "query": "*:*" }});
+        const {responseHeader, response}  = await Service.client.post(`/${options.core}/query`, {data: { 'query': '*:*' }});
         assert.strictEqual(typeof responseHeader.status, 'number');
         assert.strictEqual(typeof responseHeader.QTime, 'number');
         assert.strictEqual(typeof response.numFound, 'number');
@@ -85,7 +85,7 @@ describe('special adapter methods', () => {
       })
 
       it('post `select`', async () => {
-        const {responseHeader, response}  = await Service.client.post(`/${options.core}/select`, {data: { "query": "*:*" }});
+        const {responseHeader, response}  = await Service.client.post(`/${options.core}/select`, {data: { 'query': '*:*' }});
         assert.strictEqual(typeof responseHeader.status, 'number');
         assert.strictEqual(typeof responseHeader.QTime, 'number');
         assert.strictEqual(typeof response.numFound, 'number');
@@ -308,11 +308,11 @@ describe('special adapter methods', () => {
       it('`$facet`', async () => {
         const query = {
           $facet: {
-            age_min : "min(age)",
-            age_max : "max(age)",
+            age_min : 'min(age)',
+            age_max : 'max(age)',
             age_ranges: {
-                type: "range",
-                field: "age",
+                type: 'range',
+                field: 'age',
                 start: 0,
                 end: 100,
                 gap: 50
@@ -331,7 +331,7 @@ describe('special adapter methods', () => {
       it('`$filter`', async () => {
         const query = {
           $filter: ['age:19', 'city:London'],
-          name: "Alice"
+          name: 'Alice'
         }
         const response: any = await app.service('search').find({ query });
 

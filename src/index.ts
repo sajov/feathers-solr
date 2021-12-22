@@ -9,8 +9,7 @@ export const escapeFn = (key: string, value: any) => {
   return {key, value}
 }
 
-//@ts-ignore
-export interface SolrServiceOptions<T = any> extends ServiceOptions {
+export interface SolrServiceOptions extends ServiceOptions {
   host: string
   core: string;
   commit?: {
@@ -32,7 +31,7 @@ export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> imple
   queryHandler: string;
   updateHandler: string;
 
-  constructor (options: Partial<SolrServiceOptions<T>> = {}) {
+  constructor (options: Partial<SolrServiceOptions> = {}) {
     super(_.extend({
       id: 'id',
       commit: {
@@ -42,7 +41,7 @@ export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> imple
       },
       suggestHandler: 'suggest',
       defaultSearch: {},
-      defaultParams: { echoParams: 'none'},
+      defaultParams: { echoParams: 'none' },
       createUUID: true,
       escapeFn
     }, options));
@@ -51,7 +50,6 @@ export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> imple
     this.queryHandler = `/${core}/query`
     this.updateHandler = `/${core}/update/json`
 
-    //@ts-ignore  SolrClientOptions ??
     this.client = solrClient(host, requestOptions)
   }
 

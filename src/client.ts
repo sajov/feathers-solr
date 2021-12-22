@@ -45,7 +45,7 @@ const request = async (options: RequestOptions) => {
         return reject(new Error(`HTTP status code ${res.statusCode}`));
       }
 
-      let body: any = [];
+      const body: any = [];
       res.on('data', (chunk: any) => body.push(chunk));
       res.on('end', () => resolve(JSON.parse(Buffer.concat(body).toString('utf8'))));
     })
@@ -77,7 +77,7 @@ export const solrClient = (hostname: string, requestOptions: http.RequestOptions
         url: getUrl(resource, params),
         requestOptions: {
           method: 'GET',
-          ...requestOptions,
+          ...requestOptions
         }
       });
     },
@@ -88,7 +88,7 @@ export const solrClient = (hostname: string, requestOptions: http.RequestOptions
         data: JSON.stringify(data),
         requestOptions: {
           method: 'POST',
-          ...requestOptions,
+          ...requestOptions
         }
       });
     }

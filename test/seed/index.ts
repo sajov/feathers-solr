@@ -1,19 +1,19 @@
-//http://localhost:8983/solr/admin/cores?action=CREATE&name=test&config=solrconfig.xml&dataDir=data&configSet=_default
+// http://localhost:8983/solr/admin/cores?action=CREATE&name=test&config=solrconfig.xml&dataDir=data&configSet=_default
 export const createCore = {
-  "action":"CREATE",
-  "name":"test",
-  "config":"solrconfig.xml",
-  "dataDir":"data",
-  "configSet":"_default"
+  'action':'CREATE',
+  'name':'test',
+  'config':'solrconfig.xml',
+  'dataDir':'data',
+  'configSet':'_default'
 }
 
 // http://localhost:8983/solr/admin/cores?action=UNLOAD&core=test&deleteIndex=true&deleteDataDir=true&deleteInstanceDir=true
 export const deleteCore = {
-  "action":"UNLOAD",
-  "core":"test",
-  "deleteIndex": true,
-  "deleteDataDir": true,
-  "deleteInstanceDir": true
+  'action':'UNLOAD',
+  'core':'test',
+  'deleteIndex': true,
+  'deleteDataDir': true,
+  'deleteInstanceDir': true
 }
 
 export const addSchema = {
@@ -41,112 +41,112 @@ export const addSchema = {
   //     ]
   //   }
   // },
-  "add-field": [
+  'add-field': [
     {
-      "name": "name",
-      "type": "string",
-      "multiValued": false,
-      "indexed": false,
-      "stored": true
+      'name': 'name',
+      'type': 'string',
+      'multiValued': false,
+      'indexed': false,
+      'stored': true
     },
     {
-      "name": "city",
-      "type": "string",
-      "multiValued": false,
-      "indexed": false,
-      "stored": true
+      'name': 'city',
+      'type': 'string',
+      'multiValued': false,
+      'indexed': false,
+      'stored': true
     },
     {
-      "name": "age",
-      "type": "plong",
-      "multiValued": false,
-      "indexed": false,
-      "stored": true
+      'name': 'age',
+      'type': 'plong',
+      'multiValued': false,
+      'indexed': false,
+      'stored': true
     },
     {
-      "name": "created",
-      "type": "boolean",
-      "multiValued": false,
-      "indexed": true,
-      "stored": true
+      'name': 'created',
+      'type': 'boolean',
+      'multiValued': false,
+      'indexed': true,
+      'stored': true
     }
   ],
-  "add-copy-field": [
-    { "source": "city" , "dest": "_text_"},
-    { "source": "name" , "dest": "_text_"}
-  ],
+  'add-copy-field': [
+    { 'source': 'city' , 'dest': '_text_'},
+    { 'source': 'name' , 'dest': '_text_'}
+  ]
 };
 
 export const deleteSchema = {
-  "delete-copy-field": [
-    { "source": "city" , "dest": "_text_"},
-    { "source": "name" , "dest": "_text_"}
+  'delete-copy-field': [
+    { 'source': 'city' , 'dest': '_text_'},
+    { 'source': 'name' , 'dest': '_text_'}
   ],
-  "delete-field": [
-    { "name": "name" },
-    { "name": "age" },
-    { "name": "city" },
-    { "name": "created" }
+  'delete-field': [
+    { 'name': 'name' },
+    { 'name': 'age' },
+    { 'name': 'city' },
+    { 'name': 'created' }
   ]
 
 };
 
 export const addConfig = {
-  "add-searchcomponent": {
-    "name": "suggest",
-    "class": "solr.SuggestComponent",
-    "suggester": {
-      "name": "suggest",
-      "lookupImpl": "FuzzyLookupFactory",
-      "dictionaryImpl": "DocumentDictionaryFactory",
-      "field": "name",
-      "suggestAnalyzerFieldType": "string",
-      "buildOnStartup": "true",
-      "buildOnCommit": "true"
+  'add-searchcomponent': {
+    'name': 'suggest',
+    'class': 'solr.SuggestComponent',
+    'suggester': {
+      'name': 'suggest',
+      'lookupImpl': 'FuzzyLookupFactory',
+      'dictionaryImpl': 'DocumentDictionaryFactory',
+      'field': 'name',
+      'suggestAnalyzerFieldType': 'string',
+      'buildOnStartup': 'true',
+      'buildOnCommit': 'true'
     }
   },
-  "add-requesthandler": {
-    "startup": "lazy",
-    "name": "/suggest",
-    "class": "solr.SearchHandler",
-    "defaults": {
-      "suggest": "true",
-      "suggest.count": 10,
-      "suggest.dictionary": "suggest",
-      "spellcheck": "on",
-      "spellcheck.count": 10,
-      "spellcheck.extendedResults": "true",
-      "spellcheck.collate": "true",
-      "spellcheck.maxCollations": 10,
-      "spellcheck.maxCollationTries": 10,
-      "spellcheck.accuracy": 0.003
+  'add-requesthandler': {
+    'startup': 'lazy',
+    'name': '/suggest',
+    'class': 'solr.SearchHandler',
+    'defaults': {
+      'suggest': 'true',
+      'suggest.count': 10,
+      'suggest.dictionary': 'suggest',
+      'spellcheck': 'on',
+      'spellcheck.count': 10,
+      'spellcheck.extendedResults': 'true',
+      'spellcheck.collate': 'true',
+      'spellcheck.maxCollations': 10,
+      'spellcheck.maxCollationTries': 10,
+      'spellcheck.accuracy': 0.003
     },
-    "components": [
-      "spellcheck",
-      "suggest"
+    'components': [
+      'spellcheck',
+      'suggest'
     ]
   }
 };
 
-export const deleteConfig = { "delete-requesthandler": "/suggest", "delete-searchcomponent": "suggest" };
+export const deleteConfig = { 'delete-requesthandler': '/suggest', 'delete-searchcomponent': 'suggest' };
 
 export const mockData = [
   {
-    id:"1",
-    name:"Mike",
-    city:"New York",
+    id:'1',
+    name:'Mike',
+    city:'New York',
     age:10
   },
   {
-    id:"2",
-    name:"Alice",
-    city:"London",
+    id:'2',
+    name:'Alice',
+    city:'London',
     age:19
   },
   {
-    id:"3",
-    name:"John",
-    city:"San Francisco",
+    id:'3',
+    name:'John',
+    city:'San Francisco',
     age:99
   }
 ];
