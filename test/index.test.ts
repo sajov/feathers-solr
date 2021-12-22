@@ -92,29 +92,21 @@ describe('feathers adapter tests', () => {
   beforeEach(done => setTimeout(done, 100));
 
   before(async () => {
-    try {
-      await Client.get('/admin/cores', {params: {
-        ...createCore,
-        name: options.core
-      }});
-      await Client.post(`/${options.core}/schema`, {data: addSchema});
-      await  Solr({ ...options, multi: true })._remove(null, {});
-    } catch (error) {
-      console.log(error)
-    }
+    await Client.get('/admin/cores', {params: {
+      ...createCore,
+      name: options.core
+    }});
+    await Client.post(`/${options.core}/schema`, {data: addSchema});
+    await  Solr({ ...options, multi: true })._remove(null, {});
   });
 
   after(async () => {
-    try {
-      await  Solr({ ...options, multi: true })._remove(null, {});
-      await Client.post(`/${options.core}/schema`, {data: deleteSchema});
-      await Client.get('/admin/cores', {params: {
-        ...deleteCore,
-        core: options.core
-      }});
-    } catch (error) {
-      console.log(error)
-    }
+    await  Solr({ ...options, multi: true })._remove(null, {});
+    await Client.post(`/${options.core}/schema`, {data: deleteSchema});
+    await Client.get('/admin/cores', {params: {
+      ...deleteCore,
+      core: options.core
+    }});
   });
 
   testSuite(app, errors, 'people');

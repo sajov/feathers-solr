@@ -29,31 +29,23 @@ describe('special adapter methods', () => {
   beforeEach(done => setTimeout(done, 100));
 
   before(async () => {
-    try {
-      await Client.get('/admin/cores', {params: {
-        ...createCore,
-        name: options.core
-      }});
-      await Client.post(`/${options.core}/schema`, {data: addSchema});
-      await  Solr({ ...options, multi: true })._remove(null, {});
-    } catch (error) {
-      console.log(error)
-    }
+    await Client.get('/admin/cores', {params: {
+      ...createCore,
+      name: options.core
+    }});
+    await Client.post(`/${options.core}/schema`, {data: addSchema});
+    await  Solr({ ...options, multi: true })._remove(null, {});
   });
 
 
 
   after(async () => {
-    try {
-      await  Solr({ ...options, multi: true })._remove(null, {});
-      await Client.post(`/${options.core}/schema`, {data: deleteSchema});
-      await Client.get('/admin/cores', {params: {
-        ...deleteCore,
-        core: options.core
-      }});
-    } catch (error) {
-      console.log(error)
-    }
+    await  Solr({ ...options, multi: true })._remove(null, {});
+    await Client.post(`/${options.core}/schema`, {data: deleteSchema});
+    await Client.get('/admin/cores', {params: {
+      ...deleteCore,
+      core: options.core
+    }});
   });
 
     describe('\'client\' ', () => {
@@ -116,6 +108,7 @@ describe('special adapter methods', () => {
         const {id, ...data} = mockData[0];
         const response  = await Service._create(data);
         assert.strictEqual(Array.isArray(response), false);
+        assert.strictEqual(typeof id, 'string');
         assert.strictEqual(typeof response.id, 'string');
       });
 
