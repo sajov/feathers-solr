@@ -1,4 +1,3 @@
-// @ts-ignore
 import { randomUUID } from 'crypto';
 import { _ } from '@feathersjs/commons';
 

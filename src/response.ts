@@ -10,8 +10,7 @@ interface SolrResponse {
   }
 }
 
-// @ts-ignore
-export function responseFind (filters, query, paginate, res: Partial<SolrResponse>) {
+export function responseFind (filters: any, paginate: any, res: Partial<SolrResponse>) {
   const { responseHeader, response, ...additionalResponse } = res;
   const { numFound, start, docs, grouped } = response;
   const { max, default: def  } = paginate;

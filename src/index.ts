@@ -71,7 +71,7 @@ export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> imple
 
     const response = await this.client.post(this.queryHandler, {data: solrQuery})
 
-    const result = responseFind(filters, query, paginate, response);
+    const result = responseFind(filters, paginate, response);
 
     return result;
   }
