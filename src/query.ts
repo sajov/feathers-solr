@@ -1,3 +1,4 @@
+import { NullableId , Query } from '@feathersjs/feathers';
 import { randomUUID } from 'crypto';
 import { _ } from '@feathersjs/commons';
 
@@ -25,7 +26,7 @@ export const _get = (obj: any, key: string) => {
 
 export const whitelist = ['$search', '$suggest', '$params', '$facet', '$populate'];
 
-export const Operators: any = {
+export const operators: any = {
   $in: (key: string, value: any) => {
     return Array.isArray(value) ? `${key}:(${value.join(' OR ')})` : `${key}:${value}`;
   },
@@ -95,7 +96,7 @@ export const Operators: any = {
   }
 };
 
-export function jsonQuery (id: any, filters: any, query: any, paginate: any, escapeFn: any) {
+export function jsonQuery (id: NullableId, filters: any, query: Query, paginate: any, escapeFn: any) {
   const { $filter, ...adapterQuery} = query;
   const result = Object.assign(
     {
@@ -104,12 +105,12 @@ export function jsonQuery (id: any, filters: any, query: any, paginate: any, esc
       limit: paginate.max || paginate.default || 10,
       offset: 0
     },
-    Operators.$sort(filters),
-    Operators.$skip(filters),
-    Operators.$limit(filters),
-    Operators.$params(adapterQuery),
-    Operators.$facet(adapterQuery),
-    Operators.$filter($filter)
+    operators.$sort(filters),
+    operators.$skip(filters),
+    operators.$limit(filters),
+    operators.$params(adapterQuery),
+    operators.$facet(adapterQuery),
+    operators.$filter($filter)
   );
 
   // merge id and query // TODO: Fix if query.id has operators
@@ -153,20 +154,20 @@ function convertOperators (query:any, escapeFn: any, root = ''): any {
 
     if (prop === '$or') {
       const o = [].concat.apply([], convertOperators(value, escapeFn));
-      queryString = Operators.$or(root || prop, o);
-    } else if (_has(Operators, prop)) {
+      queryString = operators.$or(root || prop, o);
+    } else if (_has(operators, prop)) {
       const escapedResult = escapeFn(root || prop, value);
-      queryString = Operators[prop](escapedResult.key, escapedResult.value);
+      queryString = operators[prop](escapedResult.key, escapedResult.value);
     } else if (typeof prop === 'string') {
       if (!_.isObject(value)) {
         const escapedResult = escapeFn(root || prop, value);
-        queryString = Operators.$eq(escapedResult.key, escapedResult.value);
+        queryString = operators.$eq(escapedResult.key, escapedResult.value);
       } else {
         queryString = convertOperators(value, escapeFn, prop);
       }
       if (Array.isArray(queryString)) {
         if (queryString.length > 1) {
-          queryString = Operators.$and(queryString);
+          queryString = operators.$and(queryString);
         }
       }
       return res.concat(queryString);

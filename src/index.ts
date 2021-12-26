@@ -10,19 +10,19 @@ export const escapeFn = (key: string, value: any) => {
 }
 
 export interface SolrServiceOptions extends ServiceOptions {
-  host: string
+  host: string;
   core: string;
   commit?: {
-    softCommit?: boolean,
-    commitWithin?: number,
+    softCommit?: boolean;
+    commitWithin?: number;
     overwrite?: boolean
   };
   suggestHandler?: string;
-  defaultSearch?: any,
-  defaultParams?: any,
+  defaultSearch?: any;
+  defaultParams?: any;
   createUUID?: boolean;
   escapeFn?: (key: string, value: any) => {key: string, value: any};
-  requestOptions: {timeout: 10}
+  requestOptions: {timeout: 10};
 }
 
 export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> implements InternalServiceMethods<T> {
@@ -32,6 +32,8 @@ export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> imple
   updateHandler: string;
 
   constructor (options: Partial<SolrServiceOptions> = {}) {
+    const { host, core, requestOptions, ...opts } = options;
+
     super(_.extend({
       id: 'id',
       commit: {
@@ -44,11 +46,11 @@ export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> imple
       defaultParams: { echoParams: 'none' },
       createUUID: true,
       escapeFn
-    }, options));
+    }, opts));
 
-    const {host, core, requestOptions} = options;
-    this.queryHandler = `/${core}/query`
-    this.updateHandler = `/${core}/update/json`
+    this.queryHandler = `/${core}/query`;
+
+    this.updateHandler = `/${core}/update/json`;
 
     this.client = solrClient(host, requestOptions)
   }
