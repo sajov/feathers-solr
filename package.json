@@ -40,14 +40,15 @@
     "access": "public"
   },
   "dependencies": {
-    "@feathersjs/adapter-commons": "^5.0.0-pre.14",
-    "@feathersjs/commons": "^5.0.0-pre.14",
-    "@feathersjs/errors": "^5.0.0-pre.14",
-    "@feathersjs/feathers": "^5.0.0-pre.14"
+    "@feathersjs/adapter-commons": "^5.0.0-pre.15",
+    "@feathersjs/commons": "^5.0.0-pre.15",
+    "@feathersjs/errors": "^5.0.0-pre.15",
+    "@feathersjs/feathers": "^5.0.0-pre.15"
   },
   "devDependencies": {
-    "@feathersjs/adapter-tests": "^5.0.0-pre.14",
-    "@feathersjs/feathers": "^5.0.0-pre.14",
+    "@feathersjs/express": "^5.0.0-pre.15",
+    "@feathersjs/adapter-tests": "^5.0.0-pre.15",
+    "@feathersjs/feathers": "^5.0.0-pre.15",
     "@types/mocha": "^9.0.0",
     "@types/node": "^17.0.5",
     "@typescript-eslint/eslint-plugin": "^5.8.0",
