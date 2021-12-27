@@ -33,7 +33,7 @@ describe('client', () => {
     }});
   });
 
-  describe('\'methods\' ', () => {
+  describe('methods', () => {
     it('get `select`', async () => {
       const { responseHeader, response } = await Client.get(`/${options.core}/select`, { params: { 'q': '*:*' } });
       assert.strictEqual(typeof responseHeader.status, 'number');

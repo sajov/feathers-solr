@@ -48,7 +48,7 @@ describe('special adapter methods', () => {
     }});
   });
 
-    describe('\'client\' ', () => {
+    describe('client', () => {
       it('get `query`', async () => {
         const {responseHeader, response}  = await Service.client.get(`/${options.core}/query`, {params: { 'q': '*:*' }});
         assert.strictEqual(typeof responseHeader.status, 'number');
@@ -86,7 +86,7 @@ describe('special adapter methods', () => {
       })
     });
 
-    describe('\'methods\' ', () => {
+    describe('methods', () => {
 
       it('`create` one', async () => {
         const response  = await Service._create(mockData[0]);
@@ -265,7 +265,7 @@ describe('special adapter methods', () => {
       //   });
 
     });
-    describe('\'aditional params\' ', () => {
+    describe('aditional params', () => {
 
       before(async () => {
         await Service._create(mockData);
