@@ -1,15 +1,15 @@
-import { NullableId , Query } from '@feathersjs/feathers';
+import { NullableId, Query } from '@feathersjs/feathers';
 import { randomUUID } from 'crypto';
 import { _ } from '@feathersjs/commons';
 
-export const addIds = (data: any, key = 'id') => {
+export const addIds = (data: any[], key = 'id') => {
   return data.map((d: any) => {
     if(!d[key]) d[key] = randomUUID();
     return d;
   })
 }
 
-export const  _has = (obj: any, key: string) =>  {
+const _has = (obj: any, key: string) =>  {
   return key.split('.').every(function (x) {
     if (typeof obj !== 'object' || obj === null || !(x in obj)) {
       return false;
@@ -17,11 +17,6 @@ export const  _has = (obj: any, key: string) =>  {
     obj = obj[x];
     return true;
   });
-};
-export const _get = (obj: any, key: string) => {
-  return key.split('.').reduce(function (o, x) {
-    return typeof o === 'undefined' || o === null ? o : o[x];
-  }, obj);
 };
 
 export const whitelist = ['$search', '$suggest', '$params', '$facet', '$populate'];
