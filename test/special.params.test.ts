@@ -197,18 +197,6 @@ describe('special adapter methods', () => {
         assert.strictEqual(test.length, 0);
       });
 
-      it('`delete` all', async () => {
-        const Service = Solr({
-          ...options,
-          multi: true
-        });
-        await Service._create(mockData);
-        await Service._remove(null, {});
-        const test: any = await Service._find({});
-        assert.strictEqual(Array.isArray(test), true);
-        assert.strictEqual(test.length, 0);
-      });
-
       // it('patch record with prop also in query', async () => {
       //   app.use('/people', Solr({ multi: true, ...options }));
       //   const people = app.service('people');
