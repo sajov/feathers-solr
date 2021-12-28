@@ -21,7 +21,7 @@ app.use('/search', Solr({
   events,
   ...options,
   paginate: {max: 10, default: 5},
-  whitelist:['$search', '$params', '$facet', '$filter'],
+  whitelist:['$search', '$params', '$facet', '$filter' ,'$like', '$nlike'],
   multi: true
 }));
 
@@ -88,6 +88,27 @@ describe('special adapter methods', () => {
 
     describe('methods', () => {
 
+      it('`find` without params', async () => {
+        const response  = await Service.find();
+        assert.strictEqual(Array.isArray(response), true);
+      });
+
+      it('`create` with empty array', async () => {
+        try {
+          await Service._create([]);
+        } catch (error: any) {
+          assert.strictEqual(typeof error.MethodNotAllowed, 'undefined', 'has MethodNotAllowed');
+        }
+      });
+
+      it('`create` with empty object', async () => {
+        try {
+          await Service._create({});
+        } catch (error: any) {
+          assert.strictEqual(typeof error.MethodNotAllowed, 'undefined', 'has MethodNotAllowed');
+        }
+      });
+
       it('`create` one', async () => {
         const response  = await Service._create(mockData[0]);
         assert.strictEqual(Array.isArray(response), false);
@@ -112,6 +133,7 @@ describe('special adapter methods', () => {
         assert.strictEqual(typeof response.id, 'string');
       });
 
+
       it('`find` without pagination', async () => {
         const response  = await Service._find({});
         assert.strictEqual(Array.isArray(response), true);
@@ -128,6 +150,22 @@ describe('special adapter methods', () => {
         const response: any  = await Service._find({});
         assert.strictEqual(Array.isArray(response.data), true);
         assert.strictEqual(response.data.length, 3);
+      });
+
+      it('`find` $like', async () => {
+        await app.service('search').create(mockData);
+        const response: any  = await app.service('search').find({ query: { city: { $like: 'cisc' } } });
+        assert.strictEqual(Array.isArray(response.data), true);
+        assert.strictEqual(response.data.length, 1);
+        assert.strictEqual(response.data[0].id, '3');
+      });
+
+      it('`find` $nlike', async () => {
+        await app.service('search').remove(null, {});
+        await app.service('search').create(mockData);
+        const response: any  = await app.service('search').find({ query: { city: { $nlike: 'cisc' } } });
+        assert.strictEqual(Array.isArray(response.data), true);
+        assert.strictEqual(response.data.length, 2);
       });
 
       it('`get`', async () => {
@@ -155,9 +193,27 @@ describe('special adapter methods', () => {
         }
       });
 
-      it('`path`', async () => {
-        assert.strictEqual(1, 1);
+      it('`update` with empty object', async () => {
+        try {
+          await Service._update(null, {id: 'aaa'});
+        } catch (error: any) {
+          assert.strictEqual(typeof error.NotFound, 'undefined', 'has NotFound');
+        }
       });
+
+      it('`patch`', async () => {
+        await Service._create(mockData);
+        const response = await Service._patch('1', {age: 12});
+        assert.strictEqual(response.age, 12);
+      });
+
+      // it('`patch` atomic', async () => {
+      //   await Service._create(mockData);
+      //   await Service._patch('1', {age: {set: 99}});
+      //   const response = await Service.get('1');
+      //   console.log(response)
+      //   // assert.strictEqual(response.age, 99);
+      // });
 
       it('`delete` by id', async () => {
         const response  = await Service._remove(mockData[0].id);

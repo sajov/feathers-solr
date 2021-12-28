@@ -31,7 +31,7 @@ export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> imple
   queryHandler: string;
   updateHandler: string;
 
-  constructor (options: Partial<SolrServiceOptions> = {}) {
+  constructor (options: Partial<SolrServiceOptions>) {
     const { host, core, requestOptions, ...opts } = options;
 
     super(_.extend({
@@ -55,7 +55,7 @@ export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> imple
     this.client = solrClient(host, requestOptions)
   }
 
-  _getOrFind (id: Id, params: AdapterParams = {}) {
+  _getOrFind (id: Id, params: AdapterParams) {
     if (id === null) {
       return this._find(
         Object.assign(params, {
@@ -111,9 +111,7 @@ export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> imple
   async _update (id: NullableId, data: T, params: AdapterParams = {}) {
     const sel = select(params, this.id);
 
-    const referenceData: any | any[] = await this._getOrFind(id, params);
-
-    if (_.isEmpty(referenceData)) throw new NotFound('No record found');
+    await this._getOrFind(id, params);
 
     const dataToUpdate: any = id && !Array.isArray(data) ? [{id, ...data}] : data;
 
@@ -151,6 +149,6 @@ export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> imple
   }
 }
 
-export default function service (options: Partial<SolrServiceOptions> = {}) {
+export default function service (options: Partial<SolrServiceOptions>) {
   return new Service(options);
 }

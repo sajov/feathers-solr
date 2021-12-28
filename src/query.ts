@@ -41,10 +41,10 @@ export const operators: any = {
     return `${key}:[${value} TO *]`;
   },
   $like: (key: string, value: any) => {
-    return `${key}:{${value}`;
+    return `${key}:*${value}*`;
   },
-  $notlike: (key: string, value: any) => {
-    return `!${key}:{${value}`;
+  $nlike: (key: string, value: any) => {
+    return `!${key}:*${value}*`;
   },
   $eq: (key: string, value: any) => {
     return Array.isArray(value) ? `(${value.join(' AND ')})` : `${key}:${value}`;
@@ -177,16 +177,10 @@ function convertOperators (query:any, escapeFn: any, root = ''): any {
 }
 
 export function deleteQuery (id: any, params: any, escapeFn: any) {
-
   if (id) {
-    if (id === '*' || id === '*:*') {
-      return { delete: { query: '*:*' } };
-    }
     return { delete: id };
   } else if (_.isObject(params) && !_.isEmpty(params)) {
     return { delete: { query: convertOperators(params, escapeFn).join(' AND ') } };
-  } else if (!id && _.isEmpty(params)) {
-    return { delete: { query: '*:*' } };
   }
 
   return { delete: { query: '*:*' } };
@@ -202,6 +196,7 @@ export function patchQuery (toPatch: any, patch: any, idField: any) {
   Object.keys(patch).forEach(field => {
     if (field !== idField) {
       const value = patch[field];
+      console.log(value, field)
       if (_.isObject(value)) {
         if (actions.indexOf(Object.keys(value)[0]) === -1) {
           atomicFieldUpdate[field] = { add: value };
@@ -216,14 +211,6 @@ export function patchQuery (toPatch: any, patch: any, idField: any) {
   const patchData = toPatch.map((current:any) => {
     return Object.assign({ [idField]: current[idField] }, atomicFieldUpdate);
   });
-
+  console.log({ ids, patchData })
   return { ids, patchData };
 }
-
-export const getIds = (data:any, id: any) => {
-  if (!Array.isArray(data) && data[id]) return [data[id]];
-
-  return data.map((d: any) => {
-    return d[id];
-  });
-};

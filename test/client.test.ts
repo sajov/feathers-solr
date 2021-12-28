@@ -33,6 +33,23 @@ describe('client', () => {
     }});
   });
 
+  // describe('constructor', () => {
+  //   it('HTTP', async () => {
+  //     const Client = solrClient('https://localhost:1111');
+  //     assert.strictEqual(typeof Client.get, 'function');
+  //     assert.strictEqual(typeof Client.post, 'function');
+  //     // assert.throws(
+  //     //   async () => {
+  //     //     await Client.get('/', {});
+  //     //   },
+  //     //   {
+  //     //     name: /^Error$/
+  //     //   }
+  //     // );
+
+  //   });
+  // });
+
   describe('methods', () => {
     it('get `select`', async () => {
       const { responseHeader, response } = await Client.get(`/${options.core}/select`, { params: { 'q': '*:*' } });
