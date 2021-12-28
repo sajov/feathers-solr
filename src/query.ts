@@ -2,7 +2,7 @@ import { NullableId, Query } from '@feathersjs/feathers';
 import { randomUUID } from 'crypto';
 import { _ } from '@feathersjs/commons';
 
-export const addIds = (data: any[], key = 'id') => {
+export const addIds = (data: any[], key: string) => {
   return data.map((d: any) => {
     if(!d[key]) d[key] = randomUUID();
     return d;
@@ -23,10 +23,10 @@ export const whitelist = ['$search', '$suggest', '$params', '$facet', '$populate
 
 export const operators: any = {
   $in: (key: string, value: any) => {
-    return Array.isArray(value) ? `${key}:(${value.join(' OR ')})` : `${key}:${value}`;
+    return `${key}:(${value.join(' OR ')})`;
   },
-  $or: (key: string, value: any) => {
-    return Array.isArray(value) ? `(${value.join(' OR ')})` : `${key}:${value}`;
+  $or: (value: any) => {
+    return `(${value.join(' OR ')})`;
   },
   $lt: (key: string, value: any) => {
     return `${key}:[* TO ${value}}`;
@@ -47,7 +47,7 @@ export const operators: any = {
     return `!${key}:*${value}*`;
   },
   $eq: (key: string, value: any) => {
-    return Array.isArray(value) ? `(${value.join(' AND ')})` : `${key}:${value}`;
+    return `${key}:${value}`;
   },
   $ne: (key: string, value: any) => {
     return `!${key}:${value}`;
@@ -56,7 +56,7 @@ export const operators: any = {
     return `(${value.join(' AND ')})`;
   },
   $nin (key: string, value: any) {
-    return Array.isArray(value) ? `!${key}:(${value.join(' OR ')})` : `!${key}:${value}`;
+    return `!${key}:(${value.join(' OR ')})`;
   },
   $limit (filters: any) {
     return typeof filters.$limit === 'undefined' ?
@@ -87,7 +87,7 @@ export const operators: any = {
   },
   $filter (query: any) {
     if(!query) return {filter: []};
-    return { filter: Array.isArray(query) ? query : [query] };
+    return { filter: query };
   }
 };
 
@@ -139,19 +139,15 @@ function convertOperators (query:any, escapeFn: any, root = ''): any {
     });
   }
 
-  if (!_.isObject(query)) {
-    return query;
-  }
-
   const converted = Object.keys(query).reduce((res: any, prop: any) => {
     const value = query[prop];
     let queryString;
 
     if (prop === '$or') {
       const o = [].concat.apply([], convertOperators(value, escapeFn));
-      queryString = operators.$or(root || prop, o);
+      queryString = operators.$or(o);
     } else if (_has(operators, prop)) {
-      const escapedResult = escapeFn(root || prop, value);
+      const escapedResult = escapeFn(root, value);
       queryString = operators[prop](escapedResult.key, escapedResult.value);
     } else if (typeof prop === 'string') {
       if (!_.isObject(value)) {
@@ -196,7 +192,6 @@ export function patchQuery (toPatch: any, patch: any, idField: any) {
   Object.keys(patch).forEach(field => {
     if (field !== idField) {
       const value = patch[field];
-      console.log(value, field)
       if (_.isObject(value)) {
         if (actions.indexOf(Object.keys(value)[0]) === -1) {
           atomicFieldUpdate[field] = { add: value };
@@ -211,6 +206,6 @@ export function patchQuery (toPatch: any, patch: any, idField: any) {
   const patchData = toPatch.map((current:any) => {
     return Object.assign({ [idField]: current[idField] }, atomicFieldUpdate);
   });
-  console.log({ ids, patchData })
+
   return { ids, patchData };
 }
