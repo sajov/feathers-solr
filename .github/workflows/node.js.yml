@@ -20,6 +20,10 @@ jobs:
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
+    - uses: actions/setup-java@v2
+      with:
+        distribution: 'temurin' # See 'Supported distributions' for available options
+        java-version: '17'
     - name: Run build script
       run: ./.github/scripts/build.sh
       shell: bash
