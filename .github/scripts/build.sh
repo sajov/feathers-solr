@@ -4,7 +4,7 @@ FILE="solr-7.7.2.tgz"
 URL="https://archive.apache.org/dist/lucene/solr/7.7.2/"
 
 
-wget $URL$FILE
+wget $URL$FILE --quiet
 tar xfz solr-7.7.2.tgz
 cd solr-7.7.2
 
