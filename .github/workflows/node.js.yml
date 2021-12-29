@@ -35,7 +35,6 @@ jobs:
         cache: 'npm'
     - run: npm ci
     - run: npm run compile --if-present
-    - run: npm run test --if-present
     - run: npm install -g istanbul
     - run: npm install --save-dev mocha chai
     - run: npm install -g coveralls
