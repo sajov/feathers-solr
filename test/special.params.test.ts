@@ -215,6 +215,24 @@ describe('special adapter methods', () => {
       //   // assert.strictEqual(response.age, 99);
       // });
 
+      // it('`grouped` response', async () => {
+      //   await app.service('search').create(mockData);
+      //   const response: any = await app.service('search').find({
+      //     query: {
+      //       $params: {
+      //         'group': true,
+      //         'group.field': 'city',
+      //         'group.format': 'simple'
+      //       }
+      //     }
+      //   });
+
+      //   console.log(response)
+
+      //   assert.strictEqual(Array.isArray(response.data), true);
+      //   assert.strictEqual(response.data.length, 3);
+      // });
+
       it('`delete` by id', async () => {
         const response  = await Service._remove(mockData[0].id);
         assert.strictEqual(response.id, mockData[0].id);
