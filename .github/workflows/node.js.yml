@@ -25,7 +25,7 @@ jobs:
         distribution: 'temurin' # See 'Supported distributions' for available options
         java-version: '17'
     - name: Run build script
-      run: ./.github/scripts/build.sh
+      run: .github/scripts/build.sh
       shell: bash
     - uses: actions/checkout@v2
     - name: Use Node.js ${{ matrix.node-version }}
