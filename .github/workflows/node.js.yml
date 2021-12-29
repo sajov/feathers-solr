@@ -16,6 +16,8 @@ jobs:
     services:
       solr:
         image: solr:7.7.3
+        args:
+          - 'e schemaless'
         ports:
           - 8983:8983
         options: >-
@@ -30,10 +32,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/setup-java@v2
-      with:
-        distribution: 'temurin' # See 'Supported distributions' for available options
-        java-version: '17'
+    - run: |
+        echo "Checking on the solr instance"
+        curl http://localhost:8983/solr/schemaless
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v2
       with:
