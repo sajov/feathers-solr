@@ -16,8 +16,10 @@ jobs:
     services:
       solr:
         image: solr:7.7.3
+        ports:
+          - 8983:8983
         options: >-
-          --health-cmd "curl --fail http://localhost:8983/solr/cores || exit 1"
+          --health-cmd "curl --fail http://localhost:8983/solr/admin/cores || exit 1"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
