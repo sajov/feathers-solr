@@ -19,7 +19,7 @@ jobs:
         ports:
           - 8983:8983
         options: >-
-          --e schemaless
+          -e schemaless
           --health-cmd "curl --fail http://localhost:8983/solr/admin/cores || exit 1"
           --health-interval 10s
           --health-timeout 5s
