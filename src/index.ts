@@ -87,7 +87,7 @@ export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> imple
 
     if(response.response.numFound === 0) throw new NotFound(`No record found for id '${id}'`);
 
-    const result = responseGet(response, false);
+    const result = responseGet(response);
 
     return  result;
   }
@@ -135,11 +135,11 @@ export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> imple
   }
 
   async _remove (id: NullableId, params: AdapterParams = {}): Promise<T|T[]> {
-    const { query } = this.filterQuery(params);
-
     const sel = select(params, this.id);
 
     const dataToDelete = await this._getOrFind(id, params);
+
+    const { query } = this.filterQuery(params);
 
     const queryToDelete = deleteQuery(id, query, this.options.escapeFn);
 
