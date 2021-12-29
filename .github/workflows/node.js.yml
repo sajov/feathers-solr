@@ -13,7 +13,14 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-
+    services:
+      solr:
+        image: solr:7.7.3
+        options: >-
+          --health-cmd "curl --fail http://localhost:8983/solr/cores || exit 1"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     strategy:
       matrix:
         node-version: [16.x]
@@ -25,9 +32,6 @@ jobs:
       with:
         distribution: 'temurin' # See 'Supported distributions' for available options
         java-version: '17'
-    - name: Run build script
-      run: ./.github/scripts/build.sh
-      shell: bash
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v2
       with:
