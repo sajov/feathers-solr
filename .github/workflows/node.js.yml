@@ -33,7 +33,7 @@ jobs:
     - uses: actions/checkout@v2
     - run: |
         echo "Checking on the solr instance"
-        curl http://localhost:8983/solr/schemaless
+        curl http://localhost:8983/solr/admin/cores
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v2
       with:
