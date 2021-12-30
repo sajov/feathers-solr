@@ -25,7 +25,7 @@ jobs:
           --health-retries 5
 
     steps:
-    - name: "Set some postgres settings"
+    - name: "Create Solr Core gettingstarted"
       run: |
           docker exec ${{ job.services.solr.id }} sh -c 'solr create_core -c gettingstarted'
     - run: |
