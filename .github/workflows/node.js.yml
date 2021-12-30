@@ -20,7 +20,7 @@ jobs:
           - 8983:8983
         options: >-
           --user=solr solr -c gettingstarted
-          --health-cmd "curl --fail http://localhost:8983/solr/admin/cores || exit 1"
+          --health-cmd "curl --fail http://0.0.0.0:8983/solr/admin/cores || exit 1"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -33,7 +33,7 @@ jobs:
     - uses: actions/checkout@v2
     - run: |
         echo "Checking on the solr instance"
-        curl http://localhost:8983/solr/admin/cores
+        curl http://0.0.0.0:8983/solr/admin/cores
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v2
       with:
