@@ -42,5 +42,5 @@ jobs:
     - run: npm install -g istanbul
     - run: npm install --save-dev mocha chai
     - run: npm install -g coveralls
-    - run: node_modules/.bin/istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --colors --reporter spec test/
+    - run: npm run test
 
