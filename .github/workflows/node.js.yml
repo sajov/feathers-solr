@@ -31,7 +31,7 @@ jobs:
     steps:
     - name: "Set some postgres settings"
       run: |
-          docker exec ${{ job.services.solr.id }} sh -c 'solr create_core gettingstarted'
+          docker exec ${{ job.services.solr.id }} sh -c 'solr create_core -c gettingstarted'
 #    - name: Create Solr container
 #      run: |
 #         docker run -d -v "$PWD/solrdata:/var/solr" -p 8983:8983 solr solr-precreate gettingstarted
