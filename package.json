@@ -1,7 +1,7 @@
 {
   "name": "feathers-solr",
   "description": "A service plugin for Solr",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "keywords": [
     "feathers",
     "feathers-plugin",
@@ -25,6 +25,7 @@
   },
   "main": "lib/",
   "scripts": {
+    "prepare": "npm run build",
     "prepublish": "npm run build",
     "lint": "eslint src/**/*.ts test/**/*.ts --fix",
     "build": "shx rm -rf lib/ && tsc",
