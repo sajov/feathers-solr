@@ -30,8 +30,7 @@
     "compile": "shx rm -rf lib/ && tsc",
     "test": "npm run compile && npm run mocha",
     "mocha": "mocha --config .mocharc.json --recursive test/**.test.ts test/**/*.test.ts",
-    "coverage": "nyc npm run test",
-    "travis": "node_modules/.bin/istanbul cover node_modules/mocha/bin/_mocha --report lcovonly -- --colors --reporter spec test/"
+    "coverage": "nyc npm run test"
   },
   "directories": {
     "lib": "lib"
