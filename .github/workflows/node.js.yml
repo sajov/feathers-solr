@@ -23,7 +23,7 @@ jobs:
         ports:
           - 8983:8983
         options: >-
-          --user=solr solr-precreate gettingstarted
+          solr-precreate gettingstarted
           --health-cmd "curl --fail http://0.0.0.0:8983/solr/admin/cores || exit 1"
           --health-interval 10s
           --health-timeout 5s
