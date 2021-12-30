@@ -1,11 +1,8 @@
-# This workflow will do a clean install of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
-# test
-name: Node.js CI
+name: Feathers-Solr CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, v3.0.0-pre.1 ]
   pull_request:
     branches: [ master ]
 
@@ -15,7 +12,6 @@ jobs:
     strategy:
       matrix:
         node-version: [16.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     services:
       solr:
@@ -32,9 +28,6 @@ jobs:
     - name: "Set some postgres settings"
       run: |
           docker exec ${{ job.services.solr.id }} sh -c 'solr create_core -c gettingstarted'
-#    - name: Create Solr container
-#      run: |
-#         docker run -d -v "$PWD/solrdata:/var/solr" -p 8983:8983 solr solr-precreate gettingstarted
     - run: |
         echo "Checking on the solr instance"
         curl http://localhost:8983/solr/admin/cores
