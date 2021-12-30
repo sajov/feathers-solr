@@ -25,9 +25,9 @@ jobs:
           --health-retries 5
 
     steps:
-    - name: "Create Solr Core gettingstarted"
-      run: |
-          docker exec ${{ job.services.solr.id }} sh -c 'solr create_core -c gettingstarted'
+#    - name: "Create Solr Core gettingstarted"
+#      run: |
+#          docker exec ${{ job.services.solr.id }} sh -c 'solr create_core -c gettingstarted'
     - run: |
         echo "Checking on the solr instance"
         curl http://localhost:8983/solr/admin/cores
