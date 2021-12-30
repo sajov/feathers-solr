@@ -22,7 +22,7 @@ jobs:
          docker run -d -v "$PWD/solrdata:/var/solr" -p 8983:8983 --name my_solr solr solr-precreate gettingstarted
     - run: |
         echo "Checking on the solr instance"
-        curl http://localhost:8983/solr/admin/cores
+        curl http://my_solr:8983/solr/admin/cores
     - uses: actions/checkout@v2
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v2
