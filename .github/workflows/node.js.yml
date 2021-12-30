@@ -12,6 +12,16 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    services:
+      solr:
+        image: solr:8
+        ports:
+        - "8983:8983"
+        volumes:
+          - data:/var/solr
+        command:
+          - solr-precreate
+          - gettingstarted
     strategy:
       matrix:
         node-version: [16.x]
