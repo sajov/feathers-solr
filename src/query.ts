@@ -195,6 +195,8 @@ export function patchQuery (toPatch: any, patch: any, idField: any) {
       if (_.isObject(value)) {
         if (actions.indexOf(Object.keys(value)[0]) === -1) {
           atomicFieldUpdate[field] = { add: value };
+        } else {
+          atomicFieldUpdate[field] = value;
         }
       } else if (Array.isArray(value)) {
         atomicFieldUpdate[field] = { add: value };
@@ -203,8 +205,9 @@ export function patchQuery (toPatch: any, patch: any, idField: any) {
       }
     }
   });
-  const patchData = toPatch.map((current:any) => {
-    return Object.assign({ [idField]: current[idField] }, atomicFieldUpdate);
+
+  const patchData = toPatch.map((current: any) => {
+    return {...{[idField]: current[idField]}, ...atomicFieldUpdate}
   });
 
   return { ids, patchData };

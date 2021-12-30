@@ -207,31 +207,49 @@ describe('special adapter methods', () => {
         assert.strictEqual(response.age, 12);
       });
 
-      // it('`patch` atomic', async () => {
-      //   await Service._create(mockData);
-      //   await Service._patch('1', {age: {set: 99}});
-      //   const response = await Service.get('1');
-      //   console.log(response)
-      //   // assert.strictEqual(response.age, 99);
-      // });
+      it('`patch` atomic', async () => {
+        await Service._create(mockData);
+        await Service._patch('1', {age: {set: 99}});
+        const response = await Service.get('1');
+        assert.strictEqual(response.age, 99);
+      });
 
-      // it('`grouped` response', async () => {
-      //   await app.service('search').create(mockData);
-      //   const response: any = await app.service('search').find({
-      //     query: {
-      //       $params: {
-      //         'group': true,
-      //         'group.field': 'city',
-      //         'group.format': 'simple'
-      //       }
-      //     }
-      //   });
+      it('`grouped` response', async () => {
+        await app.service('search').create(mockData);
+        const response: any = await app.service('search').find({
+          query: {
+            $params: {
+              'group': true,
+              'group.field': 'city'
+            }
+          }
+        });
 
-      //   console.log(response)
+        assert.strictEqual(typeof response.QTime, 'number');
+        assert.strictEqual(response.total, 3);
+        assert.strictEqual(response.skip, 0);
+        assert.strictEqual(Array.isArray(response.data), true);
+        assert.strictEqual(response.data.length, 3);
+      });
 
-      //   assert.strictEqual(Array.isArray(response.data), true);
-      //   assert.strictEqual(response.data.length, 3);
-      // });
+      it('`grouped` response simple format', async () => {
+        await app.service('search').create(mockData);
+        const response: any = await app.service('search').find({
+          query: {
+            $params: {
+              'group': true,
+              'group.field': 'city',
+              'group.format': 'simple'
+            }
+          }
+        });
+
+        assert.strictEqual(typeof response.QTime, 'number');
+        assert.strictEqual(response.total, 3);
+        assert.strictEqual(response.skip, 0);
+        assert.strictEqual(Array.isArray(response.data), true);
+        assert.strictEqual(response.data.length, 3);
+      });
 
       it('`delete` by id', async () => {
         const response  = await Service._remove(mockData[0].id);
