@@ -40,4 +40,8 @@ jobs:
     - run: npm ci
     - run: npm run compile --if-present
     - run: npm run coverage
+    - name: Publish to coveralls.io
+      uses: coverallsapp/github-action@v1.1.2
+      with:
+        github-token: ${{ github.token }}
 
