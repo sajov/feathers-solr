@@ -133,11 +133,7 @@ export function jsonQuery (id: NullableId, filters: any, query: Query, paginate:
 
 function convertOperators (query:any, escapeFn: any, root = ''): any {
 
-  if (Array.isArray(query)) {
-    return query.map(q => {
-      return convertOperators(q, escapeFn);
-    });
-  }
+  if (Array.isArray(query)) return query.map(q => convertOperators(q, escapeFn));
 
   const converted = Object.keys(query).reduce((res: any, prop: any) => {
     const value = query[prop];

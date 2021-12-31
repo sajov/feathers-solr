@@ -6,7 +6,8 @@ import { feathers } from '@feathersjs/feathers';
 
 const options = {
   host: 'http://localhost:8983/solr',
-  core: 'test'
+  core: 'test',
+  createUUID: true
 }
 
 const Client = solrClient(options.host);
@@ -87,6 +88,20 @@ describe('additional adapter tests', () => {
       assert.strictEqual(Array.isArray(response.docs), true);
     })
   });
+
+  // describe('options', () => {
+  //   it('`createUUID`', async () => {
+  //     await Service.create(mockData.map((d:any) => {
+  //       delete d.id;
+  //       return d;
+  //     }));
+  //     const result = await Service._find({});
+  //     assert.strictEqual(typeof result.total, 3);
+  //     assert.strictEqual(typeof result.data[0].id, 'string');
+  //     assert.strictEqual(typeof result.data[1].id, 'string');
+  //     assert.strictEqual(typeof result.data[2].id, 'string');
+  //   })
+  // })
 
   describe('methods', () => {
 
