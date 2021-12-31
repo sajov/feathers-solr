@@ -17,12 +17,6 @@ $ npm install feathers-solr --save
 
 > **Important:** `feathers-solr` implements the [Feathers Common database adapter API](https://docs.feathersjs.com/api/databases/common.html) and [querying syntax](https://docs.feathersjs.com/api/databases/querying.html).
 
-Install a supported HTTP Client [Fetch](https://github.com/bitinn/node-fetch), [Undici](https://github.com/mcollina/undici) or [use a different HTTP Client](https://github.com/sajov/feathers-solr/tree/master#use-a-different-http-client).
-
-```
-$ npm install node-fetch --save
-```
-
 
 ## API
 
@@ -31,15 +25,23 @@ $ npm install node-fetch --save
 Returns a new service instance initialized with the given options.
 
 ```js
-const service = require('feathers-solr');
+import { solrClient } from '../src/client';
+const Client = solrClient(options.host);
 
-app.use('/gettingstarted', service({ id, Model, events, paginate }));
+const options = {
+  host: 'http://localhost:8983/solr',
+  core: 'gettingstarted'
+}
+
+const Client = solrClient(options.host);
+const app = feathers();
+app.use('/gettingstarted', Solr({ ...options, multi: false }));
+
 ```
 
 **Options:**
 
-- `Model` (**required**) - HTTP Client (fetch, undici, or your custom).
-- `name` - The name of the Solr Core / Colelction.
+- `core` - The name of the Solr Core / Colelction.
 - `defaultParams` - This params added to all Solr request.
 - `id` (_optional_, default: `'id'`) - The name of the id field property.
 - `commitStrategy` - (_optional_, default: `{ softCommit: true, commitWithin: 10000, overwrite: true }`) - Define how Index changes are stored [Solr Commits](https://lucene.apache.org/solr/guide/7_7/updatehandlers-in-solrconfig.html#UpdateHandlersinSolrConfig-commitandsoftCommit).
