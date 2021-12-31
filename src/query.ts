@@ -187,19 +187,12 @@ export function patchQuery (toPatch: any, patch: any, idField: any) {
 
   const ids = toPatch.map((current: any) => current[idField]);
   const atomicFieldUpdate: any = {};
-  const actions = ['set', 'add', 'remove', 'removeregex', 'inc'];
 
   Object.keys(patch).forEach(field => {
     if (field !== idField) {
       const value = patch[field];
       if (_.isObject(value)) {
-        if (actions.indexOf(Object.keys(value)[0]) === -1) {
-          atomicFieldUpdate[field] = { add: value };
-        } else {
-          atomicFieldUpdate[field] = value;
-        }
-      } else if (Array.isArray(value)) {
-        atomicFieldUpdate[field] = { add: value };
+        atomicFieldUpdate[field] = value;
       } else {
         atomicFieldUpdate[field] = value === '' ? { remove: value } : { set: value };
       }

@@ -88,7 +88,7 @@ const testSuite = adapterTests([
   'params.adapter + multi'
 ]);
 
-describe('feathers adapter tests', () => {
+describe('common adapter tests', () => {
   beforeEach(done => setTimeout(done, 100));
 
   before(async () => {
