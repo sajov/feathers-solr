@@ -32,7 +32,7 @@ export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> imple
   queryHandler: string;
   updateHandler: string;
 
-  constructor(options: Partial<SolrServiceOptions>) {
+  constructor (options: Partial<SolrServiceOptions>) {
     const { host, core, requestOptions, ...opts } = options;
 
     super(_.extend({
@@ -56,7 +56,7 @@ export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> imple
     this.client = solrClient(host, requestOptions)
   }
 
-  _getOrFind(id: Id, params: AdapterParams) {
+  _getOrFind (id: Id, params: AdapterParams) {
     if (id !== null) return this._get(id, params);
 
     return this._find(
@@ -66,7 +66,7 @@ export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> imple
     );
   }
 
-  async _get(id: Id, params: AdapterParams = {}) {
+  async _get (id: Id, params: AdapterParams = {}) {
     const { query, filters, paginate } = this.filterQuery(params);
 
     const solrQuery = jsonQuery(id, filters, query, paginate, this.options.escapeFn);
@@ -80,7 +80,7 @@ export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> imple
     return result;
   }
 
-  async _find(params: AdapterParams = {}) {
+  async _find (params: AdapterParams = {}) {
     const { query, filters, paginate } = this.filterQuery(params);
 
     const solrQuery = jsonQuery(null, filters, query, paginate, this.options.escapeFn);
@@ -92,7 +92,7 @@ export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> imple
     return result;
   }
 
-  async _create(data: Partial<T> | Partial<T>[], params: AdapterParams = {}): Promise<T | T[]> {
+  async _create (data: Partial<T> | Partial<T>[], params: AdapterParams = {}): Promise<T | T[]> {
     const sel = select(params, this.id);
 
     if (_.isEmpty(data)) throw new MethodNotAllowed('Data is empty');
@@ -108,7 +108,7 @@ export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> imple
     return sel(Array.isArray(data) ? dataToCreate : dataToCreate[0]);
   }
 
-  async _update(id: NullableId, data: T, params: AdapterParams = {}) {
+  async _update (id: NullableId, data: T, params: AdapterParams = {}) {
     const sel = select(params, this.id);
 
     await this._getOrFind(id, params);
@@ -120,7 +120,7 @@ export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> imple
     return this._getOrFind(id, params).then(res => sel(_.omit(res, 'score', '_version_')));
   }
 
-  async _patch(id: NullableId, data: Partial<T>, params: AdapterParams = {}) {
+  async _patch (id: NullableId, data: Partial<T>, params: AdapterParams = {}) {
     const sel = select(params, this.id);
 
     const dataToPatch = await this._getOrFind(id, params);
@@ -136,7 +136,7 @@ export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> imple
     return sel(ids.length === 1 ? result[0] : result)
   }
 
-  async _remove(id: NullableId, params: AdapterParams = {}): Promise<T | T[]> {
+  async _remove (id: NullableId, params: AdapterParams = {}): Promise<T | T[]> {
     const sel = select(params, this.id);
 
     const dataToDelete = await this._getOrFind(id, params);
@@ -151,6 +151,6 @@ export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> imple
   }
 }
 
-export default function service(options: Partial<SolrServiceOptions>) {
+export default function service (options: Partial<SolrServiceOptions>) {
   return new Service(options);
 }

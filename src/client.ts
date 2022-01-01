@@ -27,12 +27,10 @@ const request = async (options: RequestOptions) => {
   const { url, data, requestOptions } = options;
   const { method } = requestOptions;
   const { protocol } = new URL(url);
-  // console.log(options)
   const transport = protocol === 'https:' ? https : http;
 
   return new Promise((resolve, reject) => {
-    const request = transport.request(
-      url,
+    const request = transport.request(url,
       {
         ...requestOptions,
         headers: method === 'GET' ?
@@ -47,13 +45,15 @@ const request = async (options: RequestOptions) => {
         const body: any = [];
         res.on('data', (chunk: any) => body.push(chunk));
         res.on('end', () => resolve(JSON.parse(Buffer.concat(body).toString('utf8'))));
-      })
+      }
+    );
 
     request.on('error', (err: Error) => reject(err));
+
     request.on('timeout', () => {
       request.destroy();
       reject(new Error('timed out'));
-    })
+    });
 
     if (data) request.write(data);
 

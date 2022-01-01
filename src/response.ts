@@ -38,7 +38,7 @@ interface SolrResponse {
 //   data: any [];
 // }
 
-export function responseFind(filters: any, paginate: any, res: Partial<SolrResponse>) {
+export function responseFind (filters: any, paginate: any, res: Partial<SolrResponse>) {
   const { responseHeader, response, grouped, ...additionalResponse } = res;
 
   if (!paginate.max && !paginate.default) {
@@ -58,7 +58,7 @@ export function responseFind(filters: any, paginate: any, res: Partial<SolrRespo
 
 }
 
-export function responseGet(res: Partial<SolrResponse>) {
+export function responseGet (res: Partial<SolrResponse>) {
   const { response } = res;
   return response.docs[0];
 }
