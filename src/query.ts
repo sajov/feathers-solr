@@ -145,7 +145,7 @@ function convertOperators(query: any, escapeFn: any, root = ''): any {
     } else if (_has(operators, prop)) {
       const escapedResult = escapeFn(root, value);
       queryString = operators[prop](escapedResult.key, escapedResult.value);
-    } else if (typeof prop === 'string') {
+    } else {
       if (!_.isObject(value)) {
         const escapedResult = escapeFn(root || prop, value);
         queryString = operators.$eq(escapedResult.key, escapedResult.value);

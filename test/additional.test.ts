@@ -28,9 +28,10 @@ app.use('/search', Solr({
 app.use('/app', Solr({
   events,
   ...options,
-  paginate: { max: 10, default: 5 },
+  paginate: { max: 10 },
   whitelist: ['$search', '$params', '$facet', '$filter', '$like', '$nlike'],
   multi: true,
+  createUUID: false,
   queryHandler: '/app',
   updateHandler: '/update/json',
 }));
@@ -250,6 +251,13 @@ describe('additional adapter tests', () => {
     it('`patch`', async () => {
       await Service._create(mockData);
       const response = await Service._patch('1', { age: 12 });
+      assert.strictEqual(response.age, 12);
+    });
+
+    it('`patch` one by query', async () => {
+      await Service._create(mockData);
+      const response = await app.service('search').patch(null, { age: 12 }, { query: { age: 10 } });
+      //@ts-ignore
       assert.strictEqual(response.age, 12);
     });
 
@@ -486,11 +494,11 @@ describe('additional adapter tests', () => {
 
     before(async () => {
       await Client.post(`/${options.core}/config`, { data: addConfig });
-      await Service._create(mockData);
+      await app.service('app').create(mockData);
     });
 
     after(async () => {
-      await Service._remove(null, {});
+      await app.service('app').remove(null, {});
       await Client.post(`/${options.core}/config`, { data: deleteConfig });
     });
 
