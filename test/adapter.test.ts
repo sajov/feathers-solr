@@ -12,7 +12,7 @@ const options = {
 
 const Client = solrClient(options.host);
 
-const events = [ 'testing' ];
+const events = ['testing'];
 
 const app = feathers()
 app.use('/people', Solr({ events, ...options, multi: false }));
@@ -92,21 +92,25 @@ describe('common adapter tests', () => {
   beforeEach(done => setTimeout(done, 100));
 
   before(async () => {
-    await Client.get('/admin/cores', {params: {
-      ...createCore,
-      name: options.core
-    }});
-    await Client.post(`/${options.core}/schema`, {data: addSchema});
-    await  Solr({ ...options, multi: true })._remove(null, {});
+    await Client.get('/admin/cores', {
+      params: {
+        ...createCore,
+        name: options.core
+      }
+    });
+    await Client.post(`/${options.core}/schema`, { data: addSchema });
+    await Solr({ ...options, multi: true })._remove(null, {});
   });
 
   after(async () => {
-    await  Solr({ ...options, multi: true })._remove(null, {});
-    await Client.post(`/${options.core}/schema`, {data: deleteSchema});
-    await Client.get('/admin/cores', {params: {
-      ...deleteCore,
-      core: options.core
-    }});
+    await Solr({ ...options, multi: true })._remove(null, {});
+    await Client.post(`/${options.core}/schema`, { data: deleteSchema });
+    await Client.get('/admin/cores', {
+      params: {
+        ...deleteCore,
+        core: options.core
+      }
+    });
   });
 
   testSuite(app, errors, 'people');

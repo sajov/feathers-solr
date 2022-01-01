@@ -36,18 +36,18 @@ const request = async (options: RequestOptions) => {
       {
         ...requestOptions,
         headers: method === 'GET' ?
-        { 'Content-Type': 'application/json'} :
-        { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(data)}
+          { 'Content-Type': 'application/json' } :
+          { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(data) }
       },
       (res: any) => {
         if (res.statusCode < 200 || res.statusCode > 299) {
-        return reject(new Error(`HTTP status code ${res.statusCode}`));
-      }
+          return reject(new Error(`HTTP status code ${res.statusCode}`));
+        }
 
-      const body: any = [];
-      res.on('data', (chunk: any) => body.push(chunk));
-      res.on('end', () => resolve(JSON.parse(Buffer.concat(body).toString('utf8'))));
-    })
+        const body: any = [];
+        res.on('data', (chunk: any) => body.push(chunk));
+        res.on('end', () => resolve(JSON.parse(Buffer.concat(body).toString('utf8'))));
+      })
 
     request.on('error', (err: Error) => reject(err));
     request.on('timeout', () => {
@@ -55,7 +55,7 @@ const request = async (options: RequestOptions) => {
       reject(new Error('timed out'));
     })
 
-    if(data) request.write(data);
+    if (data) request.write(data);
 
     request.end();
   })
@@ -63,10 +63,10 @@ const request = async (options: RequestOptions) => {
 
 export const solrClient = (hostname: string, requestOptions: http.RequestOptions = {}): SolrClient => {
 
-  const getUrl = (resource:string, params: any) => {
+  const getUrl = (resource: string, params: any) => {
     const url = `${hostname}${resource}`;
-    if(!params || !Object.keys(params).length) return url;
-    return  `${url}?${new URLSearchParams(params)}`;
+    if (!params || !Object.keys(params).length) return url;
+    return `${url}?${new URLSearchParams(params)}`;
   }
 
   return {

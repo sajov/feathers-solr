@@ -236,7 +236,7 @@ describe('additional adapter tests', () => {
         },
         {
           query: {
-            $select: ['name','test_s']
+            $select: ['name', 'test_s']
           }
         }
       );
@@ -282,7 +282,7 @@ describe('additional adapter tests', () => {
       const service = app.service('search');
       await service.create(mockData);
       await service.patch(null, { test_s: { set: 'test' } });
-      const response = await Service._find({query: {test_s: 'test'}});
+      const response = await Service._find({ query: { test_s: 'test' } });
       //@ts-ignore
       assert.strictEqual(response.length, 3);
     });
@@ -291,8 +291,8 @@ describe('additional adapter tests', () => {
     it('`patch` by query', async () => {
       const service = app.service('search');
       await service.create(mockData);
-      await service.patch(null, { test_s: { set: 'test' } }, {query: {id: {$in:[1,2]}}});
-      const response = await Service.find({query: {test_s: 'test'}});
+      await service.patch(null, { test_s: { set: 'test' } }, { query: { id: { $in: [1, 2] } } });
+      const response = await Service.find({ query: { test_s: 'test' } });
       //@ts-ignore
       assert.strictEqual(response.length, 2);
     });
@@ -300,8 +300,7 @@ describe('additional adapter tests', () => {
     it('`patch` select', async () => {
       const service = app.service('search');
       await service.create(mockData);
-      const response = await service.patch(null, { test_s: { set: 'test' } }, {query: {$select: ['name','test_s']}});
-      console.log(response)
+      const response = await service.patch(null, { test_s: { set: 'test' } }, { query: { $select: ['name', 'test_s'] } });
       assert.strictEqual(typeof response[0].city, 'undefined');
       assert.strictEqual(typeof response[0].age, 'undefined');
       assert.strictEqual(typeof response[0].name, 'string');
@@ -486,8 +485,8 @@ describe('additional adapter tests', () => {
   describe('application', () => {
 
     before(async () => {
-        await Client.post(`/${options.core}/config`, { data: addConfig });
-        await Service._create(mockData);
+      await Client.post(`/${options.core}/config`, { data: addConfig });
+      await Service._create(mockData);
     });
 
     after(async () => {
@@ -513,7 +512,7 @@ describe('additional adapter tests', () => {
         $params: {
           'suggest.q': 's',
           'suggest.cfq': 'city',
-          'suggest.build':'true'
+          'suggest.build': 'true'
         },
         $facet: {
           age_min: 'min(age)',

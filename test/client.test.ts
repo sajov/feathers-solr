@@ -80,10 +80,10 @@ describe('client', () => {
   });
 
   describe('simulate errors', () => {
-    it('timeout', async function() {
+    it('timeout', async function () {
       this.timeout(10000);
       try {
-        const Client = solrClient('http://localhost:3033',{timeout: 2000});
+        const Client = solrClient('http://localhost:3033', { timeout: 2000 });
         await Client.get('/timeouts', {})
 
       } catch (error) {
@@ -91,10 +91,10 @@ describe('client', () => {
       }
     });
 
-    it('errors', async function() {
+    it('errors', async function () {
       this.timeout(10000);
       try {
-        const Client = solrClient('http://localhost:3033',{timeout: 2000});
+        const Client = solrClient('http://localhost:3033', { timeout: 2000 });
         await Client.get('/errors', {})
 
       } catch (error) {

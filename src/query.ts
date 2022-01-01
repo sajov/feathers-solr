@@ -4,12 +4,12 @@ import { _ } from '@feathersjs/commons';
 
 export const addIds = (data: any[], key: string) => {
   return data.map((d: any) => {
-    if(!d[key]) d[key] = randomUUID();
+    if (!d[key]) d[key] = randomUUID();
     return d;
   })
 }
 
-const _has = (obj: any, key: string) =>  {
+const _has = (obj: any, key: string) => {
   return key.split('.').every(function (x) {
     if (typeof obj !== 'object' || obj === null || !(x in obj)) {
       return false;
@@ -55,18 +55,18 @@ export const operators: any = {
   $and: (value: any) => {
     return `(${value.join(' AND ')})`;
   },
-  $nin (key: string, value: any) {
+  $nin(key: string, value: any) {
     return `!${key}:(${value.join(' OR ')})`;
   },
-  $limit (filters: any) {
+  $limit(filters: any) {
     return typeof filters.$limit === 'undefined' ?
-                  {} :
-                  { limit: parseInt(filters.$limit, 10) };
+      {} :
+      { limit: parseInt(filters.$limit, 10) };
   },
-  $skip (filters: any) {
+  $skip(filters: any) {
     return filters.$skip ? { offset: filters.$skip } : {};
   },
-  $sort (filters: any) {
+  $sort(filters: any) {
     const result: any = {};
     if (filters.$sort) {
       const sort: any = [];
@@ -77,22 +77,22 @@ export const operators: any = {
     }
     return result;
   },
-  $params (query: any) {
+  $params(query: any) {
     if (query.$params) return { params: query.$params };
     return {};
   },
-  $facet (query: any) {
+  $facet(query: any) {
     if (query.$facet) return { facet: query.$facet };
     return {};
   },
-  $filter (query: any) {
-    if(!query) return {filter: []};
+  $filter(query: any) {
+    if (!query) return { filter: [] };
     return { filter: query };
   }
 };
 
-export function jsonQuery (id: NullableId, filters: any, query: Query, paginate: any, escapeFn: any) {
-  const { $filter, ...adapterQuery} = query;
+export function jsonQuery(id: NullableId, filters: any, query: Query, paginate: any, escapeFn: any) {
+  const { $filter, ...adapterQuery } = query;
   const result = Object.assign(
     {
       query: (adapterQuery.$search || '*:*').toString(),
@@ -131,7 +131,7 @@ export function jsonQuery (id: NullableId, filters: any, query: Query, paginate:
   return result;
 }
 
-function convertOperators (query:any, escapeFn: any, root = ''): any {
+function convertOperators(query: any, escapeFn: any, root = ''): any {
 
   if (Array.isArray(query)) return query.map(q => convertOperators(q, escapeFn));
 
@@ -168,7 +168,7 @@ function convertOperators (query:any, escapeFn: any, root = ''): any {
   return converted;
 }
 
-export function deleteQuery (id: any, params: any, escapeFn: any) {
+export function deleteQuery(id: any, params: any, escapeFn: any) {
   if (id) {
     return { delete: id };
   } else if (_.isObject(params) && !_.isEmpty(params)) {
@@ -178,7 +178,7 @@ export function deleteQuery (id: any, params: any, escapeFn: any) {
   return { delete: { query: '*:*' } };
 }
 
-export function patchQuery (toPatch: any, patch: any, idField: any) {
+export function patchQuery(toPatch: any, patch: any, idField: any) {
   toPatch = Array.isArray(toPatch) ? toPatch : [toPatch];
 
   const ids = toPatch.map((current: any) => current[idField]);
@@ -196,7 +196,7 @@ export function patchQuery (toPatch: any, patch: any, idField: any) {
   });
 
   const patchData = toPatch.map((current: any) => {
-    return {...{[idField]: current[idField]}, ...atomicFieldUpdate}
+    return { ...{ [idField]: current[idField] }, ...atomicFieldUpdate }
   });
 
   return { ids, patchData };

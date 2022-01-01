@@ -9,7 +9,7 @@ interface ResposeHeader {
 interface Response {
   numFound: number;
   start: number;
-  docs: any [];
+  docs: any[];
 }
 
 interface Groupes {
@@ -21,7 +21,7 @@ interface ResponseGrouped {
   matches: number;
   ngroups?: number;
   doclist?: Response;
-  groups?: Groupes [];
+  groups?: Groupes[];
 }
 
 interface SolrResponse {
@@ -38,8 +38,8 @@ interface SolrResponse {
 //   data: any [];
 // }
 
-export function responseFind (filters: any, paginate: any, res: Partial<SolrResponse>) {
-  const { responseHeader, response, grouped,  ...additionalResponse } = res;
+export function responseFind(filters: any, paginate: any, res: Partial<SolrResponse>) {
+  const { responseHeader, response, grouped, ...additionalResponse } = res;
 
   if (!paginate.max && !paginate.default) {
     return response.docs;
@@ -58,7 +58,7 @@ export function responseFind (filters: any, paginate: any, res: Partial<SolrResp
 
 }
 
-export function responseGet (res: Partial<SolrResponse>) {
-  const  { response } = res;
+export function responseGet(res: Partial<SolrResponse>) {
+  const { response } = res;
   return response.docs[0];
 }
