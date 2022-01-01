@@ -2,7 +2,7 @@ import adapterTests from '@feathersjs/adapter-tests';
 import errors from '@feathersjs/errors';
 import Solr from '../src';
 import { solrClient } from '../src/client';
-import { createCore, deleteCore, addSchema,deleteSchema } from './seed';
+import { createCore, deleteCore, addSchema, deleteSchema } from './seed';
 import { feathers } from '@feathersjs/feathers';
 
 const options = {

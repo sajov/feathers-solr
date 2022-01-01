@@ -27,7 +27,7 @@ const request = async (options: RequestOptions) => {
   const { url, data, requestOptions } = options;
   const { method } = requestOptions;
   const { protocol } = new URL(url);
-
+  // console.log(options)
   const transport = protocol === 'https:' ? https : http;
 
   return new Promise((resolve, reject) => {

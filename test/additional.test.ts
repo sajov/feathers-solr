@@ -1,7 +1,7 @@
 import assert from 'assert';
 import Solr from '../src';
 import { solrClient } from '../src/client';
-import { createCore, deleteCore, addSchema, mockData, deleteSchema } from './seed';
+import { createCore, deleteCore, addSchema, mockData, deleteSchema, addConfig, deleteConfig } from './seed';
 import { feathers } from '@feathersjs/feathers';
 
 const options = {
@@ -24,6 +24,15 @@ app.use('/search', Solr({
   paginate: { max: 10, default: 5 },
   whitelist: ['$search', '$params', '$facet', '$filter', '$like', '$nlike'],
   multi: true
+}));
+app.use('/app', Solr({
+  events,
+  ...options,
+  paginate: { max: 10, default: 5 },
+  whitelist: ['$search', '$params', '$facet', '$filter', '$like', '$nlike'],
+  multi: true,
+  queryHandler: '/app',
+  updateHandler: '/update/json',
 }));
 
 describe('additional adapter tests', () => {
@@ -458,6 +467,60 @@ describe('additional adapter tests', () => {
       assert.strictEqual(response.data[0].name, 'Alice');
       assert.strictEqual(response.data[0].city, 'London');
       assert.strictEqual(response.data[0].age, 19);
+    });
+  });
+
+  describe('application', () => {
+
+    before(async () => {
+        await Client.post(`/${options.core}/config`, { data: addConfig });
+        await Service._create(mockData);
+    });
+
+    after(async () => {
+      await Service._remove(null, {});
+      await Client.post(`/${options.core}/config`, { data: deleteConfig });
+    });
+
+    it('has searchComponent `spellcheck`', async () => {
+      const response = await Client.get(`/${options.core}/config`, {});
+      assert.strictEqual(response.config.searchComponent.spellcheck.name, 'spellcheck');
+    });
+
+    it('has requesthandler `app`', async () => {
+      const response = await Client.get(`/${options.core}/config`, {});
+      console.log(response.config.requestHandler['/app'])
+      console.log(typeof response.config.requestHandler['/app'])
+      assert.strictEqual(typeof response.config.requestHandler['/app'], 'object');
+    });
+
+    it('`app`', async () => {
+      const query = {
+        $search: 'san mike',
+        $params: {
+          'suggest.q': 's',
+          'suggest.cfq': 'city',
+          'suggest.build':'true'
+        },
+        $facet: {
+          age_min: 'min(age)',
+          age_max: 'max(age)',
+          age_ranges: {
+            type: 'range',
+            field: 'age',
+            start: 0,
+            end: 100,
+            gap: 50
+          }
+        }
+      };
+      const response = await app.service('app').find({ query });
+      console.log(response)
+      console.log(response.suggest.suggest)
+      assert.strictEqual(typeof response.facets, 'object');
+      assert.strictEqual(typeof response.terms, 'object');
+      assert.strictEqual(typeof response.spellcheck, 'object');
+      assert.strictEqual(typeof response.suggest, 'object');
     });
   });
 });

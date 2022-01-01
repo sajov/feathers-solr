@@ -17,7 +17,8 @@ export interface SolrServiceOptions extends ServiceOptions {
     commitWithin?: number;
     overwrite?: boolean
   };
-  suggestHandler?: string;
+  queryHandler?: string;
+  updateHandler?: string;
   defaultSearch?: any;
   defaultParams?: any;
   createUUID?: boolean;
@@ -41,41 +42,28 @@ export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> imple
         commitWithin: 10000,
         overwrite: true
       },
-      suggestHandler: 'suggest',
+      queryHandler: '/query',
+      updateHandler: '/update/json',
       defaultSearch: {},
       defaultParams: { echoParams: 'none' },
       createUUID: true,
       escapeFn
     }, opts));
 
-    this.queryHandler = `/${core}/query`;
-
-    this.updateHandler = `/${core}/update/json`;
+    this.queryHandler = `/${core}${this.options.queryHandler}`;
+    this.updateHandler = `/${core}${this.options.updateHandler}`;
 
     this.client = solrClient(host, requestOptions)
   }
 
   _getOrFind (id: Id, params: AdapterParams) {
-    if (id === null) {
-      return this._find(
-        Object.assign(params, {
-          paginate: false
-        })
-      );
-    }
-    return this._get(id, params);
-  }
+    if (id !== null) return this._get(id, params);
 
-  async _find (params: AdapterParams = {}) {
-    const { query, filters, paginate } = this.filterQuery(params);
-
-    const solrQuery = jsonQuery(null, filters, query, paginate, this.options.escapeFn);
-
-    const response = await this.client.post(this.queryHandler, {data: solrQuery})
-
-    const result = responseFind(filters, paginate, response);
-
-    return result;
+    return this._find(
+      Object.assign(params, {
+        paginate: false
+      })
+    );
   }
 
   async _get (id: Id, params: AdapterParams = {}) {
@@ -90,6 +78,18 @@ export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> imple
     const result = responseGet(response);
 
     return  result;
+  }
+
+  async _find (params: AdapterParams = {}) {
+    const { query, filters, paginate } = this.filterQuery(params);
+
+    const solrQuery = jsonQuery(null, filters, query, paginate, this.options.escapeFn);
+
+    const response = await this.client.post(this.queryHandler, {data: solrQuery})
+
+    const result = responseFind(filters, paginate, response);
+
+    return result;
   }
 
   async _create (data: Partial<T> | Partial<T>[], params: AdapterParams = {}): Promise<T | T[]> {
