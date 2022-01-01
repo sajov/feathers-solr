@@ -39,6 +39,7 @@ app.use('/gettingstarted', Solr({ ...options, multi: false }));
 
 ```
 
+
 **Options:**
 
 - `core` - The name of the Solr Core / Colelction.
