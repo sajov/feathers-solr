@@ -515,8 +515,8 @@ describe('additional adapter tests', () => {
         }
       };
       const response = await app.service('app').find({ query });
-      console.log(response)
-      console.log(response.suggest.suggest)
+      // console.log(response)
+      // console.log(response.suggest.suggest)
       assert.strictEqual(typeof response.facets, 'object');
       assert.strictEqual(typeof response.terms, 'object');
       assert.strictEqual(typeof response.spellcheck, 'object');
