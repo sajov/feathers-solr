@@ -227,6 +227,26 @@ describe('additional adapter tests', () => {
       }
     });
 
+    it('`update` select', async () => {
+      await Service._create(mockData);
+      const response = await Service._update(mockData[0].id,
+        {
+          ...mockData[0],
+          test_s: 'test'
+        },
+        {
+          query: {
+            $select: ['name','test_s']
+          }
+        }
+      );
+
+      assert.strictEqual(typeof response.city, 'undefined');
+      assert.strictEqual(typeof response.age, 'undefined');
+      assert.strictEqual(typeof response.name, 'string');
+      assert.strictEqual(typeof response.test_s, 'string');
+    });
+
     it('`patch`', async () => {
       await Service._create(mockData);
       const response = await Service._patch('1', { age: 12 });
@@ -256,6 +276,36 @@ describe('additional adapter tests', () => {
       await Service._patch('1', { test_s: '' });
       const response2 = await Service.get('1');
       assert.strictEqual(response2.test_s, 'test');
+    });
+
+    it('`patch` all', async () => {
+      const service = app.service('search');
+      await service.create(mockData);
+      await service.patch(null, { test_s: { set: 'test' } });
+      const response = await Service._find({query: {test_s: 'test'}});
+      //@ts-ignore
+      assert.strictEqual(response.length, 3);
+    });
+
+
+    it('`patch` by query', async () => {
+      const service = app.service('search');
+      await service.create(mockData);
+      await service.patch(null, { test_s: { set: 'test' } }, {query: {id: {$in:[1,2]}}});
+      const response = await Service.find({query: {test_s: 'test'}});
+      //@ts-ignore
+      assert.strictEqual(response.length, 2);
+    });
+
+    it('`patch` select', async () => {
+      const service = app.service('search');
+      await service.create(mockData);
+      const response = await service.patch(null, { test_s: { set: 'test' } }, {query: {$select: ['name','test_s']}});
+      console.log(response)
+      assert.strictEqual(typeof response[0].city, 'undefined');
+      assert.strictEqual(typeof response[0].age, 'undefined');
+      assert.strictEqual(typeof response[0].name, 'string');
+      assert.strictEqual(typeof response[0].test_s, 'string');
     });
 
 
@@ -334,62 +384,25 @@ describe('additional adapter tests', () => {
       assert.strictEqual(test.length, 0);
     });
 
-    // it('patch record with prop also in query', async () => {
-    //   app.use('/people', Solr({ multi: true, ...options }));
-    //   const people = app.service('people');
-    //   await people.create([{
-    //     name: 'cat',
-    //     age: 30
-    //   }, {
-    //     name: 'dog',
-    //     age: 10
-    //   }]);
+    it('does not modify the original data', async () => {
+      const people = app.service('people');
+      const data = {
+        name: 'Delete tester',
+        age: 33
+      };
+      const person = await people.create(data);
 
-    // const [updated] = await people.patch(null, { age: 40 }, { query: { age: 30 } });
-    //  await people.find({ query: { age: 30 } });
+      delete person.age;
 
-    //   assert.strictEqual(updated.age, 40);
+      const otherPerson = await people.get(person.id);
 
-    //   await people.remove(null, {});
-    // });
+      assert.strictEqual(otherPerson.age, 33);
 
-    // it('does not modify the original data', async () => {
-    //   const people = app.service('people');
-
-    //   const person = await people.create({
-    //     name: 'Delete tester',
-    //     age: 33
-    //   });
-
-    //   delete person.age;
-
-    //   const otherPerson = await people.get(person.id);
-
-    //   assert.strictEqual(otherPerson.age, 33);
-
-    //   await people.remove(person.id);
-    // });
-
-    //   it('does not $select the id', async () => {
-    //     const people = app.service('people');
-    //     const person = await people.create({
-    //       name: 'Tester'
-    //     });
-    //     const results = await people.find({
-    //       query: {
-    //         name: 'Tester',
-    //         $select: ['name']
-    //       }
-    //     });
-
-    //     assert.deepStrictEqual(results[0], { name: 'Tester' },
-    //       'deepEquals the same'
-    //     );
-
-    //     await people.remove(person.id);
-    //   });
+      await people.remove(person.id);
+    });
 
   });
+
   describe('aditional params', () => {
 
     before(async () => {
@@ -489,8 +502,8 @@ describe('additional adapter tests', () => {
 
     it('has requesthandler `app`', async () => {
       const response = await Client.get(`/${options.core}/config`, {});
-      console.log(response.config.requestHandler['/app'])
-      console.log(typeof response.config.requestHandler['/app'])
+      // console.log(response.config.requestHandler['/app'])
+      // console.log(typeof response.config.requestHandler['/app'])
       assert.strictEqual(typeof response.config.requestHandler['/app'], 'object');
     });
 

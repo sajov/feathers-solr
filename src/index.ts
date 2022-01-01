@@ -131,6 +131,8 @@ export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> imple
 
     const result: any = await this._find({ query: { id: { $in: ids } } });
 
+    if(result.data) return sel(ids.length === 1 ? result.data[0] : result.data)
+
     return sel(ids.length === 1 ? result[0] : result)
   }
 
