@@ -97,9 +97,9 @@ app.listen(port, () => {
 });
 ```
 
-Install Solr
+Start Solr
 
-```
+```bash
  bin/solr start -e gettingstarted
 ```
 
