@@ -52,7 +52,6 @@ export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> imple
 
     this.queryHandler = `/${core}${this.options.queryHandler}`;
     this.updateHandler = `/${core}${this.options.updateHandler}`;
-
     this.client = solrClient(host, requestOptions)
   }
 
