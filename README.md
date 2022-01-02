@@ -5,7 +5,7 @@
 [![Known Vulnerabilities](https://snyk.io/test/npm/feathers-solr/badge.svg)](https://snyk.io/test/npm/feathers-solr)
 [![Download Status](https://img.shields.io/npm/dm/feathers-solr.svg?style=flat-square)](https://www.npmjs.com/package/feathers-solr)
 
-A [Feathers](https://feathersjs.com/) Solr Adapter. Tested with Solr 8.x require >= Solr 5.x.
+A [Feathers](https://feathersjs.com/) Solr Adapter. Tested with Solr 8.x, require at least >= Solr 5.x.
 
 
 ## Installation
@@ -15,7 +15,7 @@ $ npm install feathers-solr --save
 ```
 
 > __Important:__ `@feathersjs/memory` implements the [Feathers Common database adapter API](https://docs.feathersjs.com/api/databases/common.html) and [querying syntax](https://docs.feathersjs.com/api/databases/querying.html).
-> It use the native node `http` and `https` module.
+> It use sthe native node `http` and `https` module.
 
 ## API
 
@@ -31,8 +31,8 @@ app.use('/search', service({host, core}));
 
 **Options:**
 
-- `host` - The name of the Solr Core / Colelction.
-- `core` - The name of the Solr Core / Colelction.
+- `host` - The name of the Solr core / collection.
+- `core` - The name of the Solr core / collection.
 - `events` (*optional*) - A list of [custom service events](https://docs.feathersjs.com/api/events.html#custom-events) sent by this service
 - `paginate` (*optional*) - A [pagination object](https://docs.feathersjs.com/api/databases/common.html#pagination) containing a `default` and `max` page size
 - `whitelist` (*DEPRECATED*) - renamed to `allow`
@@ -109,9 +109,9 @@ Run the example with `node app` and go to [localhost:3030/gettingstarted](http:/
 
 Feathers Docs [Database Querying](https://docs.feathersjs.com/api/databases/querying.html)
 
-## Supportet Solr specific queries
+## Supported Solr specific queries
 
-This Adapter use the Solr [JSON Request API](https://lucene.apache.org/solr/guide/7_7/json-request-api.html).
+This Adapter uses the Solr [JSON Request API](https://lucene.apache.org/solr/guide/7_7/json-request-api.html).
 
 The following params passed in raw to Solr. This gives the **full** access to the Solr [JSON Request API](https://lucene.apache.org/solr/guide/7_7/json-request-api.html).
 
@@ -120,7 +120,7 @@ The following params passed in raw to Solr. This gives the **full** access to th
 - \$facet (alias to facet)
 - \$filter (alias to filter)
 
-To avoid full query (read) access, just whitelist only `$search` and add your query startegy into a Hook.
+To avoid full query (read) access, just whitelist only `$search` and add your query strategy into a Hook.
 
 ### \$search
 
@@ -163,7 +163,7 @@ const response = await service.find({
 
 ### \$facet
 
-A alias to Solr param `facet`
+An alias to Solr param `facet`
 
 - [Solr Facet Functions and Analytics](http://yonik.com/solr-facet-functions/)
 - [Multi Select Faceting](http://yonik.com/multi-select-faceting/)
@@ -236,7 +236,7 @@ query:{
 
 ### \$params
 
-An alias to Solr param `params`. Allows you to access all solr query (read) features like:
+An alias to Solr param `params`. Allows you to access all Solr query (read) features like:
 
 - [The Extended DisMax (eDismax) Query Parser](https://lucene.apache.org/solr/guide/7_7/the-extended-dismax-query-parser.html)
 - [Facet & Analytics Module](https://lucene.apache.org/solr/guide/7_7/json-facet-api.html)
@@ -339,7 +339,7 @@ const response = await service.find({
       d: 50,
       distanceUnits: 'kilometers',
       sort: 'geodist() asc'
-    }
+   }
   },
   paginate: { max: 10, default: 3 }
 });
@@ -358,7 +358,7 @@ All service methods provide the `multi` options.
 ### Service.create
 
 The `options.commitStrategy.override` is true in default. This allow to override an existing `id` by `service.create`.
-Add the field `_version_` to the `$select` params will return the document content with it's version. Create with an existing `id` and `_version_` for [optimistic concurrency](https://lucene.apache.org/solr/guide/6_6/updating-parts-of-documents.html#UpdatingPartsofDocuments-OptimisticConcurrency)
+Add the field `_version_` to the `$select` params will return the document content with its version. Create with an existing `id` and `_version_` for [optimistic concurrency](https://lucene.apache.org/solr/guide/6_6/updating-parts-of-documents.html#UpdatingPartsofDocuments-OptimisticConcurrency)
 
 ### Service.update
 
@@ -416,7 +416,7 @@ await client.post('/update/json', { data: [] })
 
 ## Maniging Solr
 
-using the `solrClient` for raw communication with solr.
+Using the `solrClient` for raw communication with solr.
 See adapter [test]('//test/../../test/additional.test.ts') how to:
 -  `create` and `delete` a Solr core
 -  `add`, 'update' and `delete` the Solr core schema
