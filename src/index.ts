@@ -23,7 +23,7 @@ export interface SolrServiceOptions extends ServiceOptions {
   defaultParams?: any;
   createUUID?: boolean;
   escapeFn?: (key: string, value: any) => { key: string, value: any };
-  requestOptions: { timeout: 10 };
+  requestOptions?: { timeout: 10 };
 }
 
 export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> implements InternalServiceMethods<T> {
