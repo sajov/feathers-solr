@@ -6,7 +6,10 @@
     "feathers",
     "feathers-plugin",
     "solr",
-    "solr-client"
+    "solr-client",
+    "search",
+    "database",
+    "api"
   ],
   "license": "MIT",
   "repository": {
