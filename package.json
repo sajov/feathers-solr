@@ -30,7 +30,8 @@
   "scripts": {
     "prepare": "npm run build",
     "prepublish": "npm run build",
-    "lint": "eslint src/**/*.ts test/**/*.ts --fix",
+    "lint": "eslint src/**/*.ts --fix",
+    "lint:test": "eslint test/**/*.ts --fix",
     "build": "shx rm -rf lib/ && tsc",
     "test": "npm run build && npm run mocha",
     "mocha": "mocha --config .mocharc.json --recursive test/**.test.ts test/**/*.test.ts",

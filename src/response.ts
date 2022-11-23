@@ -1,4 +1,4 @@
-interface ResposeHeader {
+interface ResponseHeader {
   status: number;
   QTime: number;
   params?: {
@@ -25,7 +25,7 @@ interface ResponseGrouped {
 }
 
 interface SolrResponse {
-  responseHeader: ResposeHeader;
+  responseHeader: ResponseHeader;
   response?: Response;
   grouped?: Record<string, ResponseGrouped>;
 }
