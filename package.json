@@ -72,7 +72,7 @@
     "istanbul": "^1.1.0-alpha.1",
     "lodash": "^4.17.21",
     "minimist": ">=1.2.5",
-    "mocha": "^8.4.0",
+    "mocha": "^10.1.0",
     "node-fetch": "^2.6.1",
     "semistandard": "^16.0.0",
     "ssri": "^8.0.1",
