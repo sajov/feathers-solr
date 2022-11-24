@@ -67,23 +67,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 // Enable REST services
 app.configure(express.rest());
-// Enable REST services
-app.configure(socketio());
-// Create an in-memory Feathers service with a default page size of 2 items
-// and a maximum size of 4
-app.use('/messages', memory({
-  paginate: {
-    default: 2,
-    max: 4
-  }
-}));
 // Set up default error handler
 app.use(express.errorHandler());
 
-// Create a dummy Message
+// Create a service
 const options = {
   host: 'http://localhost:8983/solr',
-  core: 'gettingstarted'
+  core: 'gettingstarted',
   paginate: {},
   events: ['testing']
 };
