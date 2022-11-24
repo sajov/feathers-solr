@@ -57,7 +57,7 @@ const feathers = require('@feathersjs/feathers');
 const express = require('@feathersjs/express');
 const socketio = require('@feathersjs/socketio');
 
-const Service = require('feathers-solr');
+const Service = require('feathers-solr').Service;
 
 // Create an Express compatible Feathers application instance.
 const app = express(feathers());
