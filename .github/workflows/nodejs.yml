@@ -21,7 +21,6 @@ jobs:
     strategy:
       matrix:
         node-version: [18.x]
-        # database: ['sqlite', 'postgres']
 
     steps:
       - uses: actions/checkout@v2
@@ -31,5 +30,6 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - run: npm install
       - run: npm test
+      - run: npm run coverage
         env:
           CI: true
