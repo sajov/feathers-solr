@@ -184,4 +184,59 @@ describe('Query parser', () => {
     assert.deepStrictEqual(filter, ['!title:*hello*']);
   })
 
+  it('complex', async () => {
+    const query = jsonQuery(null, {
+      $sort: {
+        price: -1,
+        createdAt: 1,
+      },
+      $limit: 3,
+      $select: ['a','b','price','createdAt'],
+      $skip: 5,
+    }, {
+      $search: 'hello world',
+      review: {
+        $like: 'cool'
+      },
+      id:  {
+        $nin: [2, 5]
+      },
+      region: {
+        $nlike: 'north'
+      },
+      price:  {
+        $gte: 2,
+        $lte: 10
+      },
+      age:  {
+        $gt: 100,
+        $lt: 10
+      },
+      channel: {
+        $ne: 2
+      },
+      $or: [
+        { 1: { $in: ['a', 'f'] } },
+        { 2: { $in: ['b', 'c'] } }
+      ]
+    }, {}, escapeFn)
+
+    assert.deepStrictEqual(query, {
+      query: 'hello world',
+      fields: 'a,b,price,createdAt,id',
+      limit: 3,
+      offset: 5,
+      sort: 'price desc,createdAt asc',
+      filter: [
+        'review:*cool*',
+        '!id:(2 OR 5)',
+        '!region:*north*',
+        '(price:[2 TO *] AND price:[* TO 10])',
+        '(age:{100 TO *] AND age:[* TO 10})',
+        '!channel:2',
+        '(1:(a OR f) OR 2:(b OR c))'
+      ]
+    });
+  })
+
 });
