@@ -9,8 +9,8 @@ import {
   select
 } from '@feathersjs/adapter-commons'
 import { solrClient } from './client';
-import { responseFind, responseGet } from './response';
-import { addIds, jsonQuery, patchQuery, deleteQuery } from './query';
+import { responseFind, responseGet } from './responseHandler';
+import { addIds, jsonQuery, patchQuery, deleteQuery } from './queryHandler';
 import type { NullableId, Id, Paginated } from '@feathersjs/feathers'
 import type { SolrAdapterOptions, SolrAdapterParams } from './declarations';
 import type { SolrClient } from './client';

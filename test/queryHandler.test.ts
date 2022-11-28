@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { jsonQuery } from '../src/query';
+import { jsonQuery } from '../src/queryHandler';
 
 const escapeFn = (key: string, value: any) => {
   return { key, value }
