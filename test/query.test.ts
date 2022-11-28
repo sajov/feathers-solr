@@ -141,6 +141,31 @@ describe('query', () => {
     assert.deepStrictEqual(filter, ['(1:(a OR f) OR 2:(b OR c))']);
   })
 
+  it('$or nested', async () => {
+    const query = jsonQuery(null, {$sort: { name: 1 }}, {
+      $or: [
+        { name: 'Doug' },
+        {
+          age: {
+            $gte: 18,
+            $lt: 25
+          }
+        }
+      ],
+
+    }, {}, escapeFn)
+    assert.deepStrictEqual(query, {
+         fields: '*,score',
+         filter: [
+           '(name:Doug OR (age:[18 TO *] AND age:[* TO 25}))'
+         ],
+         limit: 10,
+         offset: 0,
+         query: '*:*',
+         sort: 'name asc'
+    });
+  })
+
   it('$search', async () => {
     const { query } = jsonQuery(null, {}, {
       $search: 'hello world'
