@@ -5,8 +5,8 @@ import type {
 } from '@feathersjs/adapter-commons';
 import {
   AdapterBase,
-  select,
-  filterQuery
+  filterQuery,
+  select
 } from '@feathersjs/adapter-commons'
 import { solrClient } from './client';
 import { responseFind, responseGet } from './response';
@@ -56,6 +56,19 @@ export class SolrAdapter<
     this.client = solrClient(host, requestOptions)
   }
 
+  // filterQuery(id: NullableId, params: P) {
+  //   const { $select, $sort, $limit, $skip, ...query } = (params.query || {}) as AdapterQuery;
+
+  //   if (id !== null) {
+  //       query[this.id] = id;
+  //   }
+
+  //   return {
+  //     operators: { $select, $sort, $limit, $skip },
+  //     query
+  //   }
+  // }
+
   async $getOrFind(id: NullableId | NullableId, params: P) {
     if (id !== null) return this.$get(id, params);
 
@@ -66,7 +79,7 @@ export class SolrAdapter<
 
   async $get(id: Id | NullableId, params: P = {} as P): Promise<T> {
     const { paginate } = this.getOptions(params)
-    const { query, filters } = filterQuery(params.query);
+    const { query, filters } = filterQuery(params.query, this.options);
 
     const solrQuery = jsonQuery(id, filters, query, paginate, this.options.escapeFn);
 
@@ -84,7 +97,7 @@ export class SolrAdapter<
   async $find(params?: P): Promise<Paginated<T> | T[]>
   async $find(params: P = {} as P): Promise<Paginated<T> | T[]> {
     const { paginate } = this.getOptions(params)
-    const { query, filters } = filterQuery(params.query);
+    const { query, filters } = filterQuery(params.query, this.options);
 
     const solrQuery = jsonQuery(null, filters, query, paginate, this.options.escapeFn);
 
@@ -162,7 +175,7 @@ export class SolrAdapter<
 
     const dataToDelete = await this.$getOrFind(id, params);
 
-    const { query } = filterQuery(params.query);
+    const { query } = filterQuery(params.query, this.options);
 
     const queryToDelete = deleteQuery(id, query, this.options.escapeFn);
 

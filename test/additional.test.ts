@@ -7,7 +7,15 @@ import { feathers } from '@feathersjs/feathers';
 const options = {
   host: 'http://localhost:8983/solr',
   core: 'test',
-  createUUID: true
+  createUUID: true,
+  filters: {
+    $params: (value: any) => value,
+    $facet: (value: any) => value,
+    $filter: (value: any) => value,
+    $search: (value: any) => value
+  },
+  operators: ['$like','$nlike'],
+  multi: true
 }
 
 const Client = solrClient(options.host);
@@ -22,14 +30,26 @@ app.use('/search', Solr({
   events,
   ...options,
   paginate: { max: 10, default: 5 },
-  operators: ['$search', '$params', '$facet', '$filter', '$like', '$nlike'],
+  filters: {
+    $params: (value: any) => value,
+    $facet: (value: any) => value,
+    $filter: (value: any) => value,
+    $search: (value: any) => value
+  },
+  operators: ['$like','$nlike'],
   multi: true
 }));
 app.use('/app', Solr({
   events,
   ...options,
   paginate: { max: 10 },
-  operators: ['$search', '$params', '$facet', '$filter', '$like', '$nlike'],
+  filters: {
+    $params: (value: any) => value,
+    $facet: (value: any) => value,
+    $filter: (value: any) => value,
+    $search: (value: any) => value
+  },
+  operators: ['$like','$nlike'],
   multi: true,
   createUUID: false,
   queryHandler: '/app',

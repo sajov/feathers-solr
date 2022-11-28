@@ -23,11 +23,24 @@ const options = {
   // A list of all methods this service exposes externally
   methods: ['find', 'get', 'create', 'update', 'patch', 'remove'],
   // You can add additional custom events to be sent to clients here
-  events: []
+  events: [],
+  // filters: [
+  //   '$params',
+  //   '$facet',
+  //   '$filter',
+  //   '$search'
+  // ],
+  operators: [],
+  filters: {
+    $params: true,
+    $facet: true,
+    $filter: true,
+    $search: true,
+  },
 };
 
 const setupService = (app) => {
-  app.use('/products', new Service(options));
+  app.use('/products', Service(options));
 }
 
 app.configure(setupService)
@@ -53,12 +66,9 @@ app.configure(setupService)
 //     $select:['id']
 //   }
 // }).then(res => console.log({find: res})).catch(err => console.log(err))
-app.service('products').get('KJHKJT786786hhhg',{query: {$select:['id']}}).then(res => console.log({get: res})).catch(err => console.log(err))
+app.service('products').find({query: {$search: 'hlll', $select:['id']}}).then(res => console.log({get: res})).catch(err => console.log(err))
 
-app.use('/test', async (req,res,next) => {
-  const result = await app.service('products').find({});
-  res.send(result);
-})
+
 // Start the server.
 const port = 3030;
 

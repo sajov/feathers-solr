@@ -7,7 +7,10 @@ import { feathers } from '@feathersjs/feathers';
 
 const options = {
   host: 'http://localhost:8983/solr',
-  core: 'test'
+  core: 'test',
+  filters: {
+    $search: (value: any) => value
+  }
 }
 
 const Client = solrClient(options.host);

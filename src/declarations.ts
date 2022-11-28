@@ -14,8 +14,8 @@ export interface SolrAdapterOptions extends AdapterServiceOptions {
   defaultSearch?: any;
   defaultParams?: any;
   createUUID?: boolean;
-  escapeFn?: (key: string, value: any) => { key: string, value: any };
   requestOptions?: { timeout: 10 };
+  escapeFn?: (key: string, value: any) => { key: string, value: any };
 }
 
 export interface SolrAdapterParams<Q = AdapterQuery> extends AdapterParams<Q, Partial<SolrAdapterOptions>> {}
