@@ -5,7 +5,7 @@ const escapeFn = (key: string, value: any) => {
   return { key, value }
 }
 
-describe('Query parser', () => {
+describe('query', () => {
 
   it('default `query`', async () => {
     const { query } = jsonQuery(null, {}, {}, {}, escapeFn)

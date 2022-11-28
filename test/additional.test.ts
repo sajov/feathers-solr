@@ -1,5 +1,5 @@
 import assert from 'assert';
-import Solr from '../src';
+import { Solr } from '../src';
 import { solrClient } from '../src/client';
 import { createCore, deleteCore, addSchema, mockData, deleteSchema, addConfig, deleteConfig } from './seed';
 import { feathers } from '@feathersjs/feathers';
@@ -22,14 +22,14 @@ app.use('/search', Solr({
   events,
   ...options,
   paginate: { max: 10, default: 5 },
-  whitelist: ['$search', '$params', '$facet', '$filter', '$like', '$nlike'],
+  operators: ['$search', '$params', '$facet', '$filter', '$like', '$nlike'],
   multi: true
 }));
 app.use('/app', Solr({
   events,
   ...options,
   paginate: { max: 10 },
-  whitelist: ['$search', '$params', '$facet', '$filter', '$like', '$nlike'],
+  operators: ['$search', '$params', '$facet', '$filter', '$like', '$nlike'],
   multi: true,
   createUUID: false,
   queryHandler: '/app',
@@ -222,6 +222,7 @@ describe('additional adapter tests', () => {
 
     it('`update` with empty object', async () => {
       try {
+        //@ts-ignore
         await Service._update(null, { id: 'aaa' });
       } catch (error: any) {
         assert.strictEqual(typeof error.NotFound, 'undefined', 'has NotFound');
@@ -509,8 +510,6 @@ describe('additional adapter tests', () => {
 
     it('has requesthandler `app`', async () => {
       const response = await Client.get(`/${options.core}/config`, {});
-      // console.log(response.config.requestHandler['/app'])
-      // console.log(typeof response.config.requestHandler['/app'])
       assert.strictEqual(typeof response.config.requestHandler['/app'], 'object');
     });
 
@@ -535,8 +534,6 @@ describe('additional adapter tests', () => {
         }
       };
       const response = await app.service('app').find({ query });
-      // console.log(response)
-      // console.log(response.suggest.suggest)
       assert.strictEqual(typeof response.facets, 'object');
       assert.strictEqual(typeof response.terms, 'object');
       assert.strictEqual(typeof response.spellcheck, 'object');

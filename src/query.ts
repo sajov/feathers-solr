@@ -1,4 +1,4 @@
-import { NullableId, Query } from '@feathersjs/feathers';
+import type { NullableId, Query } from '@feathersjs/feathers';
 import { randomUUID } from 'crypto';
 import { _ } from '@feathersjs/commons';
 

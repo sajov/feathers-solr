@@ -1,155 +1,56 @@
-import { NotFound, MethodNotAllowed } from '@feathersjs/errors';
-import { NullableId, Id } from '@feathersjs/feathers';
-import { _ } from '@feathersjs/commons';
-import { AdapterService, ServiceOptions, InternalServiceMethods, AdapterParams, select } from '@feathersjs/adapter-commons';
-import { solrClient, SolrClient } from './client';
-import { responseFind, responseGet } from './response';
-import { addIds, jsonQuery, patchQuery, deleteQuery } from './query';
-export const escapeFn = (key: string, value: any) => {
-  return { key, value }
-}
+import type { AdapterParams, PaginationOptions } from '@feathersjs/adapter-commons';
+import type { Paginated, ServiceMethods, Id, NullableId, Params } from '@feathersjs/feathers';
+import type { SolrAdapterOptions } from './declarations';
+import { SolrAdapter } from './adapter'
 
-export interface SolrServiceOptions extends ServiceOptions {
-  host: string;
-  core: string;
-  commit?: {
-    softCommit?: boolean;
-    commitWithin?: number;
-    overwrite?: boolean
-  };
-  queryHandler?: string;
-  updateHandler?: string;
-  defaultSearch?: any;
-  defaultParams?: any;
-  createUUID?: boolean;
-  escapeFn?: (key: string, value: any) => { key: string, value: any };
-  requestOptions?: { timeout: 10 };
-}
+export * from './adapter'
 
-export class Service<T = any, D = Partial<T>> extends AdapterService<T, D> implements InternalServiceMethods<T> {
-  options: SolrServiceOptions;
-  client: SolrClient;
-  queryHandler: string;
-  updateHandler: string;
-
-  constructor (options: Partial<SolrServiceOptions>) {
-    const { host, core, requestOptions, ...opts } = options;
-
-    super(_.extend({
-      id: 'id',
-      commit: {
-        softCommit: true,
-        commitWithin: 10000,
-        overwrite: true
-      },
-      queryHandler: '/query',
-      updateHandler: '/update/json',
-      defaultSearch: {},
-      defaultParams: { echoParams: 'none' },
-      createUUID: true,
-      escapeFn
-    }, opts));
-
-    this.queryHandler = `/${core}${this.options.queryHandler}`;
-    this.updateHandler = `/${core}${this.options.updateHandler}`;
-    this.client = solrClient(host, requestOptions)
+export class SolrService<T = any, D = Partial<T>, P extends AdapterParams = AdapterParams>
+  extends SolrAdapter<T, D, P>
+  implements ServiceMethods<T | Paginated<T>, D, P>
+{
+  async find(params?: P & { paginate?: PaginationOptions }): Promise<Paginated<T>>
+  async find(params?: P & { paginate: false }): Promise<T[]>
+  async find(params?: P): Promise<Paginated<T> | T[]>
+  async find (params?: P): Promise<Paginated<T> | T[]> {
+    return this._find(params) as any
   }
 
-  _getOrFind (id: Id, params: AdapterParams) {
-    if (id !== null) return this._get(id, params);
-
-    return this._find(
-      Object.assign(params, {
-        paginate: false
-      })
-    );
+  async get(id: NullableId, params?: P): Promise<T>
+  async get(id: Id, params?: P): Promise<T>
+  async get(id: Id | NullableId, params?: P): Promise<T> {
+    return this._get(id as Id, params)
   }
 
-  async _get (id: Id, params: AdapterParams = {}) {
-    const { query, filters, paginate } = this.filterQuery(params);
-
-    const solrQuery = jsonQuery(id, filters, query, paginate, this.options.escapeFn);
-
-    const response = await this.client.post(this.queryHandler, { data: solrQuery })
-
-    if (response.response.numFound === 0) throw new NotFound(`No record found for id '${id}'`);
-
-    const result = responseGet(response);
-
-    return result;
+  async create(data: D, params?: P): Promise<T>
+  async create(data: D[], params?: P): Promise<T[]>
+  async create(data: D | D[], params?: P): Promise<T | T[]> {
+    return this._create(data, params)
   }
 
-  async _find (params: AdapterParams = {}) {
-    const { query, filters, paginate } = this.filterQuery(params);
-
-    const solrQuery = jsonQuery(null, filters, query, paginate, this.options.escapeFn);
-
-    const response = await this.client.post(this.queryHandler, { data: solrQuery })
-
-    const result = responseFind(filters, paginate, response);
-
-    return result;
+  async update(id: Id, data: D, params?: P): Promise<T>
+  async update(id: NullableId, data: D, params?: P): Promise<T>
+  async update(id: Id | NullableId, data: D, params?: P): Promise<T> {
+    return this._update(id as Id, data, params)
   }
 
-  async _create (data: Partial<T> | Partial<T>[], params: AdapterParams = {}): Promise<T | T[]> {
-    const sel = select(params, this.id);
-
-    if (_.isEmpty(data)) throw new MethodNotAllowed('Data is empty');
-
-    let dataToCreate: any | any[] = Array.isArray(data) ? [...data] : [{ ...data }];
-
-    if (this.options.createUUID) {
-      dataToCreate = addIds(dataToCreate, this.options.id);
-    }
-
-    await this.client.post(this.updateHandler, { data: dataToCreate, params: this.options.commit });
-
-    return sel(Array.isArray(data) ? dataToCreate : dataToCreate[0]);
+  async patch(id: NullableId, data: Partial<D>, params?: P): Promise<T>
+  async patch(id: Id, data: Partial<D>, params?: P): Promise<T>
+  async patch(id: null, data: Partial<D>, params?: P): Promise<T[]>
+  async patch(id: NullableId | NullableId, data: Partial<D>, params?: P): Promise<T | T[]> {
+    return this._patch(id as NullableId, data, params)
   }
 
-  async _update (id: NullableId, data: T, params: AdapterParams = {}) {
-    const sel = select(params, this.id);
-
-    await this._getOrFind(id, params);
-
-    const dataToUpdate: any = id && !Array.isArray(data) ? [{ id, ...data }] : data;
-
-    await this.client.post(this.updateHandler, { data: dataToUpdate, params: this.options.commit });
-
-    return this._getOrFind(id, params).then(res => sel(_.omit(res, 'score', '_version_')));
-  }
-
-  async _patch (id: NullableId, data: Partial<T>, params: AdapterParams = {}) {
-    const sel = select(params, this.id);
-
-    const dataToPatch = await this._getOrFind(id, params);
-
-    const { ids, patchData } = patchQuery(dataToPatch, data, this.id);
-
-    await this.client.post(this.updateHandler, { data: patchData, params: this.options.commit });
-
-    const result: any = await this._find({ query: { id: { $in: ids } } });
-
-    if (result.data) return sel(ids.length === 1 ? result.data[0] : result.data)
-
-    return sel(ids.length === 1 ? result[0] : result)
-  }
-
-  async _remove (id: NullableId, params: AdapterParams = {}): Promise<T | T[]> {
-    const sel = select(params, this.id);
-
-    const dataToDelete = await this._getOrFind(id, params);
-
-    const { query } = this.filterQuery(params);
-
-    const queryToDelete = deleteQuery(id, query, this.options.escapeFn);
-
-    await this.client.post(this.updateHandler, { data: queryToDelete, params: this.options.commit });
-
-    return sel(dataToDelete);
+  async remove(id: Id, params?: P): Promise<T>
+  async remove(id: NullableId, params?: P): Promise<T>
+  async remove(id: null, params?: P): Promise<T[]>
+  async remove(id: NullableId | NullableId, params?: P): Promise<T | T[]> {
+    return this._remove(id as NullableId, params)
   }
 }
 
-export default function service (options: Partial<SolrServiceOptions>) {
-  return new Service(options);
+export function Solr<T = any, D = Partial<T>, P extends Params = Params>(
+  options: Partial<SolrAdapterOptions> = {}
+) {
+  return new SolrService<T, D, P>(options)
 }

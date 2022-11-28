@@ -1,6 +1,6 @@
 //@ts-ignore
 import assert from 'assert';
-import Solr from '../src';
+import { Solr } from '../src';
 import { solrClient } from '../src/client';
 import { createCore, deleteCore, addSchema, deleteSchema } from './seed';
 // import https from 'https';

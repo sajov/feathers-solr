@@ -1,6 +1,6 @@
 import adapterTests from '@feathersjs/adapter-tests';
 import errors from '@feathersjs/errors';
-import Solr from '../src';
+import { Solr } from '../src';
 import { solrClient } from '../src/client';
 import { createCore, deleteCore, addSchema, deleteSchema } from './seed';
 import { feathers } from '@feathersjs/feathers';
@@ -18,41 +18,46 @@ const app = feathers()
 app.use('/people', Solr({ events, ...options, multi: false }));
 
 const testSuite = adapterTests([
+  '.$create',
+  '.$find',
+  '.$get',
+  '.$patch',
+  '.$remove',
+  '.$update',
   '.options',
   '.events',
-  '._get',
-  '._find',
   '._create',
-  '._update',
+  '._find',
+  '._get',
   '._patch',
   '._remove',
+  '._update',
+  'params.adapter + paginate',
+  'params.adapter + multi',
   '.get',
   '.get + $select',
   '.get + id + query',
   '.get + NotFound',
-  '.get + id + query id',
   '.find',
-  '.find + paginate + query',
   '.remove',
   '.remove + $select',
   '.remove + id + query',
   '.remove + multi',
-  '.remove + id + query id',
+  '.remove + multi no pagination',
   '.update',
   '.update + $select',
   '.update + id + query',
-  '.update + NotFound',
-  '.update + id + query id',
   '.update + query + NotFound',
+  '.update + NotFound',
   '.patch',
   '.patch + $select',
   '.patch + id + query',
   '.patch multiple',
+  '.patch multiple no pagination',
   '.patch multi query same',
   '.patch multi query changed',
   '.patch + query + NotFound',
   '.patch + NotFound',
-  '.patch + id + query id',
   '.create',
   '.create + $select',
   '.create multi',
@@ -81,13 +86,15 @@ const testSuite = adapterTests([
   '.find + $gt + $lt + $sort',
   '.find + $or nested + $sort',
   '.find + paginate',
+  '.find + paginate + query',
   '.find + paginate + $limit + $skip',
   '.find + paginate + $limit 0',
   '.find + paginate + params',
-  'params.adapter + paginate',
-  'params.adapter + multi'
+  '.remove + id + query id',
+  '.update + id + query id',
+  '.patch + id + query id',
+  '.get + id + query id'
 ]);
-
 describe('common adapter tests', () => {
   beforeEach(done => setTimeout(done, 100));
 

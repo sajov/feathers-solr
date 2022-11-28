@@ -146,7 +146,7 @@ module.exports = {
       "prefer-arrow/prefer-arrow-functions": "off",
       "prefer-const": "error",
       "radix": "error",
-      "space-before-function-paren": "error",
+      "space-before-function-paren": "always",
       "spaced-comment": [
           "error",
           "always",
