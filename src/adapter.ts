@@ -87,7 +87,7 @@ export class SolrAdapter<
     const { paginate } = this.getOptions(params);
     const {$search, $params, $filter, $facet, ...paramsQuery} = params.query;
     const { query, filters } = filterQuery(paramsQuery, this.options);
-    console.log({query, filters})
+
     const solrQuery = jsonQuery(null, filters, {
       $search,
       $params,
