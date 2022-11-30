@@ -8,12 +8,12 @@ import {
   filterQuery,
   select
 } from '@feathersjs/adapter-commons'
-import { solrClient } from './client';
+import { httpClient } from './httpClient';
 import { responseFind, responseGet } from './responseHandler';
 import { addIds, jsonQuery, patchQuery, deleteQuery } from './queryHandler';
 import type { NullableId, Id, Paginated } from '@feathersjs/feathers'
 import type { SolrAdapterOptions, SolrAdapterParams } from './declarations';
-import type { SolrClient } from './client';
+import type { HttpClient } from './httpClient';
 
 export const escapeFn = (key: string, value: any) => {
   return { key, value }
@@ -29,7 +29,7 @@ export class SolrAdapter<
   P,
   SolrAdapterOptions
 > {
-  client: SolrClient;
+  client: HttpClient;
   queryHandler: string;
   updateHandler: string;
 
@@ -53,7 +53,7 @@ export class SolrAdapter<
 
     this.queryHandler = `/${core}${this.options.queryHandler}`;
     this.updateHandler = `/${core}${this.options.updateHandler}`;
-    this.client = solrClient(host, requestOptions)
+    this.client = httpClient(host, requestOptions)
   }
 
   // filterQuery(id: NullableId, params: P) {
@@ -96,10 +96,16 @@ export class SolrAdapter<
   async $find(params?: P & { paginate: false }): Promise<T[]>
   async $find(params?: P): Promise<Paginated<T> | T[]>
   async $find(params: P = {} as P): Promise<Paginated<T> | T[]> {
-    const { paginate } = this.getOptions(params)
-    const { query, filters } = filterQuery(params.query, this.options);
-
-    const solrQuery = jsonQuery(null, filters, query, paginate, this.options.escapeFn);
+    const { paginate } = this.getOptions(params);
+    const {$search, $params, $filter, $facet, ...paramsQuery} = params.query;
+    const { query, filters } = filterQuery(paramsQuery, this.options);
+    console.log({query, filters})
+    const solrQuery = jsonQuery(null, filters, {
+      $search,
+      $params,
+      $filter,
+      ...query,
+    }, paginate, this.options.escapeFn);
 
     const response = await this.client.post(this.queryHandler, { data: solrQuery })
 

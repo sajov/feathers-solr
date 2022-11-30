@@ -1,6 +1,6 @@
 import assert from 'assert';
 import { Solr } from '../src';
-import { solrClient } from '../src/client';
+import { httpClient } from '../src/httpClient';
 import { createCore, deleteCore, addSchema, mockData, deleteSchema, addConfig, deleteConfig } from './seed';
 import { feathers } from '@feathersjs/feathers';
 
@@ -18,7 +18,7 @@ const options = {
   multi: true
 }
 
-const Client = solrClient(options.host);
+const Client = httpClient(options.host);
 
 const Service = Solr(options);
 

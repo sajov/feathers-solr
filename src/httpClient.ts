@@ -1,7 +1,7 @@
 import http from 'http';
 import https from 'https';
 
-export interface SolrClientOptions {
+export interface httpClientOptions {
   hostname: string;
   username?: string;
   password?: string;
@@ -12,14 +12,14 @@ interface MethodOptions {
   data?: any;
 }
 
-export interface SolrClient {
+export interface HttpClient {
   get: (resource: string, options: MethodOptions) => Promise<any>;
   post: (resource: string, options: MethodOptions) => Promise<any>;
 }
 
 interface RequestOptions {
   url: string;
-  requestOptions: http.RequestOptions;
+  requestOptions: http.RequestOptions | https.RequestOptions;
   data?: any;
 }
 
@@ -61,7 +61,7 @@ const request = async (options: RequestOptions) => {
   })
 }
 
-export const solrClient = (hostname: string, requestOptions: http.RequestOptions = {}): SolrClient => {
+export const httpClient = (hostname: string, requestOptions: http.RequestOptions = {}): HttpClient => {
 
   const getUrl = (resource: string, params: any) => {
     const url = `${hostname}${resource}`;

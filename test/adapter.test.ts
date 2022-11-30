@@ -1,7 +1,7 @@
 import adapterTests from '@feathersjs/adapter-tests';
 import errors from '@feathersjs/errors';
 import { Solr } from '../src';
-import { solrClient } from '../src/client';
+import { httpClient } from '../src/httpClient';
 import { createCore, deleteCore, addSchema, deleteSchema } from './seed';
 import { feathers } from '@feathersjs/feathers';
 
@@ -13,7 +13,7 @@ const options = {
   }
 }
 
-const Client = solrClient(options.host);
+const Client = httpClient(options.host);
 
 const events = ['testing'];
 
