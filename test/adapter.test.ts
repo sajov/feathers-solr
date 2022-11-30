@@ -9,8 +9,12 @@ const options = {
   host: 'http://localhost:8983/solr',
   core: 'test',
   filters: {
+    $params: (value: any) => value,
+    $facet: (value: any) => value,
+    $filter: (value: any) => value,
     $search: (value: any) => value
-  }
+  },
+  operators: ['$like','$nlike'],
 }
 
 const Client = httpClient(options.host);

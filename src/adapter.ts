@@ -56,22 +56,10 @@ export class SolrAdapter<
     this.client = httpClient(host, requestOptions)
   }
 
-  // filterQuery(id: NullableId, params: P) {
-  //   const { $select, $sort, $limit, $skip, ...query } = (params.query || {}) as AdapterQuery;
-
-  //   if (id !== null) {
-  //       query[this.id] = id;
-  //   }
-
-  //   return {
-  //     operators: { $select, $sort, $limit, $skip },
-  //     query
-  //   }
-  // }
-
   async $getOrFind(id: NullableId | NullableId, params: P) {
     if (id !== null) return this.$get(id, params);
 
+    // TODO: handle paginate
     return this.$find(
       Object.assign({ paginate: false }, params)
     );
@@ -104,6 +92,7 @@ export class SolrAdapter<
       $search,
       $params,
       $filter,
+      $facet,
       ...query,
     }, paginate, this.options.escapeFn);
 
@@ -137,7 +126,8 @@ export class SolrAdapter<
   async $patch(id: Id, data: Partial<D>, params?: P): Promise<T>
   async $patch(id: NullableId, data: Partial<D>, _params?: P): Promise<T | T[]>
   async $patch(id: NullableId, data: Partial<D>, params: P = {} as P): Promise<T | T[]> {
-    const { paginate } = this.getOptions(params)
+    const { paginate } = this.getOptions(params);
+
     const sel = select(params, this.id);
 
     const dataToPatch = await this.$getOrFind(id, params);

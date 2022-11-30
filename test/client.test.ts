@@ -1,7 +1,7 @@
 //@ts-ignore
 import assert from 'assert';
 import { Solr } from '../src';
-import { solrClient } from '../src/client';
+import { httpClient } from '../src/httpClient';
 import { createCore, deleteCore, addSchema, deleteSchema } from './seed';
 // import https from 'https';
 import http from 'http';
@@ -34,7 +34,7 @@ const options = {
   host: 'http://localhost:8983/solr',
   core: 'test'
 }
-const Client = solrClient(options.host);
+const Client = httpClient(options.host);
 
 describe('client', () => {
   let server: any = null;
@@ -71,7 +71,7 @@ describe('client', () => {
 
   describe('https', () => {
     it('HTTP', async () => {
-      const Client = solrClient('https://jsonplaceholder.typicode.com');
+      const Client = httpClient('https://jsonplaceholder.typicode.com');
       assert.strictEqual(typeof Client.get, 'function');
       assert.strictEqual(typeof Client.post, 'function');
       const response = await Client.get('/todos', {});
@@ -83,7 +83,7 @@ describe('client', () => {
     it('timeout', async function () {
       this.timeout(10000);
       try {
-        const Client = solrClient('http://localhost:3033', { timeout: 2000 });
+        const Client = httpClient('http://localhost:3033', { timeout: 2000 });
         await Client.get('/timeouts', {})
 
       } catch (error) {
@@ -94,7 +94,7 @@ describe('client', () => {
     it('errors', async function () {
       this.timeout(10000);
       try {
-        const Client = solrClient('http://localhost:3033', { timeout: 2000 });
+        const Client = httpClient('http://localhost:3033', { timeout: 2000 });
         await Client.get('/errors', {})
 
       } catch (error) {
