@@ -17,26 +17,22 @@ app.use(express.errorHandler());
 // Create a service
 const options = {
   host: 'http://localhost:8983/solr',
-  core: 'gettingstarted',
-  paginate: {},
+  core: 'techproducts',
+  paginate: {
+     default: 3
+  },
   events: ['testing'],
   // A list of all methods this service exposes externally
   methods: ['find', 'get', 'create', 'update', 'patch', 'remove'],
   // You can add additional custom events to be sent to clients here
   events: [],
-  // filters: [
-  //   '$params',
-  //   '$facet',
-  //   '$filter',
-  //   '$search'
-  // ],
-  operators: [],
   filters: {
-    $params: true,
-    $facet: true,
-    $filter: true,
-    $search: true,
+    '$params': (value) => value,
+    '$facet': (value) => value,
+    '$filter': (value) => value,
+    '$search': (value) => value
   },
+  operators: ['$like','$nlike'],
 };
 
 const setupService = (app) => {
@@ -44,6 +40,11 @@ const setupService = (app) => {
 }
 
 app.configure(setupService)
+
+// app.service('products').create({
+//   id: 'KJHKJT786786hhhg',
+//   title:'hello world'
+// }).then(res => console.log({find: res})).catch(err => console.log(err))
 
 // app.service('products').update('KJHKJT786786hhhg', {
 //   title:'hi ho'
@@ -55,18 +56,15 @@ app.configure(setupService)
 // }
 // ).then(res => console.log({find: res})).catch(err => console.log(err))
 
-
-// app.service('products').create({
-//   id: 'KJHKJT786786hhhg',
-//   title:'hi'
-// }).then(res => console.log({find: res})).catch(err => console.log(err))
-
 // app.service('products').find({
 //   query: {
 //     $select:['id']
 //   }
 // }).then(res => console.log({find: res})).catch(err => console.log(err))
-app.service('products').find({query: {$search: 'hlll', $select:['id']}}).then(res => console.log({get: res})).catch(err => console.log(err))
+app.service('products').find({
+  query: {$search: 'title:hello', $select:['id']},
+  paginate: false
+}).then(res => console.log({get: res})).catch(err => console.log(err))
 
 
 // Start the server.

@@ -115,6 +115,12 @@ export function jsonQuery (id: NullableId, filters: any, query: Query, paginate:
     adapterQuery.id = id;
   }
 
+  //TODO: refactor filter and operators
+  if(filters.$or) {
+    adapterQuery.$or = filters.$or;
+    delete filters.$or
+  }
+
   // convert special adapter params
   whitelist.forEach(param => {
     delete adapterQuery[param];

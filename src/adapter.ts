@@ -85,9 +85,10 @@ export class SolrAdapter<
   async $find(params?: P): Promise<Paginated<T> | T[]>
   async $find(params: P = {} as P): Promise<Paginated<T> | T[]> {
     const { paginate } = this.getOptions(params);
+    // TODO: destruct based on filter and operators options
     const {$search, $params, $filter, $facet, ...paramsQuery} = params.query;
     const { query, filters } = filterQuery(paramsQuery, this.options);
-
+    //console.log({paginate, query, filters, params})
     const solrQuery = jsonQuery(null, filters, {
       $search,
       $params,

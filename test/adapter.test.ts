@@ -14,7 +14,7 @@ const options = {
     $filter: (value: any) => value,
     $search: (value: any) => value
   },
-  operators: ['$like','$nlike'],
+  operators: ['$like','$nlike']
 }
 
 const Client = httpClient(options.host);

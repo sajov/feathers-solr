@@ -41,7 +41,7 @@ interface SolrResponse {
 export function responseFind (filters: any, paginate: any, res: Partial<SolrResponse>) {
   const { responseHeader, response, grouped, ...additionalResponse } = res;
 
-  if (!paginate.max && !paginate.default) {
+  if ((!paginate.max && !paginate.default) || !paginate) {
     return response.docs;
   }
 
