@@ -1,6 +1,5 @@
 import type { AdapterParams, PaginationOptions } from '@feathersjs/adapter-commons';
 import type { Paginated, ServiceMethods, Id, NullableId } from '@feathersjs/feathers';
-// import type { SolrAdapterOptions } from './declarations';
 import { SolrAdapter } from './adapter'
 
 export * from './adapter'
