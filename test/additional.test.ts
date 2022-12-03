@@ -1,5 +1,5 @@
 import assert from 'assert';
-import { Solr } from '../src';
+import { SolrService } from '../src';
 import { httpClient } from '../src/httpClient';
 import { createCore, deleteCore, addSchema, mockData, deleteSchema, addConfig, deleteConfig } from './seed';
 import { feathers } from '@feathersjs/feathers';
@@ -20,14 +20,14 @@ const options = {
 
 const Client = httpClient(options.host);
 
-const Service = Solr(options);
+const Service = new SolrService(options);
 
 const events = ['testing'];
 
 const app = feathers()
 
-app.use('/people', Solr({ events, ...options, multi: false }));
-app.use('/search', Solr({
+app.use('/people', new SolrService({ events, ...options, multi: false }));
+app.use('/search', new SolrService({
   events,
   ...options,
   paginate: { max: 10, default: 5 },
@@ -40,7 +40,7 @@ app.use('/search', Solr({
   operators: ['$like','$nlike'],
   multi: true
 }));
-app.use('/app', Solr({
+app.use('/app', new SolrService({
   events,
   ...options,
   paginate: { max: 10 },
@@ -68,11 +68,11 @@ describe('additional adapter tests', () => {
       }
     });
     await Client.post(`/${options.core}/schema`, { data: addSchema });
-    await Solr({ ...options, multi: true })._remove(null, {});
+    await new SolrService({ ...options, multi: true })._remove(null, {});
   });
 
   after(async () => {
-    await Solr({ ...options, multi: true })._remove(null, {});
+    await new SolrService({ ...options, multi: true })._remove(null, {});
     await Client.post(`/${options.core}/schema`, { data: deleteSchema });
     await Client.get('/admin/cores', {
       params: {
@@ -164,7 +164,7 @@ describe('additional adapter tests', () => {
     });
 
     it('`create` multi', async () => {
-      const Service = Solr({
+      const Service = new SolrService({
         ...options,
         multi: true
       });
@@ -188,7 +188,7 @@ describe('additional adapter tests', () => {
     });
 
     it('`find` with pagination', async () => {
-      const Service = Solr({
+      const Service = new SolrService({
         ...options,
         paginate: {
           default: 3,
@@ -402,7 +402,7 @@ describe('additional adapter tests', () => {
     });
 
     it('`delete` all', async () => {
-      const Service = Solr({
+      const Service = new SolrService({
         ...options,
         multi: true
       });

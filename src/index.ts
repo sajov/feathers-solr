@@ -1,6 +1,6 @@
 import type { AdapterParams, PaginationOptions } from '@feathersjs/adapter-commons';
-import type { Paginated, ServiceMethods, Id, NullableId, Params } from '@feathersjs/feathers';
-import type { SolrAdapterOptions } from './declarations';
+import type { Paginated, ServiceMethods, Id, NullableId } from '@feathersjs/feathers';
+// import type { SolrAdapterOptions } from './declarations';
 import { SolrAdapter } from './adapter'
 
 export * from './adapter'
@@ -47,10 +47,4 @@ export class SolrService<T = any, D = Partial<T>, P extends AdapterParams = Adap
   async remove(id: NullableId | NullableId, params?: P): Promise<T | T[]> {
     return this._remove(id as NullableId, params)
   }
-}
-
-export function Solr<T = any, D = Partial<T>, P extends Params = Params>(
-  options: Partial<SolrAdapterOptions> = {}
-) {
-  return new SolrService<T, D, P>(options)
 }

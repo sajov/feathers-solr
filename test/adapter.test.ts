@@ -1,6 +1,6 @@
 import adapterTests from '@feathersjs/adapter-tests';
 import errors from '@feathersjs/errors';
-import { Solr } from '../src';
+import { SolrService } from '../src';
 import { httpClient } from '../src/httpClient';
 import { createCore, deleteCore, addSchema, deleteSchema } from './seed';
 import { feathers } from '@feathersjs/feathers';
@@ -22,7 +22,7 @@ const Client = httpClient(options.host);
 const events = ['testing'];
 
 const app = feathers()
-app.use('/people', Solr({ events, ...options, multi: false }));
+app.use('/people', new SolrService({ events, ...options, multi: false }));
 
 const testSuite = adapterTests([
   '.$create',
@@ -113,11 +113,11 @@ describe('common adapter tests', () => {
       }
     });
     await Client.post(`/${options.core}/schema`, { data: addSchema });
-    await Solr({ ...options, multi: true })._remove(null, {});
+    await new SolrService({ ...options, multi: true })._remove(null, {});
   });
 
   after(async () => {
-    await Solr({ ...options, multi: true })._remove(null, {});
+    await new SolrService({ ...options, multi: true })._remove(null, {});
     await Client.post(`/${options.core}/schema`, { data: deleteSchema });
     await Client.get('/admin/cores', {
       params: {

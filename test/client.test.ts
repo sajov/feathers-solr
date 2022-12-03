@@ -1,6 +1,6 @@
 //@ts-ignore
 import assert from 'assert';
-import { Solr } from '../src';
+import { SolrService } from '../src';
 import { httpClient } from '../src/httpClient';
 import { createCore, deleteCore, addSchema, deleteSchema } from './seed';
 // import https from 'https';
@@ -49,7 +49,7 @@ describe('client', () => {
       }
     });
     await Client.post(`/${options.core}/schema`, { data: addSchema });
-    await Solr({ ...options, multi: true })._remove(null, {});
+    await new SolrService({ ...options, multi: true })._remove(null, {});
     server = http.createServer(requestListener);
     server.listen(3033, 'localhost', () => {
       console.log(`Server is running `);
@@ -57,7 +57,7 @@ describe('client', () => {
   });
 
   after(async () => {
-    await Solr({ ...options, multi: true })._remove(null, {});
+    await new SolrService({ ...options, multi: true })._remove(null, {});
     await Client.post(`/${options.core}/schema`, { data: deleteSchema });
     await Client.get('/admin/cores', {
       params: {

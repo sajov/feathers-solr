@@ -151,17 +151,13 @@ export class SolrAdapter<
 
     const dataToUpdate: any = id && !Array.isArray(data) ? [{ id, ...data }] : data;
 
-    try {
-      await this.client.post(this.updateHandler, {
-        data: dataToUpdate,
-        params: this.options.commit
-      });
+    await this.client.post(this.updateHandler, {
+      data: dataToUpdate,
+      params: this.options.commit
+    });
 
-      return this.$getOrFind(id, params)
-        .then(res => sel(_.omit(res, 'score', '_version_')));
-    } catch (err: any) {
-      throw Error(err);
-    }
+    return this.$getOrFind(id, params)
+      .then(res => sel(_.omit(res, 'score', '_version_')));
   }
 
   async $remove(id: null, params?: P): Promise<T[]>
