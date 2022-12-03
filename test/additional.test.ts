@@ -118,21 +118,21 @@ describe('additional adapter tests', () => {
       assert.strictEqual(typeof response.start, 'number');
       assert.strictEqual(Array.isArray(response.docs), true);
     })
-  });
 
-  // describe('options', () => {
-  //   it('`createUUID`', async () => {
-  //     await Service.create(mockData.map((d:any) => {
-  //       delete d.id;
-  //       return d;
-  //     }));
-  //     const result = await Service._find({});
-  //     assert.strictEqual(typeof result.total, 3);
-  //     assert.strictEqual(typeof result.data[0].id, 'string');
-  //     assert.strictEqual(typeof result.data[1].id, 'string');
-  //     assert.strictEqual(typeof result.data[2].id, 'string');
-  //   })
-  // })
+    it.skip('`createUUID`', async () => {
+
+      await Service.create(mockData.map((d:any) => {
+        delete d.id;
+        return d;
+      }));
+      const result = await Service.find();
+      assert.strictEqual(result.total, 3);
+      assert.strictEqual(typeof result.data[0].id, 'string');
+      assert.strictEqual(typeof result.data[1].id, 'string');
+      assert.strictEqual(typeof result.data[2].id, 'string');
+
+    })
+  });
 
   describe('methods', () => {
 
@@ -592,7 +592,7 @@ describe('additional adapter tests', () => {
       await service.remove(doug['id'])
     })
 
-    it.skip('.find + paginate + params', async () => {
+    it('.find + paginate + params', async () => {
       //@ts-ignore
       const page = await app.service('search').find({ paginate: { default: 3 } })
 
