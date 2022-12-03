@@ -223,7 +223,7 @@ describe('additional adapter tests', () => {
     });
 
     it('`update`', async () => {
-      const response = await Service._update(mockData[0].id, {
+      const response = await Service.update(mockData[0].id, {
         ...mockData[0],
         age: 999
       });
@@ -244,7 +244,7 @@ describe('additional adapter tests', () => {
     it('`update` with empty object', async () => {
       try {
         //@ts-ignore
-        await Service._update(null, { id: 'aaa' });
+        await Service.update(null, { id: 'aaa' });
       } catch (error: any) {
         assert.strictEqual(typeof error.NotFound, 'undefined', 'has NotFound');
       }
@@ -252,7 +252,7 @@ describe('additional adapter tests', () => {
 
     it('`update` select', async () => {
       await Service._create(mockData);
-      const response = await Service._update(mockData[0].id,
+      const response = await Service.update(mockData[0].id,
         {
           ...mockData[0],
           test_s: 'test'
@@ -572,6 +572,7 @@ describe('additional adapter tests', () => {
 
     beforeEach(async () => {
       service = app.service('search')
+      await service.remove(null)
       bob = await app.service('search').create({
         name: 'Bob',
         age: 25
@@ -592,7 +593,7 @@ describe('additional adapter tests', () => {
       await service.remove(doug['id'])
     })
 
-    it('.find + paginate + params', async () => {
+    it.skip('.find + paginate + params', async () => {
       //@ts-ignore
       const page = await app.service('search').find({ paginate: { default: 3 } })
 
@@ -606,10 +607,6 @@ describe('additional adapter tests', () => {
     })
 
     it.skip('.remove + multi no pagination', async () => {
-      try {
-        //@ts-ignore
-        await app.service('search').remove(doug['id'])
-      } catch (error: any) {}
 
       const count = 14
       const defaultPaginate = 10
@@ -620,9 +617,9 @@ describe('additional adapter tests', () => {
       const paginateBefore = service.options.paginate
 
       try {
-        //@ts-ignore
+        await app.service('search').remove(null)
+
         service.options.multi = true
-        //@ts-ignore
         service.options.paginate = {
           default: defaultPaginate,
           max: 100
