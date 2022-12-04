@@ -19,3 +19,17 @@ export interface SolrAdapterOptions extends AdapterServiceOptions {
 }
 
 export interface SolrAdapterParams<Q = AdapterQuery> extends AdapterParams<Q, Partial<SolrAdapterOptions>> {}
+
+interface SolrQueryParams { }
+interface SolrQueryFacet { }
+
+export interface SolrQuery {
+  query: string;
+  fields: string;
+  limit: number;
+  offset: number;
+  sort?: string;
+  filter?: string[];
+  params?: SolrQueryParams
+  facet?: SolrQueryFacet
+}

@@ -12,8 +12,10 @@ import { httpClient } from './httpClient';
 import { responseFind, responseGet } from './responseHandler';
 import { addIds, jsonQuery, patchQuery, deleteQuery } from './queryHandler';
 import type { NullableId, Id, Paginated } from '@feathersjs/feathers'
-import type { SolrAdapterOptions, SolrAdapterParams } from './declarations';
+import type { SolrAdapterOptions, SolrAdapterParams, SolrQuery } from './declarations';
 import type { HttpClient } from './httpClient';
+import { filterResolver } from './utils/filterResolver';
+import { convertOperators } from './utils/convertOperators';
 
 export const escapeFn = (key: string, value: any) => {
   return { key, value }
@@ -54,6 +56,38 @@ export class SolrAdapter<
     this.queryHandler = `/${core}${this.options.queryHandler}`;
     this.updateHandler = `/${core}${this.options.updateHandler}`;
     this.client = httpClient(host, requestOptions)
+  }
+
+  filterQuery(id: NullableId | Id, params: P) {
+    const { paginate } = this.getOptions(params);
+    const { $search, $params, $filter = [], $facet, ...adapterQuery } = params.query || {};
+    const { $skip, $sort, ...query } = adapterQuery;
+
+    // console.log({operators: Object.keys(operators)})
+
+    let result: SolrQuery = {
+      query: $search || '*:*',
+      fields: adapterQuery.$select ? adapterQuery.$select.join(',') : '*',
+      limit: paginate ? paginate.default : 100,
+      offset: $skip || 0,
+      filter: []
+    }
+
+    if(id) {
+      result.filter.push(`${this.options.id}:${id}`)
+    }
+    if(!_.isEmpty(query)) {
+      result.filter = [
+        ...result.filter,
+        ...convertOperators(query, this.options.escapeFn)
+      ]
+    }
+
+    if($sort) {
+      result.sort = filterResolver.$sort($sort)
+    }
+
+    return result;
   }
 
   async $getOrFind(id: NullableId | NullableId, params: P) {
