@@ -10,7 +10,7 @@ import {
 } from '@feathersjs/adapter-commons'
 import { httpClient } from './httpClient';
 import { responseFind, responseGet } from './responseHandler';
-import { addIds, jsonQuery, patchQuery, deleteQuery } from './queryHandler';
+import { addIds, patchQuery, deleteQuery } from './queryHandler';
 import type { NullableId, Id, Paginated } from '@feathersjs/feathers'
 import type { SolrAdapterOptions, SolrAdapterParams, SolrQuery } from './declarations';
 import type { HttpClient } from './httpClient';
@@ -121,12 +121,9 @@ export class SolrAdapter<
   }
 
   async $get(id: Id | NullableId, params: P = {} as P): Promise<T> {
-    const { paginate } = this.getOptions(params)
-    const { query, filters } = filterQuery(params.query, this.options);
+    const query = this.filterQuery(id, params);
 
-    const solrQuery = jsonQuery(id, filters, query, paginate, this.options.escapeFn);
-
-    const response = await this.client.post(this.queryHandler, { data: solrQuery })
+    const response = await this.client.post(this.queryHandler, { data: query })
 
     if (response.response.numFound === 0) throw new NotFound(`No record found for id '${id}'`);
 
@@ -140,25 +137,12 @@ export class SolrAdapter<
   async $find(params?: P): Promise<Paginated<T> | T[]>
   async $find(params: P = {} as P): Promise<Paginated<T> | T[]> {
     const { paginate } = this.getOptions(params);
-    // TODO: destruct based on filter and operators options
     const {$search, $params, $filter, $facet, ...paramsQuery} = params.query;
-    const { query, filters } = filterQuery(paramsQuery, this.options);
-    //console.log({paginate, query, filters, params})
-    //@ts-ignore
-    const solrQuery = jsonQuery(null, filters, {
-      $search,
-      $params,
-      $filter,
-      $facet,
-      ...query,
-    }, paginate, this.options.escapeFn);
-    // console.log(solrQuery)
-    // console.log({paginate})
-    //@ts-ignore
-    const query2 = this.filterQuery(null, params);
-    // console.log(query2)
-    // const response = await this.client.post(this.queryHandler, { data: solrQuery })
-    const response = await this.client.post(this.queryHandler, { data: query2 })
+    const { filters } = filterQuery(paramsQuery, this.options);
+
+    const query = this.filterQuery(null, params);
+
+    const response = await this.client.post(this.queryHandler, { data: query })
 
     const result = responseFind(filters, paginate, response);
 
