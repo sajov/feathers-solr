@@ -59,7 +59,7 @@
     "@feathersjs/commons": "^4.5.11",
     "@feathersjs/errors": "^4.5.11",
     "debug": "^4.3.1",
-    "qs": "^6.10.1",
+    "qs": "^6.10.3",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
