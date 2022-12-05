@@ -60,34 +60,55 @@ export class SolrAdapter<
 
   filterQuery(id: NullableId | Id, params: P) {
     const { paginate } = this.getOptions(params);
-    const { $search, $params, $filter = [], $facet, ...adapterQuery } = params.query || {};
-    const { $skip, $sort, ...query } = adapterQuery;
+    const {
+      $search,
+      $params,
+      $select = [],
+      $filter = [],
+      $facet,
+      ...adapterQuery
+    } = params.query || {};
+    const {
+      $skip = 0,
+      $sort,
+      $limit,
+      ...filter
+    } = adapterQuery;
 
-    // console.log({operators: Object.keys(operators)})
-
-    let result: SolrQuery = {
-      query: $search || '*:*',
-      fields: adapterQuery.$select ? adapterQuery.$select.join(',') : '*',
-      limit: paginate ? paginate.default : 100,
-      offset: $skip || 0,
-      filter: []
+    let query: SolrQuery = {
+      query: filterResolver.$search($search),
+      fields: filterResolver.$select($select),
+      limit: filterResolver.$limit($limit, paginate),
+      offset: filterResolver.$skip($skip),
+      filter: $filter
     }
 
     if(id) {
-      result.filter.push(`${this.options.id}:${id}`)
+      query.filter = [
+        ...convertOperators({[this.options.id]:id},this.options.escapeFn)
+      ]
     }
-    if(!_.isEmpty(query)) {
-      result.filter = [
-        ...result.filter,
-        ...convertOperators(query, this.options.escapeFn)
+
+    if(!_.isEmpty(filter)) {
+      query.filter = [
+        ...query.filter,
+        ...convertOperators(filter, this.options.escapeFn)
       ]
     }
 
     if($sort) {
-      result.sort = filterResolver.$sort($sort)
+      query.sort = filterResolver.$sort($sort)
     }
 
-    return result;
+    if($params) {
+      query.params = $params;
+    }
+
+    if($facet) {
+      query.facet = $facet;
+    }
+
+    return query;
   }
 
   async $getOrFind(id: NullableId | NullableId, params: P) {
@@ -95,7 +116,7 @@ export class SolrAdapter<
 
     // TODO: handle paginate
     return this.$find(
-      Object.assign({ paginate: false }, params)
+      Object.assign(params, { paginate: false })
     );
   }
 
@@ -123,6 +144,7 @@ export class SolrAdapter<
     const {$search, $params, $filter, $facet, ...paramsQuery} = params.query;
     const { query, filters } = filterQuery(paramsQuery, this.options);
     //console.log({paginate, query, filters, params})
+    //@ts-ignore
     const solrQuery = jsonQuery(null, filters, {
       $search,
       $params,
@@ -130,8 +152,13 @@ export class SolrAdapter<
       $facet,
       ...query,
     }, paginate, this.options.escapeFn);
-
-    const response = await this.client.post(this.queryHandler, { data: solrQuery })
+    // console.log(solrQuery)
+    // console.log({paginate})
+    //@ts-ignore
+    const query2 = this.filterQuery(null, params);
+    // console.log(query2)
+    // const response = await this.client.post(this.queryHandler, { data: solrQuery })
+    const response = await this.client.post(this.queryHandler, { data: query2 })
 
     const result = responseFind(filters, paginate, response);
 
@@ -154,6 +181,8 @@ export class SolrAdapter<
 
     await this.client.post(this.updateHandler, { data: dataToCreate, params: this.options.commit });
 
+    // return this.$getOrFind(null, params)
+    //   .then(res => sel(res));
     return sel(Array.isArray(data) ? dataToCreate : dataToCreate[0]);
   }
 
@@ -161,6 +190,7 @@ export class SolrAdapter<
   async $patch(id: Id, data: Partial<D>, params?: P): Promise<T>
   async $patch(id: NullableId, data: Partial<D>, _params?: P): Promise<T | T[]>
   async $patch(id: NullableId, data: Partial<D>, params: P = {} as P): Promise<T | T[]> {
+    // @ts-ignore
     const { paginate } = this.getOptions(params);
 
     const sel = select(params, this.id);
@@ -170,8 +200,8 @@ export class SolrAdapter<
     const { ids, patchData } = patchQuery(dataToPatch, data, this.id);
 
     await this.client.post(this.updateHandler, { data: patchData, params: this.options.commit });
-    // @ts-ignore
-    const result: any = await this.$find({ query: { id: { $in: ids } }, paginate });
+    //@ts-ignore
+    const result = await this.$find({ query:{id: { $in: ids }}  });
 
     if (result.data) return sel(ids.length === 1 ? result.data[0] : result.data)
 

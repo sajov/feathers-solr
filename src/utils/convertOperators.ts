@@ -1,5 +1,14 @@
 import { operatorResolver } from './operatorResolver';
 import { _ } from '@feathersjs/commons/lib';
+const _has = (obj: any, key: string) => {
+  return key.split('.').every(function (x) {
+    if (typeof obj !== 'object' || obj === null || !(x in obj)) {
+      return false;
+    }
+    obj = obj[x];
+    return true;
+  });
+};
 
 export function convertOperators (query: any, escapeFn: any, root = ''): any {
 
@@ -12,7 +21,7 @@ export function convertOperators (query: any, escapeFn: any, root = ''): any {
     if (prop === '$or') {
       const o = [].concat.apply([], convertOperators(value, escapeFn));
       queryString = operatorResolver.$or(o);
-    } else if (typeof operatorResolver[prop] !== undefined) {
+    } else if (_has(operatorResolver, prop)) {
       const escapedResult = escapeFn(root, value);
       queryString = operatorResolver[prop](escapedResult.key, escapedResult.value);
     } else {

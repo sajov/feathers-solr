@@ -97,7 +97,7 @@ export function jsonQuery (id: NullableId, filters: any, query: Query, paginate:
     {
       query: (adapterQuery.$search || '*:*').toString(),
       fields: Array.isArray(filters.$select) ? filters.$select.join(',') + ',id' : '*,score',
-      limit: paginate.max || paginate.default || 10,
+      limit: paginate.max || paginate.default || 100,
       offset: 0
     },
     operators.$sort(filters),

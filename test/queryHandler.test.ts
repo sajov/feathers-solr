@@ -19,7 +19,7 @@ describe('query', () => {
 
   it('default `limit`', async () => {
     const { limit } = jsonQuery(null, {}, {}, {}, escapeFn)
-    assert.deepStrictEqual(limit, 10);
+    assert.deepStrictEqual(limit, 100);
   })
 
   it('default `offset`', async () => {
@@ -37,7 +37,7 @@ describe('query', () => {
 
   it.skip('$limit', async () => {
     const { filter, offset } = jsonQuery(null, {}, {
-      $limit: 2, //TOOD: pagiante.default used instead of query.$limit
+      $limit: 2, //TOOD: pagante.default used instead of query.$limit
       read: false,
     }, {}, escapeFn)
     assert.deepStrictEqual(filter, [ 'read:false' ]);
@@ -159,7 +159,7 @@ describe('query', () => {
          filter: [
            '(name:Doug OR (age:[18 TO *] AND age:[* TO 25}))'
          ],
-         limit: 10,
+         limit: 100,
          offset: 0,
          query: '*:*',
          sort: 'name asc'

@@ -1,18 +1,28 @@
 export const filterResolver: any = {
-  $limit: (filters: any) => typeof filters.$limit === 'undefined' ?
-    {} :  { limit: parseInt(filters.$limit, 10) },
-  $skip: (filters: any) => filters.$skip ? { offset: filters.$skip } : {},
-  $sort: (filters: any) => {
-    const result: any = {};
-    if (filters.$sort) {
-      const sort: any = [];
-      Object.keys(filters.$sort).forEach(name => {
-        sort.push(name + (parseInt(filters.$sort[name], 10) === 1 ? ' asc' : ' desc'));
-      });
-      result.sort = sort.join(',');
+  $search: (value: string | undefined) => value || '*:*',
+  $select: (fields: string[]) => fields.length > 0 ? fields.join(',') :  '*,score',
+  $limit: ($limit: number, paginate: any) => {
+
+    if(typeof $limit !== 'undefined') {
+      if(paginate === false) {
+        return $limit
+      } else if(paginate.max) {
+        return paginate.max > $limit ? $limit : paginate.max;
+      } else if(paginate.default) {
+        return paginate.default > $limit ? $limit : paginate.default;
+      }
     }
-    return result;
+
+    if(paginate) {
+      return paginate.max || paginate.default;
+    }
+
+    return 1000;
   },
+  $skip: (value: number) => value || 0,
+  $sort: (value: any) => Object.keys(value)
+          .map(key => key + (parseInt(value[key], 10) === 1 ? ' asc' : ' desc'))
+          .join(','),
   $params: (query: any) => query.$params ? { params: query.$params } : {},
   $facet: (query: any) => query.$facet ? { facet: query.$facet } : {},
   $filter: (query: any) => !query ? { filter: [] } : { filter: query }
