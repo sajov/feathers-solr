@@ -1,6 +1,14 @@
 export const filterResolver: any = {
   $search: (value: string | undefined) => value || '*:*',
-  $select: (fields: string[]) => fields.length > 0 ? fields.join(',') :  '*,score',
+  $select: (fields: string[]) => {
+    if(fields.length === 0) return '*,score';
+
+    if(fields.indexOf('id') === -1) {
+      fields.push('id');
+    }
+
+    return fields.join(',');
+  },
   $limit: ($limit: number, paginate: any) => {
 
     if(typeof $limit !== 'undefined') {
