@@ -51,9 +51,7 @@ describe('client', () => {
     await Client.post(`/${options.core}/schema`, { data: addSchema });
     await new SolrService({ ...options, multi: true })._remove(null, {});
     server = http.createServer(requestListener);
-    server.listen(3033, 'localhost', () => {
-      console.log(`Server is running `);
-    });
+    server.listen(3033, 'localhost', () => {});
   });
 
   after(async () => {
