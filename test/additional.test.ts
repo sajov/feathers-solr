@@ -119,7 +119,7 @@ describe('additional adapter tests', () => {
       assert.strictEqual(Array.isArray(response.docs), true);
     })
 
-    // it('`createUUID`', async () => {
+    // it.skip('`createUUID`', async () => {
     //   await Service.create(mockData.map((d:any) => {
     //     delete d.id;
     //     return d;
@@ -128,7 +128,6 @@ describe('additional adapter tests', () => {
     //   assert.strictEqual(typeof result[0].id, 'string');
     //   assert.strictEqual(typeof result[1].id, 'string');
     //   assert.strictEqual(typeof result[2].id, 'string');
-
     // })
   });
 
