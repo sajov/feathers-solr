@@ -68,7 +68,7 @@ export class SolrAdapter<
       ...filter
     } = adapterQuery;
 
-    let query: SolrQuery = {
+    const query: SolrQuery = {
       query: filterResolver.$search($search),
       fields: filterResolver.$select($select),
       limit: filterResolver.$limit($limit, paginate),
@@ -181,27 +181,28 @@ export class SolrAdapter<
     const response = await this.$getOrFind(id, params);
     const dataToPatch = Array.isArray(response) ? response : [response];
     const ids = dataToPatch.map((d: any) => d[this.id])
-    const atomicFieldUpdate: any = {};
-    Object.keys(data).forEach(field => {
-      if (field !== this.id) {
-        //@ts-ignore
-        const value = data[field];
-        if (_.isObject(value)) {
-          atomicFieldUpdate[field] = value;
-        } else {
-          atomicFieldUpdate[field] = value === '' ? { remove: value } : { set: value };
-        }
-      }
-    });
+
+    const atomicFieldUpdate = Object.fromEntries(
+      Object.entries(data)
+        .filter(([ field ]) => field !== this.id)
+        .map(([field, value]) => (
+          [ field, _.isObject(value) ? value : value === '' ? { remove: value } : { set: value }]
+        )
+      )
+    );
+
     const patchData = dataToPatch.map((current: any) => {
       return { ...{ [this.id]: current[this.id] }, ...atomicFieldUpdate }
     });
 
     await this.client.post(this.updateHandler, { data: patchData, params: this.options.commit });
-    //@ts-ignore
-    const result = await this.$find({ query:{id: { $in: ids }}  });
 
-    if (result.data) return sel(ids.length === 1 ? result.data[0] : result.data)
+    const result = await this.$find({
+      ...params,
+      query:{id: { $in: ids }}
+    });
+
+    if ('data' in result) return sel(ids.length === 1 ? result.data[0] : result.data)
 
     return sel(ids.length === 1 ? result[0] : result)
   }
