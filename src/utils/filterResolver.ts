@@ -30,8 +30,5 @@ export const filterResolver: any = {
   $skip: (value: number) => value || 0,
   $sort: (value: any) => Object.keys(value)
           .map(key => key + (parseInt(value[key], 10) === 1 ? ' asc' : ' desc'))
-          .join(','),
-  $params: (query: any) => query.$params ? { params: query.$params } : {},
-  $facet: (query: any) => query.$facet ? { facet: query.$facet } : {},
-  $filter: (query: any) => !query ? { filter: [] } : { filter: query }
+          .join(',')
 };
