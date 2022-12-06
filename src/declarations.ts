@@ -18,10 +18,9 @@ export interface SolrAdapterOptions extends AdapterServiceOptions {
   escapeFn?: (key: string, value: any) => { key: string, value: any };
 }
 
-export interface SolrAdapterParams<Q = AdapterQuery> extends AdapterParams<Q, Partial<SolrAdapterOptions>> {}
-
-interface SolrQueryParams { }
-interface SolrQueryFacet { }
+export type SolrAdapterParams<Q = AdapterQuery> = AdapterParams<Q, Partial<SolrAdapterOptions>>
+type SolrQueryParams = { }
+type SolrQueryFacet = { }
 
 export interface SolrQuery {
   query: string;
