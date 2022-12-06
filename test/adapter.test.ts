@@ -96,7 +96,7 @@ const testSuite = adapterTests([
   '.find + paginate + query',
   '.find + paginate + $limit + $skip',
   '.find + paginate + $limit 0',
-  // '.find + paginate + params',
+  '.find + paginate + params',
   '.remove + id + query id',
   '.update + id + query id',
   '.patch + id + query id',
