@@ -1,20 +1,15 @@
 import { NotFound, MethodNotAllowed } from '@feathersjs/errors'
 import { _ } from '@feathersjs/commons'
-import type {
-  PaginationOptions
-} from '@feathersjs/adapter-commons';
-import {
-  AdapterBase,
-  filterQuery,
-  select
-} from '@feathersjs/adapter-commons'
+import { AdapterBase, select } from '@feathersjs/adapter-commons'
 import { httpClient } from './httpClient';
-import { addIds, patchQuery, deleteQuery } from './queryHandler';
+import { patchQuery } from './queryHandler';
+import { addIds } from './utils/addIds';
+import { filterResolver } from './utils/filterResolver';
+import { convertOperators } from './utils/convertOperators';
+import type { PaginationOptions } from '@feathersjs/adapter-commons';
 import type { NullableId, Id, Paginated } from '@feathersjs/feathers'
 import type { SolrAdapterOptions, SolrAdapterParams, SolrQuery } from './declarations';
 import type { HttpClient } from './httpClient';
-import { filterResolver } from './utils/filterResolver';
-import { convertOperators } from './utils/convertOperators';
 
 export const escapeFn = (key: string, value: any) => {
   return { key, value }
@@ -226,9 +221,11 @@ export class SolrAdapter<
 
     const dataToDelete = await this.$getOrFind(id, params);
 
-    const { query } = filterQuery(params.query, this.options);
+    const { query } = this.filterQuery(id, params);
 
-    const queryToDelete = deleteQuery(id, query, this.options.escapeFn);
+    const queryToDelete = id ? { delete: id } :
+      query.filter.length > 0 ? { delete: { query: query.filter.join(' AND ') }} :
+      { delete: { query: '*:*' } };
 
     await this.client.post(this.updateHandler, { data: queryToDelete, params: this.options.commit });
 
