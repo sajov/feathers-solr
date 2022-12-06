@@ -2,7 +2,6 @@ import { NotFound, MethodNotAllowed } from '@feathersjs/errors'
 import { _ } from '@feathersjs/commons'
 import { AdapterBase, select } from '@feathersjs/adapter-commons'
 import { httpClient } from './httpClient';
-import { patchQuery } from './queryHandler';
 import { addIds } from './utils/addIds';
 import { filterResolver } from './utils/filterResolver';
 import { convertOperators } from './utils/convertOperators';
@@ -170,8 +169,6 @@ export class SolrAdapter<
 
     await this.client.post(this.updateHandler, { data: dataToCreate, params: this.options.commit });
 
-    // return this.$getOrFind(null, params)
-    //   .then(res => sel(res));
     return sel(Array.isArray(data) ? dataToCreate : dataToCreate[0]);
   }
 
@@ -179,14 +176,26 @@ export class SolrAdapter<
   async $patch(id: Id, data: Partial<D>, params?: P): Promise<T>
   async $patch(id: NullableId, data: Partial<D>, _params?: P): Promise<T | T[]>
   async $patch(id: NullableId, data: Partial<D>, params: P = {} as P): Promise<T | T[]> {
-    // @ts-ignore
-    const { paginate } = this.getOptions(params);
-
     const sel = select(params, this.id);
 
-    const dataToPatch = await this.$getOrFind(id, params);
-
-    const { ids, patchData } = patchQuery(dataToPatch, data, this.id);
+    const response = await this.$getOrFind(id, params);
+    const dataToPatch = Array.isArray(response) ? response : [response];
+    const ids = dataToPatch.map((d: any) => d[this.id])
+    const atomicFieldUpdate: any = {};
+    Object.keys(data).forEach(field => {
+      if (field !== this.id) {
+        //@ts-ignore
+        const value = data[field];
+        if (_.isObject(value)) {
+          atomicFieldUpdate[field] = value;
+        } else {
+          atomicFieldUpdate[field] = value === '' ? { remove: value } : { set: value };
+        }
+      }
+    });
+    const patchData = dataToPatch.map((current: any) => {
+      return { ...{ [this.id]: current[this.id] }, ...atomicFieldUpdate }
+    });
 
     await this.client.post(this.updateHandler, { data: patchData, params: this.options.commit });
     //@ts-ignore
