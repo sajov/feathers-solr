@@ -1,4 +1,4 @@
-//@ts-ignore
+// @ts-ignore
 import assert from 'assert';
 import { SolrService } from '../src';
 import { httpClient } from '../src/httpClient';
@@ -9,24 +9,24 @@ function timeout(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 const requestListener = async function (req: any, res: any) {
-  res.setHeader("Content-Type", "application/json");
+  res.setHeader('Content-Type', 'application/json');
   switch (req.url) {
-    case "/timeouts":
+    case '/timeouts':
       res.writeHead(200);
       await timeout(5000);
-      res.end(`{"message": "This is a JSON timeouted response"}`);
+      res.end('{"message": "This is a JSON timeouted response"}');
       break
-    case "/errors":
+    case '/errors':
       res.writeHead(500);
-      res.end(`{"message": "This is a JSON errored response"}`);
+      res.end('{"message": "This is a JSON errored response"}');
       break
   }
 };
 function iThrowErrorTimeout() {
-  throw new Error("timed out");
+  throw new Error('timed out');
 }
 function iThrowErrorBadRequest() {
-  throw new Error("timed out");
+  throw new Error('timed out');
 }
 
 

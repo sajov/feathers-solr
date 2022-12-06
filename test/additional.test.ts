@@ -54,7 +54,7 @@ app.use('/app', new SolrService({
   multi: true,
   createUUID: false,
   queryHandler: '/app',
-  updateHandler: '/update/json',
+  updateHandler: '/update/json'
 }));
 
 describe('additional adapter tests', () => {
@@ -240,7 +240,7 @@ describe('additional adapter tests', () => {
 
     it('`update` with empty object', async () => {
       try {
-        //@ts-ignore
+        // @ts-ignore
         await Service.update(null, { id: 'aaa' });
       } catch (error: any) {
         assert.strictEqual(typeof error.NotFound, 'undefined', 'has NotFound');
@@ -276,7 +276,7 @@ describe('additional adapter tests', () => {
     it('`patch` one by query', async () => {
       await Service._create(mockData);
       const response = await app.service('search').patch(null, { age: 12 }, { query: { age: 10 } });
-      //@ts-ignore
+      // @ts-expect-error 2339
       assert.strictEqual(response.age, 12);
     });
 
@@ -310,7 +310,7 @@ describe('additional adapter tests', () => {
       await service.create(mockData);
       await service.patch(null, { test_s: { set: 'test' } });
       const response = await Service._find({ query: { test_s: 'test' } });
-      //@ts-ignore
+      // @ts-expect-error 2339
       assert.strictEqual(response.length, 3);
     });
 
@@ -320,7 +320,7 @@ describe('additional adapter tests', () => {
       await service.create(mockData);
       await service.patch(null, { test_s: { set: 'test' } }, { query: { id: { $in: [1, 2] } } });
       const response = await Service.find({ query: { test_s: 'test' } });
-      //@ts-ignore
+      // @ts-expect-error 2339
       assert.strictEqual(response.length, 2);
     });
 

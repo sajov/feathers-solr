@@ -252,7 +252,7 @@ describe('filterQuery', () => {
                 $lt: 25
               }
             }
-          ],
+          ]
         }
       })
       assert.deepStrictEqual(query, {
@@ -279,7 +279,7 @@ describe('filterQuery', () => {
     // TODO: escape $search
     it('escapeFn', async () => {
       Service.options.escapeFn = (key: string, value: any) => {
-        return { key, value: value.replace(/:/g, "\\:") }
+        return { key, value: value.replace(/:/g, '\\:') }
       }
       const { query } = Service.filterQuery(null, {
         query: {
@@ -327,7 +327,7 @@ describe('filterQuery', () => {
         query: {
           $sort: {
             price: -1,
-            createdAt: 1,
+            createdAt: 1
           },
           $limit: 3,
           $select: ['a','b','price','createdAt'],
