@@ -9,7 +9,6 @@ import {
   select
 } from '@feathersjs/adapter-commons'
 import { httpClient } from './httpClient';
-import { responseFind, responseGet } from './responseHandler';
 import { addIds, patchQuery, deleteQuery } from './queryHandler';
 import type { NullableId, Id, Paginated } from '@feathersjs/feathers'
 import type { SolrAdapterOptions, SolrAdapterParams, SolrQuery } from './declarations';
@@ -108,45 +107,56 @@ export class SolrAdapter<
       query.facet = $facet;
     }
 
-    return query;
+    return {
+      paginate,
+      query
+    };
   }
 
   async $getOrFind(id: NullableId | NullableId, params: P) {
     if (id !== null) return this.$get(id, params);
 
-    // TODO: handle paginate
     return this.$find(
       Object.assign(params, { paginate: false })
     );
   }
 
   async $get(id: Id | NullableId, params: P = {} as P): Promise<T> {
-    const query = this.filterQuery(id, params);
+    const { query } = this.filterQuery(id, params);
 
-    const response = await this.client.post(this.queryHandler, { data: query })
+    const { response } = await this.client.post(this.queryHandler, { data: query })
 
-    if (response.response.numFound === 0) throw new NotFound(`No record found for id '${id}'`);
+    if (response.numFound === 0) throw new NotFound(`No record found for id '${id}'`);
 
-    const result = responseGet(response);
-
-    return result;
+    return response.docs[0];
   }
 
   async $find(params?: P & { paginate?: PaginationOptions }): Promise<Paginated<T>>
   async $find(params?: P & { paginate: false }): Promise<T[]>
   async $find(params?: P): Promise<Paginated<T> | T[]>
   async $find(params: P = {} as P): Promise<Paginated<T> | T[]> {
-    const { paginate } = this.getOptions(params);
-    const {$search, $params, $filter, $facet, ...paramsQuery} = params.query;
-    const { filters } = filterQuery(paramsQuery, this.options);
+    const { query, paginate } = this.filterQuery(null, params);
 
-    const query = this.filterQuery(null, params);
+    const {
+      responseHeader,
+      response,
+      grouped, ...additionalResponse
+    } = await this.client.post(this.queryHandler, { data: query })
 
-    const response = await this.client.post(this.queryHandler, { data: query })
+    const groupKey: string = grouped ? Object.keys(grouped)[0] : undefined;
 
-    const result = responseFind(filters, paginate, response);
+    const data = response ? response.docs : grouped[groupKey].groups || grouped[groupKey].doclist.docs;
 
-    return result;
+    if (!paginate) return data
+
+    return {
+      QTime: responseHeader.QTime || 0,
+      total: response ? response.numFound : grouped[groupKey].matches,
+      limit: query.limit,
+      skip: query.offset,
+      data,
+      ...additionalResponse
+    }
   }
 
   async $create(data: D, params?: P): Promise<T>
