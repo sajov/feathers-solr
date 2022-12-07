@@ -70,9 +70,12 @@ describe('client', () => {
   describe('https', () => {
     it('HTTP', async () => {
       const Client = httpClient('https://jsonplaceholder.typicode.com');
+
       assert.strictEqual(typeof Client.get, 'function');
       assert.strictEqual(typeof Client.post, 'function');
+
       const response = await Client.get('/todos', {});
+
       assert.strictEqual(typeof response[0].title, 'string');
     });
   });
@@ -104,6 +107,7 @@ describe('client', () => {
   describe('methods', () => {
     it('get `select`', async () => {
       const { responseHeader, response } = await Client.get(`/${options.core}/select`, { params: { 'q': '*:*' } });
+
       assert.strictEqual(typeof responseHeader.status, 'number');
       assert.strictEqual(typeof responseHeader.QTime, 'number');
       assert.strictEqual(typeof response.numFound, 'number');
@@ -113,6 +117,7 @@ describe('client', () => {
 
     it('post `query`', async () => {
       const { responseHeader, response } = await Client.post(`/${options.core}/query`, { data: { 'query': '*:*' } });
+
       assert.strictEqual(typeof responseHeader.status, 'number');
       assert.strictEqual(typeof responseHeader.QTime, 'number');
       assert.strictEqual(typeof response.numFound, 'number');
@@ -120,5 +125,4 @@ describe('client', () => {
       assert.strictEqual(Array.isArray(response.docs), true);
     });
   });
-
 });

@@ -39,21 +39,25 @@ describe('filterQuery', () => {
 
   it('query with `paginate`', async () => {
     const { query } = Service.filterQuery(null, { paginate: false })
+
     assert.equal(query.limit, 1000);
   })
 
   it('query with default `paginate`', async () => {
     const { query } = Service.filterQuery(null, { paginate: { default: 3 } })
+
     assert.equal(query.limit, 3);
   })
 
   it('query with default `paginate` 0', async () => {
     const { query } = Service.filterQuery(null, { query: { $limit: 0 } })
+
     assert.equal(query.limit, 0);
   })
 
   it('query with `id`', async () => {
     const { query } = Service.filterQuery('1', {})
+
     assert.deepStrictEqual(query.filter, ['id:1']);
   })
 
@@ -61,6 +65,7 @@ describe('filterQuery', () => {
     Service.options.id = '_id';
     const { query } = Service.filterQuery('1', {})
     Service.options.id = 'id';
+
     assert.deepStrictEqual(query.filter, ['_id:1']);
   })
 
@@ -72,6 +77,7 @@ describe('filterQuery', () => {
           roomId: 2
         }
       })
+
       assert.deepStrictEqual(query.filter, [ 'read:false', 'roomId:2' ]);
     })
 
@@ -83,6 +89,7 @@ describe('filterQuery', () => {
           price: {$gt: 10}
         }
       })
+
       assert.deepStrictEqual(query.filter, ['name:john','price:{10 TO *]']);
     })
   })
@@ -95,6 +102,7 @@ describe('filterQuery', () => {
           $search: 'name: john'
         }
       })
+
       assert.equal(query.query, 'name: john');
     })
 
@@ -107,6 +115,7 @@ describe('filterQuery', () => {
         }
       })
       Service.options.paginate = before;
+
       assert.deepStrictEqual(query.limit, 0);
     })
 
@@ -119,6 +128,7 @@ describe('filterQuery', () => {
         }
       })
       Service.options.paginate = before;
+
       assert.deepStrictEqual(query.limit, 1);
     })
 
@@ -128,6 +138,7 @@ describe('filterQuery', () => {
           $skip: 1
         }
       })
+
       assert.deepStrictEqual(query.offset, 1);
     })
 
@@ -137,11 +148,13 @@ describe('filterQuery', () => {
           $sort: {name: 1, price: -1}
         }
       })
+
       assert.deepStrictEqual(query.sort, 'name asc,price desc');
     })
 
     it('query with empty `$select`', async () => {
       const { query } = Service.filterQuery(null, {})
+
       assert.deepStrictEqual(query.fields, '*,score');
     })
 
@@ -151,6 +164,7 @@ describe('filterQuery', () => {
           $select: ['id','name']
         }
       })
+
       assert.deepStrictEqual(query.fields, 'id,name');
     })
 
@@ -160,6 +174,7 @@ describe('filterQuery', () => {
           roomId: { $in: [2, 5] }
         }
       })
+
       assert.deepStrictEqual(query.filter, ['roomId:(2 OR 5)']);
     })
 
@@ -169,6 +184,7 @@ describe('filterQuery', () => {
           roomId: { $nin: [2, 5] }
         }
       })
+
       assert.deepStrictEqual(query.filter, ['!roomId:(2 OR 5)']);
     })
 
@@ -181,6 +197,7 @@ describe('filterQuery', () => {
           }
         }
       })
+
       assert.deepStrictEqual(query.filter, ['roomId:[* TO 2}']);
     })
 
@@ -192,6 +209,7 @@ describe('filterQuery', () => {
           }
         }
       })
+
       assert.deepStrictEqual(query.filter, ['roomId:[* TO 2]']);
     })
 
@@ -203,6 +221,7 @@ describe('filterQuery', () => {
           }
         }
       })
+
       assert.deepStrictEqual(query.filter, ['roomId:{2 TO *]']);
     })
 
@@ -214,6 +233,7 @@ describe('filterQuery', () => {
           }
         }
       })
+
       assert.deepStrictEqual(query.filter, ['roomId:[2 TO *]']);
     })
 
@@ -225,6 +245,7 @@ describe('filterQuery', () => {
           }
         }
       })
+
       assert.deepStrictEqual(query.filter, ['!roomId:2']);
     })
 
@@ -237,6 +258,7 @@ describe('filterQuery', () => {
           ]
         }
       })
+
       assert.deepStrictEqual(query.filter, ['(1:(a OR f) OR 2:(b OR c))']);
     })
 
@@ -255,6 +277,7 @@ describe('filterQuery', () => {
           ]
         }
       })
+
       assert.deepStrictEqual(query, {
            fields: '*,score',
            filter: [
@@ -273,6 +296,7 @@ describe('filterQuery', () => {
           $search: 'hello world'
         }
       })
+
       assert.deepStrictEqual(query.query, 'hello world');
     })
 
@@ -287,6 +311,7 @@ describe('filterQuery', () => {
         }
       })
       Service.options.escapeFn = escapeFn;
+
       assert.deepStrictEqual(query.filter, ['title:hello\\:world']);
     })
 
@@ -297,6 +322,7 @@ describe('filterQuery', () => {
           2: 'b'
         }
       })
+
       assert.deepStrictEqual(query.filter, ['1:a', '2:b']);
     })
 
@@ -308,6 +334,7 @@ describe('filterQuery', () => {
           }
         }
       })
+
       assert.deepStrictEqual(query.filter, ['title:*hello*']);
     })
 
@@ -319,6 +346,7 @@ describe('filterQuery', () => {
           }
         }
       })
+
       assert.deepStrictEqual(query.filter, ['!title:*hello*']);
     })
 

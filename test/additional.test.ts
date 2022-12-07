@@ -85,6 +85,7 @@ describe('additional adapter tests', () => {
   describe('use service client', () => {
     it('get `query`', async () => {
       const { responseHeader, response } = await Service.client.get(`/${options.core}/query`, { params: { 'q': '*:*' } });
+
       assert.strictEqual(typeof responseHeader.status, 'number');
       assert.strictEqual(typeof responseHeader.QTime, 'number');
       assert.strictEqual(typeof response.numFound, 'number');
@@ -94,6 +95,7 @@ describe('additional adapter tests', () => {
 
     it('get `select`', async () => {
       const { responseHeader, response } = await Service.client.get(`/${options.core}/select`, { params: { 'q': '*:*' } });
+
       assert.strictEqual(typeof responseHeader.status, 'number');
       assert.strictEqual(typeof responseHeader.QTime, 'number');
       assert.strictEqual(typeof response.numFound, 'number');
@@ -103,6 +105,7 @@ describe('additional adapter tests', () => {
 
     it('post `query`', async () => {
       const { responseHeader, response } = await Service.client.post(`/${options.core}/query`, { data: { 'query': '*:*' } });
+
       assert.strictEqual(typeof responseHeader.status, 'number');
       assert.strictEqual(typeof responseHeader.QTime, 'number');
       assert.strictEqual(typeof response.numFound, 'number');
@@ -112,6 +115,7 @@ describe('additional adapter tests', () => {
 
     it('post `select`', async () => {
       const { responseHeader, response } = await Service.client.post(`/${options.core}/select`, { data: { 'query': '*:*' } });
+
       assert.strictEqual(typeof responseHeader.status, 'number');
       assert.strictEqual(typeof responseHeader.QTime, 'number');
       assert.strictEqual(typeof response.numFound, 'number');
@@ -156,6 +160,7 @@ describe('additional adapter tests', () => {
 
     it('`create` one', async () => {
       const response = await Service._create(mockData[0]);
+
       assert.strictEqual(Array.isArray(response), false);
       assert.strictEqual(mockData[0].id, response.id);
     });
@@ -166,6 +171,7 @@ describe('additional adapter tests', () => {
         multi: true
       });
       const response = await Service._create(mockData);
+
       assert.strictEqual(Array.isArray(response), true);
       assert.strictEqual(mockData[0].id, response[0].id);
     });
@@ -173,6 +179,7 @@ describe('additional adapter tests', () => {
     it('`create` without ids', async () => {
       const { id, ...data } = mockData[0];
       const response = await Service._create(data);
+
       assert.strictEqual(Array.isArray(response), false);
       assert.strictEqual(typeof id, 'string');
       assert.strictEqual(typeof response.id, 'string');
@@ -193,6 +200,7 @@ describe('additional adapter tests', () => {
         }
       });
       const response: any = await Service._find({});
+
       assert.strictEqual(Array.isArray(response.data), true);
       assert.strictEqual(response.data.length, 3);
     });
@@ -200,6 +208,7 @@ describe('additional adapter tests', () => {
     it('`find` $like', async () => {
       await app.service('search').create(mockData);
       const response: any = await app.service('search').find({ query: { city: { $like: 'cisc' } } });
+
       assert.strictEqual(Array.isArray(response.data), true);
       assert.strictEqual(response.data.length, 1);
       assert.strictEqual(response.data[0].id, '3');
@@ -209,12 +218,14 @@ describe('additional adapter tests', () => {
       await app.service('search').remove(null, {});
       await app.service('search').create(mockData);
       const response: any = await app.service('search').find({ query: { city: { $nlike: 'cisc' } } });
+
       assert.strictEqual(Array.isArray(response.data), true);
       assert.strictEqual(response.data.length, 2);
     });
 
     it('`get`', async () => {
       const response = await Service._get(mockData[0].id);
+
       assert.strictEqual(Array.isArray(response), false);
       assert.strictEqual(response.id, mockData[0].id);
     });
@@ -224,6 +235,7 @@ describe('additional adapter tests', () => {
         ...mockData[0],
         age: 999
       });
+
       assert.strictEqual(Array.isArray(response), false);
       assert.strictEqual(response.id, mockData[0].id);
       assert.strictEqual(response.age, 999);
@@ -270,12 +282,14 @@ describe('additional adapter tests', () => {
     it('`patch`', async () => {
       await Service._create(mockData);
       const response = await Service._patch('1', { age: 12 });
+
       assert.strictEqual(response.age, 12);
     });
 
     it('`patch` one by query', async () => {
       await Service._create(mockData);
       const response = await app.service('search').patch(null, { age: 12 }, { query: { age: 10 } });
+
       // @ts-expect-error 2339
       assert.strictEqual(response.age, 12);
     });
@@ -284,6 +298,7 @@ describe('additional adapter tests', () => {
       await Service._create(mockData);
       await Service._patch('1', { age: { set: 99 } });
       const response = await Service.get('1');
+
       assert.strictEqual(response.age, 99);
     });
 
@@ -291,6 +306,7 @@ describe('additional adapter tests', () => {
       await Service._create(mockData);
       await Service._patch('1', { test_s: { set: 'test' } });
       const response = await Service.get('1');
+
       assert.strictEqual(response.test_s, 'test');
     });
 
@@ -298,10 +314,12 @@ describe('additional adapter tests', () => {
       await Service._create(mockData);
       await Service._patch('1', { test_s: { set: 'test' } });
       const response = await Service.get('1');
+
       assert.strictEqual(response.test_s, 'test');
 
       await Service._patch('1', { test_s: {remove: 'test'} });
       const response2 = await Service.get('1');
+
       assert.strictEqual(response2.test_s, undefined);
     });
 
@@ -310,6 +328,7 @@ describe('additional adapter tests', () => {
       await service.create(mockData);
       await service.patch(null, { test_s: { set: 'test' } });
       const response = await Service.find({ query: { test_s: 'test' }, paginate:false});
+
       assert.strictEqual(response.length, 3);
     });
 
@@ -319,6 +338,7 @@ describe('additional adapter tests', () => {
       await service.create(mockData);
       await service.patch(null, { test_s: { set: 'test' } }, { query: { id: { $in: [1, 2] } } });
       const response = await Service.find({ query: { test_s: 'test' }, paginate:false });
+
       assert.strictEqual(response.length, 2);
     });
 
@@ -326,6 +346,7 @@ describe('additional adapter tests', () => {
       const service = app.service('search');
       await service.create(mockData);
       const response = await service.patch(null, { test_s: { set: 'test' } }, { query: { $select: ['name', 'test_s'] } });
+
       assert.strictEqual(typeof response[0].city, 'undefined');
       assert.strictEqual(typeof response[0].age, 'undefined');
       assert.strictEqual(typeof response[0].name, 'string');
@@ -372,8 +393,11 @@ describe('additional adapter tests', () => {
 
     it('`delete` by id', async () => {
       const response = await Service._remove(mockData[0].id);
+
       assert.strictEqual(response.id, mockData[0].id);
+
       const test: any = await Service._find({ query: { id: mockData[0].id } });
+
       assert.strictEqual(Array.isArray(test), true);
       assert.strictEqual(test.length, 0);
     });
@@ -388,10 +412,12 @@ describe('additional adapter tests', () => {
       };
 
       const response = await Service._remove(null, { query });
+
       assert.strictEqual(Array.isArray(response), true);
       assert.strictEqual(response.length, 2);
 
       const test: any = await Service._find({ query });
+
       assert.strictEqual(Array.isArray(test), true);
       assert.strictEqual(test.length, 0);
     });
@@ -442,6 +468,7 @@ describe('additional adapter tests', () => {
         $search: 'san'
       }
       const response: any = await app.service('search').find({ query });
+
       assert.strictEqual(Array.isArray(response.data), true);
       assert.strictEqual(response.data[0].city, 'San Francisco');
     });
@@ -451,6 +478,7 @@ describe('additional adapter tests', () => {
         $search: 'new san'
       }
       const response: any = await app.service('search').find({ query });
+
       assert.strictEqual(Array.isArray(response.data), true);
       assert.strictEqual(response.data.length, 2);
     });
@@ -552,6 +580,7 @@ describe('additional adapter tests', () => {
         }
       };
       const response = await app.service('app').find({ query });
+
       assert.strictEqual(typeof response.facets, 'object');
       assert.strictEqual(typeof response.terms, 'object');
       assert.strictEqual(typeof response.spellcheck, 'object');
