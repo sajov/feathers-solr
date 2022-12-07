@@ -9,7 +9,7 @@ export function convertOperators (query: any, escapeFn: any, root = ''): any {
     let queryString;
 
     if (prop === '$or') {
-      queryString = operatorResolver.$or([].concat.apply([], convertOperators(value, escapeFn)));
+      queryString = operatorResolver.$or(convertOperators(value, escapeFn));
     } else if (typeof operatorResolver[prop] !== 'undefined') {
       queryString = operatorResolver[prop](...Object.values(escapeFn(root, value)));
     } else  if (_.isObject(value)) {
