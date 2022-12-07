@@ -21,6 +21,7 @@ export function convertOperators (query: any, escapeFn: any, root = ''): any {
     if (Array.isArray(queryString) && queryString.length > 1) {
         queryString = operatorResolver.$and(queryString);
     }
+
     return res.concat(queryString);
   }, []);
 
