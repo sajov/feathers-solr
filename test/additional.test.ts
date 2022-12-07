@@ -309,8 +309,7 @@ describe('additional adapter tests', () => {
       const service = app.service('search');
       await service.create(mockData);
       await service.patch(null, { test_s: { set: 'test' } });
-      const response = await Service._find({ query: { test_s: 'test' } });
-      // @ts-expect-error 2339
+      const response = await Service.find({ query: { test_s: 'test' }, paginate:false});
       assert.strictEqual(response.length, 3);
     });
 
@@ -319,8 +318,7 @@ describe('additional adapter tests', () => {
       const service = app.service('search');
       await service.create(mockData);
       await service.patch(null, { test_s: { set: 'test' } }, { query: { id: { $in: [1, 2] } } });
-      const response = await Service.find({ query: { test_s: 'test' } });
-      // @ts-expect-error 2339
+      const response = await Service.find({ query: { test_s: 'test' }, paginate:false });
       assert.strictEqual(response.length, 2);
     });
 

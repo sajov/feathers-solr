@@ -1,5 +1,5 @@
 //@ts-ignore
-const Service = require('../lib').Solr;
+const SolrService = require('../lib').SolrService;
 const feathers = require('@feathersjs/feathers');
 const express = require('@feathersjs/express');
 
@@ -17,7 +17,7 @@ app.use(express.errorHandler());
 // Create a service
 const options = {
   host: 'http://localhost:8983/solr',
-  core: 'techproducts',
+  core: 'gettingstarted',
   paginate: {
      default: 3
   },
@@ -36,15 +36,15 @@ const options = {
 };
 
 const setupService = (app) => {
-  app.use('/products', Service(options));
+  app.use('/products', new SolrService(options));
 }
 
 app.configure(setupService)
 
-// app.service('products').create({
-//   id: 'KJHKJT786786hhhg',
-//   title:'hello world'
-// }).then(res => console.log({find: res})).catch(err => console.log(err))
+app.service('products').create({
+  id: 'KJHKJT786786hhhg',
+  title:'hello world'
+}).then(res => console.log({find: res})).catch(err => console.log(err))
 
 // app.service('products').update('KJHKJT786786hhhg', {
 //   title:'hi ho'
@@ -61,10 +61,10 @@ app.configure(setupService)
 //     $select:['id']
 //   }
 // }).then(res => console.log({find: res})).catch(err => console.log(err))
-app.service('products').find({
-  query: {$search: 'title:hello', $select:['id']},
-  paginate: false
-}).then(res => console.log({get: res})).catch(err => console.log(err))
+// app.service('products').find({
+//   query: {$search: 'title:hello', $select:['id']},
+//   paginate: false
+// }).then(res => console.log({get: res})).catch(err => console.log(err))
 
 
 // Start the server.
