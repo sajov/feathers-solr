@@ -300,9 +300,9 @@ describe('additional adapter tests', () => {
       const response = await Service.get('1');
       assert.strictEqual(response.test_s, 'test');
 
-      await Service._patch('1', { test_s: '' });
+      await Service._patch('1', { test_s: {remove: 'test'} });
       const response2 = await Service.get('1');
-      assert.strictEqual(response2.test_s, 'test');
+      assert.strictEqual(response2.test_s, undefined);
     });
 
     it('`patch` all', async () => {
