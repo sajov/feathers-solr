@@ -1,15 +1,5 @@
 import { operatorResolver } from './operatorResolver';
 import { _ } from '@feathersjs/commons/lib';
-const _has = (obj: any, key: string) => {
-  return key.split('.').every(function (x) {
-    if (typeof obj !== 'object' || obj === null || !(x in obj)) {
-      return false;
-    }
-    obj = obj[x];
-    return true;
-  });
-};
-
 export function convertOperators (query: any, escapeFn: any, root = ''): any {
 
   if (Array.isArray(query)) return query.map(q => convertOperators(q, escapeFn));
@@ -21,7 +11,7 @@ export function convertOperators (query: any, escapeFn: any, root = ''): any {
     if (prop === '$or') {
       const o = [].concat.apply([], convertOperators(value, escapeFn));
       queryString = operatorResolver.$or(o);
-    } else if (_has(operatorResolver, prop)) {
+    } else if (typeof operatorResolver[prop] !== 'undefined') {
       const escapedResult = escapeFn(root, value);
       queryString = operatorResolver[prop](escapedResult.key, escapedResult.value);
     } else {
@@ -31,10 +21,9 @@ export function convertOperators (query: any, escapeFn: any, root = ''): any {
       } else {
         queryString = convertOperators(value, escapeFn, prop);
       }
-      if (Array.isArray(queryString)) {
-        if (queryString.length > 1) {
+
+      if (Array.isArray(queryString) && queryString.length > 1) {
           queryString = operatorResolver.$and(queryString);
-        }
       }
       return res.concat(queryString);
     }
