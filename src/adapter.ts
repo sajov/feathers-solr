@@ -141,7 +141,7 @@ export class SolrAdapter<
 
     const data = response ? response.docs : grouped[groupKey].groups || grouped[groupKey].doclist.docs;
 
-    if (!paginate) return data
+    if (!paginate) return data;
 
     return {
       QTime: responseHeader.QTime || 0,
@@ -180,22 +180,21 @@ export class SolrAdapter<
 
     const response = await this.$getOrFind(id, params);
     const dataToPatch = Array.isArray(response) ? response : [response];
-    const ids = dataToPatch.map((d: any) => d[this.id])
-
-    const atomicFieldUpdate = Object.fromEntries(
-      Object.entries(data)
-        .filter(([ field ]) => field !== this.id)
-        .map(([field, value]) => (
-          [ field, _.isObject(value) ? value : value === '' ? { remove: value } : { set: value }]
-        )
-      )
-    );
 
     const patchData = dataToPatch.map((current: any) => {
-      return { ...{ [this.id]: current[this.id] }, ...atomicFieldUpdate }
+      return { [this.id]: current[this.id], ...Object.fromEntries(
+        Object.entries(data)
+          .filter(([ field ]) => field !== this.id)
+          .map(([field, value]) => (
+            [ field, _.isObject(value) ? value : value === '' ? { remove: value } : { set: value }]
+          )
+        )
+      )}
     });
 
     await this.client.post(this.updateHandler, { data: patchData, params: this.options.commit });
+
+    const ids = dataToPatch.map((d: any) => d[this.id]);
 
     const result = await this.$find({
       ...params,
