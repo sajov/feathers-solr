@@ -76,28 +76,28 @@ export class SolrAdapter<
       filter: $filter
     }
 
-    if(id) {
+    if (id) {
       query.filter = [
-        ...convertOperators({[this.options.id]:id},this.options.escapeFn)
+        ...convertOperators({ [this.options.id]: id }, this.options.escapeFn)
       ]
     }
 
-    if(!_.isEmpty(filter)) {
+    if (!_.isEmpty(filter)) {
       query.filter = [
         ...query.filter,
         ...convertOperators(filter, this.options.escapeFn)
       ]
     }
 
-    if($sort) {
+    if ($sort) {
       query.sort = filterResolver.$sort($sort)
     }
 
-    if($params) {
+    if ($params) {
       query.params = $params;
     }
 
-    if($facet) {
+    if ($facet) {
       query.facet = $facet;
     }
 
@@ -182,14 +182,16 @@ export class SolrAdapter<
     const dataToPatch = Array.isArray(response) ? response : [response];
 
     const patchData = dataToPatch.map((current: any) => {
-      return { [this.id]: current[this.id], ...Object.fromEntries(
-        Object.entries(data)
-          .filter(([ field ]) => field !== this.id)
-          .map(([field, value]) => (
-            [ field, _.isObject(value) ? value : value === '' ? { remove: value } : { set: value }]
-          )
+      return {
+        [this.id]: current[this.id], ...Object.fromEntries(
+          Object.entries(data)
+            .filter(([field]) => field !== this.id)
+            .map(([field, value]) => (
+              [field, _.isObject(value) ? value : value === '' ? { remove: value } : { set: value }]
+            )
+            )
         )
-      )}
+      }
     });
 
     await this.client.post(this.updateHandler, { data: patchData, params: this.options.commit });
@@ -198,7 +200,7 @@ export class SolrAdapter<
 
     const result = await this.$find({
       ...params,
-      query:{id: { $in: ids }}
+      query: { id: { $in: ids } }
     });
 
     if ('data' in result) return sel(ids.length === 1 ? result.data[0] : result.data)
@@ -233,8 +235,8 @@ export class SolrAdapter<
     const { query } = this.filterQuery(id, params);
 
     const queryToDelete = id ? { delete: id } :
-      query.filter.length > 0 ? { delete: { query: query.filter.join(' AND ') }} :
-      { delete: { query: '*:*' } };
+      query.filter.length > 0 ? { delete: { query: query.filter.join(' AND ') } } :
+        { delete: { query: '*:*' } };
 
     await this.client.post(this.updateHandler, { data: queryToDelete, params: this.options.commit });
 

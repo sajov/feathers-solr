@@ -11,7 +11,7 @@ export class SolrService<T = any, D = Partial<T>, P extends AdapterParams = Adap
   async find(params?: P & { paginate?: PaginationOptions }): Promise<Paginated<T>>
   async find(params?: P & { paginate: false }): Promise<T[]>
   async find(params?: P): Promise<Paginated<T> | T[]>
-  async find (params?: P): Promise<Paginated<T> | T[]> {
+  async find(params?: P): Promise<Paginated<T> | T[]> {
     return this._find(params) as any
   }
 
