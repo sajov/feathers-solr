@@ -29,6 +29,9 @@ const request = async (options: RequestOptions) => {
   const { protocol } = new URL(url);
   const transport = protocol === 'https:' ? https : http;
 
+  // eslint-disable-next-line no-console
+  // console.log({url, data});
+
   return new Promise((resolve, reject) => {
     const request = transport.request(url,
       {
