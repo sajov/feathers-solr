@@ -4,7 +4,7 @@ import { _ } from '@feathersjs/commons/lib';
 export function convertOperators(query: any, escapeFn: any, root = ''): any {
   if (Array.isArray(query)) return query.map(q => convertOperators(q, escapeFn));
 
-  const converted = Object.keys(query).reduce((res: any, prop: any) => {
+  return Object.keys(query).reduce((res: any, prop: any) => {
     const value = query[prop];
     let queryString;
 
@@ -24,6 +24,4 @@ export function convertOperators(query: any, escapeFn: any, root = ''): any {
 
     return res.concat(queryString);
   }, []);
-
-  return converted;
 }
