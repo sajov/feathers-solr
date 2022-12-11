@@ -10,9 +10,7 @@ import type { NullableId, Id, Paginated } from '@feathersjs/feathers'
 import type { SolrAdapterOptions, SolrAdapterParams } from './declarations';
 import type { HttpClient } from './httpClient';
 
-export const escapeFn = (key: string, value: any) => {
-  return { key, value }
-}
+export const escapeFn = (key: string, value: any) => ({ key, value });
 
 export class SolrAdapter<
   T,
@@ -30,7 +28,6 @@ export class SolrAdapter<
 
   constructor(options: Partial<SolrAdapterOptions>) {
     const { host, core, requestOptions, ...opts } = options;
-
     super(_.extend({
       id: 'id',
       commit: {
