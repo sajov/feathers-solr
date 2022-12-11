@@ -1,7 +1,7 @@
 export const filterResolver: any = {
   $search: (value: string | undefined) => value || '*:*',
-  $select: (fields: string[]) => {
-    if (fields.length === 0) return '*,score';
+  $select: (fields: string[] | undefined) => {
+    if (!Array.isArray(fields) || fields.length === 0) return '*,score';
 
     if (fields.indexOf('id') === -1) {
       fields.push('id');

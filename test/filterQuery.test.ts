@@ -152,6 +152,48 @@ describe('filterQuery', () => {
       assert.deepStrictEqual(query.sort, 'name asc,price desc');
     })
 
+    it('query with `sort` as $param', async () => {
+      const { query } = Service.filterQuery(null, {
+        query: {
+          $params: {
+            sort: 'age desc'
+          }
+        }
+      })
+
+      assert.deepStrictEqual(query.params, {sort: 'age desc'});
+    });
+
+    it('`$facet`', async () => {
+      const { query } = Service.filterQuery(null, {
+        query: {
+          $facet: {
+            age_min: 'min(age)',
+            age_max: 'max(age)',
+            age_ranges: {
+              type: 'range',
+              field: 'age',
+              start: 0,
+              end: 100,
+              gap: 50
+            }
+          }
+        }
+      })
+
+      assert.deepStrictEqual(query.facet, {
+        age_min: "min(age)",
+        age_max: "max(age)",
+        age_ranges: {
+          type: "range",
+          field: "age",
+          start: 0,
+          end: 100,
+          gap: 50,
+        },
+      });
+    });
+
     it('query with empty `$select`', async () => {
       const { query } = Service.filterQuery(null, {})
 

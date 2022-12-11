@@ -7,7 +7,7 @@ import { filterResolver } from './utils/filterResolver';
 import { convertOperators } from './utils/convertOperators';
 import type { PaginationOptions } from '@feathersjs/adapter-commons';
 import type { NullableId, Id, Paginated } from '@feathersjs/feathers'
-import type { SolrAdapterOptions, SolrAdapterParams, SolrQuery } from './declarations';
+import type { SolrAdapterOptions, SolrAdapterParams } from './declarations';
 import type { HttpClient } from './httpClient';
 
 export const escapeFn = (key: string, value: any) => {
@@ -53,57 +53,25 @@ export class SolrAdapter<
 
   filterQuery(id: NullableId | Id, params: P) {
     const { paginate } = this.getOptions(params);
-    const {
-      $search,
-      $params,
-      $select = [],
-      $filter = [],
-      $facet,
-      ...adapterQuery
-    } = params.query || {};
-    const {
-      $skip = 0,
-      $sort,
-      $limit,
-      ...filter
-    } = adapterQuery;
-
-    const query: SolrQuery = {
-      query: filterResolver.$search($search),
-      fields: filterResolver.$select($select),
-      limit: filterResolver.$limit($limit, paginate),
-      offset: filterResolver.$skip($skip),
-      filter: $filter
-    }
-
-    if (id) {
-      query.filter = [
-        ...convertOperators({ [this.options.id]: id }, this.options.escapeFn)
-      ]
-    }
-
-    if (!_.isEmpty(filter)) {
-      query.filter = [
-        ...query.filter,
-        ...convertOperators(filter, this.options.escapeFn)
-      ]
-    }
-
-    if ($sort) {
-      query.sort = filterResolver.$sort($sort)
-    }
-
-    if ($params) {
-      query.params = $params;
-    }
-
-    if ($facet) {
-      query.facet = $facet;
-    }
+    const { $search, $params, $select, $filter, $facet, ...adapterQuery } = params.query || {};
+    const { $skip, $sort, $limit, ...filter } = adapterQuery;
 
     return {
-      paginate,
-      query
+      query: {
+        query: filterResolver.$search($search),
+        fields: filterResolver.$select($select),
+        limit: filterResolver.$limit($limit, paginate),
+        offset: filterResolver.$skip($skip),
+        filter: [
+          ...(id ? convertOperators({ [this.options.id]: id }, this.options.escapeFn) : []),
+          ...(!_.isEmpty(filter) ? convertOperators(filter, this.options.escapeFn) : []),
+          ...($filter ? $filter : [])
+        ],
+        ...($sort && { sort: filterResolver.$sort($sort) }),
+        ...($facet && { facet: $facet }),
+        ...($params && { params: $params })
+      },
+      paginate
     };
   }
 

@@ -2,7 +2,7 @@
 const SolrService = require('../lib').SolrService;
 const feathers = require('@feathersjs/feathers');
 const express = require('@feathersjs/express');
-
+const httpClient = require('../lib/httpClient').httpClient;
 // Create an Express compatible Feathers application instance.
 const app = express(feathers());
 // Turn on JSON parser for REST services
@@ -34,6 +34,7 @@ const options = {
   },
   operators: ['$like','$nlike'],
 };
+const Client = httpClient(options.host);
 
 const setupService = (app) => {
   app.use('/products', new SolrService(options));
@@ -71,5 +72,62 @@ app.service('products').create({
 const port = 3030;
 
 app.listen(port, () => {
+    Client.get('/admin/cores', {
+      params: {
+          'action': 'CREATE',
+          'name': 'example',
+          'config': 'solrconfig.xml',
+          'dataDir': 'data',
+          'configSet': '_default'
+      }
+    })
+    .then(res => {
+      Client.post(`/${options.core}/schema`, {
+        data: {
+          'add-field': [
+            {
+              'name': 'name',
+              'type': 'string',
+              'multiValued': false,
+              'indexed': false,
+              'stored': true
+            },
+            {
+              'name': 'city',
+              'type': 'string',
+              'multiValued': false,
+              'indexed': false,
+              'stored': true
+            },
+            {
+              'name': 'age',
+              'type': 'plong',
+              'multiValued': false,
+              'indexed': false,
+              'stored': true
+            },
+            {
+              'name': 'created',
+              'type': 'boolean',
+              'multiValued': false,
+              'indexed': true,
+              'stored': true
+            }
+          ],
+          'add-copy-field': [
+            { 'source': 'city', 'dest': '_text_' },
+            { 'source': 'name', 'dest': '_text_' },
+            { 'source': 'age', 'dest': '_text_' }
+          ]
+        }
+      })
+      .then(res2 => {
+        console.log(res2)
+        return  res
+      })
+      .catch(error => console.log(error));
+    })
+    .catch(error => console.log(error));
+
   console.log(`Feathers server listening on port ${port}`)
 });
