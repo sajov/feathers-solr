@@ -10,8 +10,6 @@ import type { NullableId, Id, Paginated } from '@feathersjs/feathers'
 import type { SolrAdapterOptions, SolrAdapterParams } from './declarations';
 import type { HttpClient } from './httpClient';
 
-export const escapeFn = (key: string, value: any) => ({ key, value });
-
 export class SolrAdapter<
   T,
   D = Partial<T>,
@@ -40,7 +38,7 @@ export class SolrAdapter<
       defaultSearch: {},
       defaultParams: { echoParams: 'none' },
       createUUID: true,
-      escapeFn
+      escapeFn: (key: string, value: any) => ({ key, value })
     }, opts));
 
     this.queryHandler = `/${core}${this.options.queryHandler}`;
