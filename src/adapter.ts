@@ -85,7 +85,6 @@ export class SolrAdapter<
 
   async $get(id: Id | NullableId, params: P = {} as P): Promise<T> {
     const { query } = this.filterQuery(id, params);
-
     const { response } = await this.client.post(this.queryHandler, { data: query })
 
     if (response.numFound === 0) throw new NotFound(`No record found for id '${id}'`);
@@ -98,15 +97,12 @@ export class SolrAdapter<
   async $find(params?: P): Promise<Paginated<T> | T[]>
   async $find(params: P = {} as P): Promise<Paginated<T> | T[]> {
     const { query, paginate } = this.filterQuery(null, params);
-
     const {
       responseHeader,
       response,
       grouped, ...additionalResponse
-    } = await this.client.post(this.queryHandler, { data: query })
-
+    } = await this.client.post(this.queryHandler, { data: query });
     const groupKey: string = grouped ? Object.keys(grouped)[0] : undefined;
-
     const data = response ? response.docs : grouped[groupKey].groups || grouped[groupKey].doclist.docs;
 
     if (!paginate) return data;
@@ -145,10 +141,8 @@ export class SolrAdapter<
   async $patch(id: NullableId, data: Partial<D>, _params?: P): Promise<T | T[]>
   async $patch(id: NullableId, data: Partial<D>, params: P = {} as P): Promise<T | T[]> {
     const sel = select(params, this.id);
-
     const response = await this.$getOrFind(id, params);
     const dataToPatch = Array.isArray(response) ? response : [response];
-
     const patchData = dataToPatch.map((current: any) => {
       return {
         [this.id]: current[this.id], ...Object.fromEntries(
@@ -165,11 +159,7 @@ export class SolrAdapter<
     await this.client.post(this.updateHandler, { data: patchData, params: this.options.commit });
 
     const ids = dataToPatch.map((d: any) => d[this.id]);
-
-    const result = await this.$find({
-      ...params,
-      query: { id: { $in: ids } }
-    });
+    const result = await this.$find({ ...params, query: { id: { $in: ids } } });
 
     if ('data' in result) return sel(ids.length === 1 ? result.data[0] : result.data)
 
@@ -197,11 +187,8 @@ export class SolrAdapter<
   async $remove(id: NullableId, params?: P): Promise<T | T[]>
   async $remove(id: NullableId, params: P = {} as P): Promise<T | T[]> {
     const sel = select(params, this.id);
-
     const dataToDelete = await this.$getOrFind(id, params);
-
     const { query } = this.filterQuery(id, params);
-
     const queryToDelete = id ? { delete: id } :
       query.filter.length > 0 ? { delete: { query: query.filter.join(' AND ') } } :
         { delete: { query: '*:*' } };
