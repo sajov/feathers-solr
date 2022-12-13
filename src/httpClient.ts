@@ -1,6 +1,5 @@
 import http from 'http';
 import https from 'https';
-import { createDebug } from '@feathersjs/commons';
 
 export interface httpClientOptions {
   hostname: string;
@@ -24,14 +23,12 @@ interface RequestOptions {
   data?: any;
 }
 
-
-const request = async (options: RequestOptions, debug: any) => {
+const request = async (options: RequestOptions) => {
   const { url, data, requestOptions } = options;
   const { method } = requestOptions;
   const { protocol } = new URL(url);
   const transport = protocol === 'https:' ? https : http;
-  debug('Request path', url);
-  debug('Request params', data);
+
   return new Promise((resolve, reject) => {
     const request = transport.request(url,
       {
@@ -66,8 +63,6 @@ const request = async (options: RequestOptions, debug: any) => {
 
 export const httpClient = (hostname: string, requestOptions: http.RequestOptions = {}): HttpClient => {
 
-  const debug = createDebug('feathers-solr')
-
   const getUrl = (resource: string, params: any) => {
     const url = `${hostname}${resource}`;
     if (!params || !Object.keys(params).length) return url;
@@ -83,7 +78,7 @@ export const httpClient = (hostname: string, requestOptions: http.RequestOptions
           method: 'GET',
           ...requestOptions
         }
-      }, debug);
+      });
     },
     post: async (resource: string, options: MethodOptions) => {
       const { params, data } = options;
@@ -94,7 +89,7 @@ export const httpClient = (hostname: string, requestOptions: http.RequestOptions
           method: 'POST',
           ...requestOptions
         }
-      }, debug);
+      });
     }
   }
 }
