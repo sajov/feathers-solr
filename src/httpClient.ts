@@ -75,7 +75,7 @@ export const httpClient = (hostname: string, requestOptions: http.RequestOptions
   }
 
   return {
-    get: async (resource: string, options: MethodOptions, debug) => {
+    get: async (resource: string, options: MethodOptions) => {
       const { params } = options;
       return await request({
         url: getUrl(resource, params),
@@ -83,9 +83,9 @@ export const httpClient = (hostname: string, requestOptions: http.RequestOptions
           method: 'GET',
           ...requestOptions
         }
-      });
+      }, debug);
     },
-    post: async (resource: string, options: MethodOptions, debug) => {
+    post: async (resource: string, options: MethodOptions) => {
       const { params, data } = options;
       return await request({
         url: getUrl(resource, params),
@@ -94,7 +94,7 @@ export const httpClient = (hostname: string, requestOptions: http.RequestOptions
           method: 'POST',
           ...requestOptions
         }
-      });
+      }, debug);
     }
   }
 }
