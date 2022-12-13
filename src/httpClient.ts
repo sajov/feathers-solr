@@ -24,9 +24,8 @@ interface RequestOptions {
   data?: any;
 }
 
-const debug = createDebug('feathers-solr')
 
-const request = async (options: RequestOptions) => {
+const request = async (options: RequestOptions, debug: any) => {
   const { url, data, requestOptions } = options;
   const { method } = requestOptions;
   const { protocol } = new URL(url);
@@ -67,6 +66,8 @@ const request = async (options: RequestOptions) => {
 
 export const httpClient = (hostname: string, requestOptions: http.RequestOptions = {}): HttpClient => {
 
+  const debug = createDebug('feathers-solr')
+
   const getUrl = (resource: string, params: any) => {
     const url = `${hostname}${resource}`;
     if (!params || !Object.keys(params).length) return url;
@@ -74,7 +75,7 @@ export const httpClient = (hostname: string, requestOptions: http.RequestOptions
   }
 
   return {
-    get: async (resource: string, options: MethodOptions) => {
+    get: async (resource: string, options: MethodOptions, debug) => {
       const { params } = options;
       return await request({
         url: getUrl(resource, params),
@@ -84,7 +85,7 @@ export const httpClient = (hostname: string, requestOptions: http.RequestOptions
         }
       });
     },
-    post: async (resource: string, options: MethodOptions) => {
+    post: async (resource: string, options: MethodOptions, debug) => {
       const { params, data } = options;
       return await request({
         url: getUrl(resource, params),
