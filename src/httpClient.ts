@@ -1,5 +1,6 @@
 import http from 'http';
 import https from 'https';
+import { createDebug } from '@feathersjs/commons';
 
 export interface httpClientOptions {
   hostname: string;
@@ -23,12 +24,15 @@ interface RequestOptions {
   data?: any;
 }
 
+const debug = createDebug('feathers-solr')
+
 const request = async (options: RequestOptions) => {
   const { url, data, requestOptions } = options;
   const { method } = requestOptions;
   const { protocol } = new URL(url);
   const transport = protocol === 'https:' ? https : http;
-
+  debug('Request path', url);
+  debug('Request params', data);
   return new Promise((resolve, reject) => {
     const request = transport.request(url,
       {
