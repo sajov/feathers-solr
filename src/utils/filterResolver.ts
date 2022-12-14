@@ -25,7 +25,7 @@ export const filterResolver: any = {
       return paginate.max || paginate.default;
     }
 
-    return 1000;
+    return 15;
   },
   $skip: (value: number) => value || 0,
   $sort: (value: any) => Object.keys(value)

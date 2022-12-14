@@ -40,7 +40,7 @@ describe('filterQuery', () => {
   it('query with `paginate`', async () => {
     const { query } = Service.filterQuery(null, { paginate: false })
 
-    assert.equal(query.limit, 1000);
+    assert.equal(query.limit, 15);
   })
 
   it('query with default `paginate`', async () => {
