@@ -29,7 +29,7 @@ const request = async (options: RequestOptions) => {
   const { protocol } = new URL(url);
   const transport = protocol === 'https:' ? https : http;
 
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve, reject): void => {
     const request = transport.request(url,
       {
         ...requestOptions,
@@ -37,7 +37,7 @@ const request = async (options: RequestOptions) => {
           { 'Content-Type': 'application/json' } :
           { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(data) }
       },
-      (res: any) => {
+      (res: any): void => {
         if (res.statusCode < 200 || res.statusCode > 299) {
           return reject(new Error(`HTTP status code ${res.statusCode}`));
         }
@@ -63,33 +63,36 @@ const request = async (options: RequestOptions) => {
 
 export const httpClient = (hostname: string, requestOptions: http.RequestOptions = {}): HttpClient => {
 
-  const getUrl = (resource: string, params: any) => {
+  function getUrl({ resource, params }: { resource: string; params: any; }): string {
     const url = `${hostname}${resource}`;
-    if (!params || !Object.keys(params).length) return url;
-    return `${url}?${new URLSearchParams(params)}`;
+    return !params || !Object.keys(params).length ? url : `${url}?${new URLSearchParams(params)}`;
+  }
+
+  async function get(resource: string, options: MethodOptions): Promise<unknown> {
+    const { params } = options;
+    return await request({
+      url: getUrl({ resource, params }),
+      requestOptions: {
+        ...requestOptions,
+        method: 'GET'
+      }
+    });
+  }
+
+  async function post(resource: string, options: MethodOptions): Promise<unknown> {
+    const { params, data } = options;
+    return await request({
+      url: getUrl({ resource, params }),
+      data: JSON.stringify(data),
+      requestOptions: {
+        ...requestOptions,
+        method: 'POST'
+      }
+    });
   }
 
   return {
-    get: async (resource: string, options: MethodOptions) => {
-      const { params } = options;
-      return await request({
-        url: getUrl(resource, params),
-        requestOptions: {
-          method: 'GET',
-          ...requestOptions
-        }
-      });
-    },
-    post: async (resource: string, options: MethodOptions) => {
-      const { params, data } = options;
-      return await request({
-        url: getUrl(resource, params),
-        data: JSON.stringify(data),
-        requestOptions: {
-          method: 'POST',
-          ...requestOptions
-        }
-      });
-    }
+    get,
+    post
   }
 }
