@@ -7,7 +7,7 @@ export const convertOperators = (query: any, escapeFn: any, root = ''): string[]
     Object.keys(query).map((prop: any) =>
       prop === '$or' ?
         operatorResolver.$or(convertOperators(query[prop], escapeFn)) :
-        typeof operatorResolver[prop] !== 'undefined' ?
+        (prop in operatorResolver) ?
           operatorResolver[prop](...Object.values(escapeFn(root, query[prop]))) :
           _.isObject(query[prop]) ?
             operatorResolver.$and(convertOperators(query[prop], escapeFn, prop)) :
