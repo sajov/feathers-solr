@@ -156,9 +156,7 @@ export class SolrAdapter<
     const ids = dataToPatch.map((d: any) => d[this.id]);
     const result = await this.$find({ ...params, query: { id: { $in: ids } } });
 
-    if ('data' in result) return sel(ids.length === 1 ? result.data[0] : result.data)
-
-    return sel(ids.length === 1 ? result[0] : result)
+    return sel(ids.length === 1 && Array.isArray(result) && result.length > 0 ? result[0] : result)
   }
 
   async $update(id: Id | NullableId, data: D, params: P = {} as P): Promise<T> {
@@ -184,8 +182,10 @@ export class SolrAdapter<
     const sel = select(params, this.id);
     const dataToDelete = await this.$getOrFind(id, params);
     const { query } = this.filterQuery(id, params);
-    const queryToDelete = id ? { delete: id } :
-      query.filter.length > 0 ? { delete: { query: query.filter.join(' AND ') } } :
+    const queryToDelete = id ?
+      { delete: id } :
+      query.filter.length > 0 ?
+        { delete: { query: query.filter.join(' AND ') } } :
         { delete: { query: '*:*' } };
 
     await this.client.post(this.updateHandler, { data: queryToDelete, params: this.options.commit });
