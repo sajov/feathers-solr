@@ -138,18 +138,16 @@ export class SolrAdapter<
     const sel = select(params, this.id);
     const response = await this.$getOrFind(id, params);
     const dataToPatch = Array.isArray(response) ? response : [response];
-    const patchData = dataToPatch.map((current: any) => {
-      return {
-        [this.id]: current[this.id], ...Object.fromEntries(
-          Object.entries(data)
-            .filter(([field]) => field !== this.id)
-            .map(([field, value]) => (
-              [field, _.isObject(value) ? value : value === '' ? { remove: value } : { set: value }]
-            )
-            )
-        )
-      }
-    });
+    const patchData = dataToPatch.map((current: any) => ({
+      [this.id]: current[this.id], ...Object.fromEntries(
+        Object.entries(data)
+          .filter(([field]) => field !== this.id)
+          .map(([field, value]) => (
+            [field, _.isObject(value) ? value : value === '' ? { remove: value } : { set: value }]
+          )
+          )
+      )
+    }));
 
     await this.client.post(this.updateHandler, { data: patchData, params: this.options.commit });
 
