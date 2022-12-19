@@ -2,9 +2,9 @@ import { operatorResolver } from './operatorResolver';
 import { _ } from '@feathersjs/commons/lib';
 
 export function convertOperators(query: any, escapeFn: any, root = ''): any {
-  return Array.isArray(query) ?
-    query.map(q => convertOperators(q, escapeFn)) :
-    Object.keys(query).map(prop =>  prop === '$or' ?
+  if (Array.isArray(query)) return query.map(q => convertOperators(q, escapeFn));
+
+  return Object.keys(query).map(prop =>  prop === '$or' ?
           operatorResolver.$or(convertOperators(query[prop], escapeFn)) :
           typeof operatorResolver[prop] !== 'undefined' ?
             operatorResolver[prop](...Object.values(escapeFn(root, query[prop]))) :
