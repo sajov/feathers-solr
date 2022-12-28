@@ -10,11 +10,11 @@ export const filterResolver: any = {
       paginate === false ?
         $limit :
         paginate.max ?
-          paginate.max > $limit ?
+          paginate.max >= $limit ?
             $limit :
             paginate.max :
-          paginate.max || paginate.default :
-      paginate ? paginate.max || paginate.default : 15;
+          paginate.default || paginate.max :
+      paginate ? paginate.default || paginate.max : 15;
   },
   $skip: (value: number) => value || 0,
   $sort: (value: any) => Object.keys(value).map(key => `${key} ${(parseInt(value[key], 10) === 1 ? 'asc' : 'desc')}`).join(',')

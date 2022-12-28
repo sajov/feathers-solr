@@ -31,7 +31,7 @@ describe('filterQuery', () => {
     assert.deepStrictEqual(query, {
         query: '*:*',
         fields: '*,score',
-        limit: 100,
+        limit: 15,
         offset: 0,
         filter: []
     });
@@ -325,7 +325,7 @@ describe('filterQuery', () => {
            filter: [
              '(name:Doug OR (age:[18 TO *] AND age:[* TO 25}))'
            ],
-           limit: 100,
+           limit: 15,
            offset: 0,
            query: '*:*',
            sort: 'name asc'

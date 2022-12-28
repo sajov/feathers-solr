@@ -1,30 +1,79 @@
-import { NotFound, MethodNotAllowed } from '@feathersjs/errors'
+import { BadRequest, MethodNotAllowed, NotFound } from '@feathersjs/errors'
 import { _ } from '@feathersjs/commons'
-import { AdapterBase, select } from '@feathersjs/adapter-commons'
 import { httpClient } from './httpClient';
 import { addIds } from './utils/addIds';
 import { filterResolver } from './utils/filterResolver';
 import { convertOperators } from './utils/convertOperators';
-import type { PaginationOptions } from '@feathersjs/adapter-commons';
+import {
+  AdapterBase,
+  select,
+  AdapterParams,
+  AdapterServiceOptions,
+  PaginationOptions,
+  AdapterQuery
+} from '@feathersjs/adapter-commons'
 import type { NullableId, Id, Paginated } from '@feathersjs/feathers'
-import type { SolrAdapterOptions, SolrAdapterParams } from './declarations';
 import type { HttpClient } from './httpClient';
 
+export interface SolrAdapterOptions extends AdapterServiceOptions {
+  host: string;
+  core: string;
+  commit?: {
+    softCommit?: boolean;
+    commitWithin?: number;
+    overwrite?: boolean
+  };
+  queryHandler?: string;
+  updateHandler?: string;
+  defaultSearch?: any;
+  defaultParams?: any;
+  createUUID?: boolean;
+  requestOptions?: { timeout: 10 };
+  escapeFn?: (key: string, value: any) => { key: string, value: any };
+}
+
+export type SolrAdapterParams<Q = AdapterQuery> = AdapterParams<Q, Partial<SolrAdapterOptions>>
+type SolrQueryParams = {}
+type SolrQueryFacet = {}
+
+export interface SolrQuery {
+  query: string;
+  fields: string;
+  limit: number;
+  offset: number;
+  sort?: string;
+  filter?: string[];
+  params?: SolrQueryParams
+  facet?: SolrQueryFacet
+}
+export interface SolrAdapterOptions extends AdapterServiceOptions {
+  host: string;
+  core: string;
+  commit?: {
+    softCommit?: boolean;
+    commitWithin?: number;
+    overwrite?: boolean
+  };
+  queryHandler?: string;
+  updateHandler?: string;
+  defaultSearch?: any;
+  defaultParams?: any;
+  createUUID?: boolean;
+  requestOptions?: { timeout: 10 };
+  escapeFn?: (key: string, value: any) => { key: string, value: any };
+}
+
 export class SolrAdapter<
-  T,
-  D = Partial<T>,
-  P extends SolrAdapterParams = SolrAdapterParams<any>
-> extends AdapterBase<
-  T,
-  D,
-  P,
-  SolrAdapterOptions
-> {
+  Result,
+  Data = Partial<Result>,
+  ServiceParams extends SolrAdapterParams<any> = SolrAdapterParams,
+  PatchData = Partial<Data>
+> extends AdapterBase<Result, Data, PatchData, ServiceParams, SolrAdapterOptions> {
   client: HttpClient;
   queryHandler: string;
   updateHandler: string;
 
-  constructor(options: Partial<SolrAdapterOptions>) {
+  constructor(options: SolrAdapterOptions) {
     const { host, core, requestOptions, ...opts } = options;
     super(_.extend({
       id: 'id',
@@ -46,7 +95,7 @@ export class SolrAdapter<
     this.client = httpClient(host, requestOptions)
   }
 
-  filterQuery(id: NullableId | Id, params: P) {
+  filterQuery(id: NullableId | Id, params: ServiceParams) {
     const { paginate } = this.getOptions(params);
     const { $search, $params, $select, $filter, $facet, ...adapterQuery } = params.query || {};
     const { $skip, $sort, $limit, ...filter } = adapterQuery;
@@ -70,15 +119,15 @@ export class SolrAdapter<
     };
   }
 
-  async $getOrFind(id: NullableId | NullableId, params: P) {
-    if (id !== null) return this.$get(id, params);
+  async _getOrFind(id: NullableId | NullableId, params: ServiceParams) {
+    if (id !== null) return this._get(id, params);
 
-    return this.$find(
+    return this._find(
       Object.assign(params, { paginate: false })
     );
   }
 
-  async $get(id: Id | NullableId, params: P = {} as P): Promise<T> {
+  async _get(id: Id | NullableId, params: ServiceParams = {} as ServiceParams): Promise<Result> {
     const { query } = this.filterQuery(id, params);
     const { response } = await this.client.post(this.queryHandler, { data: query })
 
@@ -87,10 +136,10 @@ export class SolrAdapter<
     return response.docs[0];
   }
 
-  async $find(params?: P & { paginate?: PaginationOptions }): Promise<Paginated<T>>
-  async $find(params?: P & { paginate: false }): Promise<T[]>
-  async $find(params?: P): Promise<Paginated<T> | T[]>
-  async $find(params: P = {} as P): Promise<Paginated<T> | T[]> {
+  async _find(params?: ServiceParams & { paginate?: PaginationOptions }): Promise<Paginated<Result>>
+  async _find(params?: ServiceParams & { paginate: false }): Promise<Result[]>
+  async _find(params?: ServiceParams): Promise<Paginated<Result> | Result[]>
+  async _find(params: ServiceParams = {} as ServiceParams): Promise<Paginated<Result> | Result[]> {
     const { query, paginate } = this.filterQuery(null, params);
     const {
       responseHeader,
@@ -112,13 +161,16 @@ export class SolrAdapter<
     }
   }
 
-  async $create(data: D, params?: P): Promise<T>
-  async $create(data: D[], params?: P): Promise<T[]>
-  async $create(data: D | D[], _params?: P): Promise<T | T[]>
-  async $create(data: D | D[], params: P = {} as P): Promise<T | T[]> {
-    const sel = select(params, this.id);
+  async _create(data: Data, params?: ServiceParams): Promise<Result>
+  async _create(data: Data[], params?: ServiceParams): Promise<Result[]>
+  async _create(data: Data | Data[], _params?: ServiceParams): Promise<Result | Result[]>
+  async _create(
+    data: Data | Data[],
+    params: ServiceParams = {} as ServiceParams
+  ): Promise<Result | Result[]> {
+  if (_.isEmpty(data)) throw new MethodNotAllowed('Data is empty');
 
-    if (_.isEmpty(data)) throw new MethodNotAllowed('Data is empty');
+    const sel = select(params, this.id);
 
     let dataToCreate: any | any[] = Array.isArray(data) ? [...data] : [{ ...data }];
 
@@ -131,16 +183,23 @@ export class SolrAdapter<
     return sel(Array.isArray(data) ? dataToCreate : dataToCreate[0]);
   }
 
-  async $patch(id: null, data: Partial<D>, params?: P): Promise<T[]>
-  async $patch(id: Id, data: Partial<D>, params?: P): Promise<T>
-  async $patch(id: NullableId, data: Partial<D>, _params?: P): Promise<T | T[]>
-  async $patch(id: NullableId, data: Partial<D>, params: P = {} as P): Promise<T | T[]> {
+  async _patch(id: null, data: PatchData, params?: ServiceParams): Promise<Result[]>
+  async _patch(id: NullableId, data: PatchData, params?: ServiceParams): Promise<Result>
+  async _patch(id: NullableId, data: PatchData, _params?: ServiceParams): Promise<Result | Result[]>
+  async _patch(
+    id: NullableId,
+    _data: PatchData,
+    params: ServiceParams = {} as ServiceParams
+  ): Promise<Result | Result[]> {
+    if (id === null && !this.allowsMulti('patch', params)) {
+      throw new MethodNotAllowed('Can not patch multiple entries')
+    }
     const sel = select(params, this.id);
-    const response = await this.$getOrFind(id, params);
+    const response = await this._getOrFind(id, params);
     const dataToPatch = Array.isArray(response) ? response : [response];
     const patchData = dataToPatch.map((current: any) => ({
       [this.id]: current[this.id], ...Object.fromEntries(
-        Object.entries(data)
+        Object.entries(_data)
           .filter(([field]) => field !== this.id)
           .map(([field, value]) => (
             [field, _.isObject(value) ? value : value === '' ? { remove: value } : { set: value }]
@@ -152,15 +211,18 @@ export class SolrAdapter<
     await this.client.post(this.updateHandler, { data: patchData, params: this.options.commit });
 
     const ids = dataToPatch.map((d: any) => d[this.id]);
-    const result = await this.$find({ ...params, query: { id: { $in: ids } } });
+    const result = await this._find({ ...params, query: { id: { $in: ids } } });
 
     return sel(ids.length === 1 && Array.isArray(result) && result.length > 0 ? result[0] : result)
   }
 
-  async $update(id: Id | NullableId, data: D, params: P = {} as P): Promise<T> {
+  async _update(id: NullableId, data: Data, params: ServiceParams = {} as ServiceParams): Promise<Result> {
+    if (id === null || Array.isArray(data)) {
+      throw new BadRequest('You can not replace multiple instances. Did you mean \'patch\'?')
+    }
     const sel = select(params, this.id);
 
-    await this.$getOrFind(id, params);
+    await this._getOrFind(id, params);
 
     const dataToUpdate: any = id && !Array.isArray(data) ? [{ id, ...data }] : data;
 
@@ -169,16 +231,22 @@ export class SolrAdapter<
       params: this.options.commit
     });
 
-    return this.$getOrFind(id, params)
+    return this._getOrFind(id, params)
       .then(res => sel(_.omit(res, 'score', '_version_')));
   }
 
-  async $remove(id: null, params?: P): Promise<T[]>
-  async $remove(id: Id, params?: P): Promise<T>
-  async $remove(id: NullableId, params?: P): Promise<T | T[]>
-  async $remove(id: NullableId, params: P = {} as P): Promise<T | T[]> {
+  async _remove(id: null, params?: ServiceParams): Promise<Result[]>
+  async _remove(id: NullableId, params?: ServiceParams): Promise<Result>
+  async _remove(id: NullableId, _params?: ServiceParams): Promise<Result | Result[]>
+  async _remove(
+    id: NullableId,
+    params: ServiceParams = {} as ServiceParams
+  ): Promise<Result | Result[]> {
+    if (id === null && !this.allowsMulti('remove', params)) {
+      throw new MethodNotAllowed('Can not remove multiple entries')
+    }
     const sel = select(params, this.id);
-    const dataToDelete = await this.$getOrFind(id, params);
+    const dataToDelete = await this._getOrFind(id, params);
     const { query } = this.filterQuery(id, params);
     const queryToDelete = id ?
       { delete: id } :
