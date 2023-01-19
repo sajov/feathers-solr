@@ -30,7 +30,7 @@
   "scripts": {
     "prepare": "npm run build",
     "prepublish": "npm run build",
-    "prepublish:ext": "npm run build && npm publish --tag next",
+    "prepublish:next": "npm run build && npm version prerelease --preid=next && npm publish --tag next",
     "lint": "eslint src/**/*.ts --fix",
     "lint:test": "eslint test/**/*.ts --fix",
     "build": "shx rm -rf lib/ && tsc",
