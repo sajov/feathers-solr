@@ -30,6 +30,7 @@ export interface SolrAdapterOptions extends AdapterServiceOptions {
   createUUID?: boolean;
   requestOptions?: { timeout: 10 };
   escapeFn?: (key: string, value: any) => { key: string, value: any };
+  logger?: (msg: any) => any;
 }
 
 export type SolrAdapterParams<Q = AdapterQuery> = AdapterParams<Q, Partial<SolrAdapterOptions>>
@@ -45,22 +46,6 @@ export interface SolrQuery {
   filter?: string[];
   params?: SolrQueryParams
   facet?: SolrQueryFacet
-}
-export interface SolrAdapterOptions extends AdapterServiceOptions {
-  host: string;
-  core: string;
-  commit?: {
-    softCommit?: boolean;
-    commitWithin?: number;
-    overwrite?: boolean
-  };
-  queryHandler?: string;
-  updateHandler?: string;
-  defaultSearch?: any;
-  defaultParams?: any;
-  createUUID?: boolean;
-  requestOptions?: { timeout: 10 };
-  escapeFn?: (key: string, value: any) => { key: string, value: any };
 }
 
 export class SolrAdapter<
@@ -87,12 +72,13 @@ export class SolrAdapter<
       defaultSearch: {},
       defaultParams: { echoParams: 'none' },
       createUUID: true,
-      escapeFn: (key: string, value: any) => ({ key, value })
+      escapeFn: (key: string, value: any) => ({ key, value }),
+      logger: (msg: any): any => msg
     }, opts));
 
     this.queryHandler = `/${core}${this.options.queryHandler}`;
     this.updateHandler = `/${core}${this.options.updateHandler}`;
-    this.client = httpClient(host, requestOptions)
+    this.client = httpClient(host, requestOptions, this.options.logger)
   }
 
   filterQuery(id: NullableId | Id, params: ServiceParams) {

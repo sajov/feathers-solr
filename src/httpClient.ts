@@ -21,14 +21,16 @@ interface RequestOptions {
   url: string;
   requestOptions: http.RequestOptions | https.RequestOptions;
   data?: any;
+  logger?: any;
 }
 
 const request = async (options: RequestOptions) => {
-  const { url, data, requestOptions } = options;
+  const { url, data, requestOptions, logger } = options;
   const { method } = requestOptions;
   const { protocol } = new URL(url);
   const transport = protocol === 'https:' ? https : http;
 
+  logger({url, data});
   return new Promise((resolve, reject): void => {
     const request = transport.request(url,
       {
@@ -39,6 +41,7 @@ const request = async (options: RequestOptions) => {
       },
       (res: any): void => {
         if (res.statusCode < 200 || res.statusCode > 299) {
+          logger({statusCode: res.statusCode});
           return reject(new Error(`HTTP status code ${res.statusCode}`));
         }
 
@@ -48,10 +51,14 @@ const request = async (options: RequestOptions) => {
       }
     );
 
-    request.on('error', (err: Error) => reject(err));
+    request.on('error', (err: Error) => {
+      logger({err});
+      reject(err);
+    });
 
     request.on('timeout', () => {
       request.destroy();
+      logger('timeout');
       reject(new Error('timed out'));
     });
 
@@ -61,7 +68,7 @@ const request = async (options: RequestOptions) => {
   })
 }
 
-export const httpClient = (hostname: string, requestOptions: http.RequestOptions = {}): HttpClient => {
+export const httpClient = (hostname: string, requestOptions: http.RequestOptions = {}, logger: any = () => {}): HttpClient => {
 
   function getUrl({ resource, params }: { resource: string; params: any; }): string {
     const url = `${hostname}${resource}`;
@@ -75,7 +82,8 @@ export const httpClient = (hostname: string, requestOptions: http.RequestOptions
       requestOptions: {
         ...requestOptions,
         method: 'GET'
-      }
+      },
+      logger
     });
   }
 
@@ -87,7 +95,8 @@ export const httpClient = (hostname: string, requestOptions: http.RequestOptions
       requestOptions: {
         ...requestOptions,
         method: 'POST'
-      }
+      },
+      logger
     });
   }
 
