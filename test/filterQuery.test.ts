@@ -360,13 +360,36 @@ describe('filterQuery', () => {
     it('$and', async () => {
       const { query } = Service.filterQuery(null, {
         query: {
-          1: 'a',
-          2: 'b'
-        }
+          $and: [{ age: 19 }],
+          $sort: { name: 1 }
+      }
       })
-
-      assert.deepStrictEqual(query.filter, ['1:a', '2:b']);
+      // console.log('end', query.filter)
+      assert.deepStrictEqual(query.filter, [ 'age:19' ]);
     })
+
+    it('$and $or', async () => {
+      const { query } = Service.filterQuery(null, {
+        query: {
+          $and: [{ $or: [{ name: 'Alice' },{ name: 'Bob' }] }, {age: {$gt: 30}}],
+          $sort: { name: 1 }
+      }
+      })
+      // console.log('end', JSON.stringify(query.filter))
+      assert.deepStrictEqual(query.filter, ['((name:Alice OR name:Bob) AND age:{30 TO *])']);
+    })
+
+    it('$and $or simple', async () => {
+      const { query } = Service.filterQuery(null, {
+        query: {
+          $and: [{ $or: [{ name: 'Alice' }] }],
+      }
+      })
+      // console.log('end', JSON.stringify(query))
+      assert.deepStrictEqual(query.filter, ['(name:Alice)']);
+    })
+
+
 
     it('$like', async () => {
       const { query } = Service.filterQuery(null, {

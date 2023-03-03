@@ -15,6 +15,8 @@ const options = {
     $search: (value: any) => value
   },
   operators: ['$like','$nlike'],
+  // @ts-ignore
+  // logger: (msg) => {console.log({msg})}
   //paginate: {default: 10}
 }
 
@@ -41,7 +43,6 @@ const testSuite = adapterTests([
   '.get + NotFound',
   '.get + id + query id',
   '.find',
-  '.find + paginate + query',
   '.remove',
   '.remove + $select',
   '.remove + id + query',
@@ -52,8 +53,8 @@ const testSuite = adapterTests([
   '.update + $select',
   '.update + id + query',
   '.update + NotFound',
-  '.update + id + query id',
   '.update + query + NotFound',
+  '.update + id + query id',
   '.patch',
   '.patch + $select',
   '.patch + id + query',
@@ -61,10 +62,11 @@ const testSuite = adapterTests([
   '.patch multiple no pagination',
   '.patch multi query same',
   '.patch multi query changed',
-  '.patch + query + NotFound',
   '.patch + NotFound',
+  '.patch + query + NotFound',
   '.patch + id + query id',
   '.create',
+  '.create ignores query',
   '.create + $select',
   '.create multi',
   'internal .find',
@@ -82,6 +84,7 @@ const testSuite = adapterTests([
   '.find + $skip',
   '.find + $select',
   '.find + $or',
+  '.find + $and',
   '.find + $in',
   '.find + $nin',
   '.find + $lt',
@@ -91,12 +94,14 @@ const testSuite = adapterTests([
   '.find + $ne',
   '.find + $gt + $lt + $sort',
   '.find + $or nested + $sort',
+  '.find + $and + $or',
+  'params.adapter + paginate',
+  'params.adapter + multi',
   '.find + paginate',
+  '.find + paginate + query',
   '.find + paginate + $limit + $skip',
   '.find + paginate + $limit 0',
-  '.find + paginate + params',
-  'params.adapter + paginate',
-  'params.adapter + multi'
+  '.find + paginate + params'
 ])
 
 describe.skip('debug', () => {
