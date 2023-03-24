@@ -29,7 +29,7 @@
   "main": "lib/",
   "scripts": {
     "prepare": "npm run build",
-    "publish": "npm run build",
+    "prepublish": "npm run build",
     "lint": "eslint src/**/*.ts --fix",
     "lint:test": "eslint test/**/*.ts --fix",
     "build": "shx rm -rf lib/ && tsc",
