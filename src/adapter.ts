@@ -188,7 +188,7 @@ export class SolrAdapter<
         Object.entries(_data)
           .filter(([field]) => field !== this.id)
           .map(([field, value]) => (
-            [field, _.isObject(value) ? value : value === '' ? { remove: value } : { set: value }]
+            [field, _.isObject(value) ? value : value === undefined ? { set: null } : { set: value }]
           )
           )
       )
@@ -210,10 +210,8 @@ export class SolrAdapter<
 
     await this._getOrFind(id, params);
 
-    const dataToUpdate: any = id && !Array.isArray(data) ? [{ id, ...data }] : data;
-
     await this.client.post(this.updateHandler, {
-      data: dataToUpdate,
+      data: [{ ...data, id }],
       params: this.options.commit
     });
 

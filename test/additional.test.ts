@@ -321,6 +321,19 @@ describe('additional adapter tests', () => {
       const response2 = await Service.get('1');
 
       assert.strictEqual(response2.test_s, undefined);
+
+      await Service._patch('1', { test_ss: { set: ['test1', 'test2'] } });
+      const response3 = await Service.get('1');
+      assert.deepEqual(response3.test_ss, ['test1', 'test2']);
+
+      await Service._patch('1', { test_ss: {remove: 'test2'} });
+      const response4 = await Service.get('1');
+      assert.deepEqual(response4.test_ss, ['test1']);
+
+      await Service._patch('1', { test_ss: { set: ['test1', 'test2'] } });
+      await Service._patch('1', { test_ss: undefined });
+      const response5 = await Service.get('1');
+      assert.strictEqual(response5.test_s, undefined);
     });
 
     it('`patch` all', async () => {
