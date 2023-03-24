@@ -5,17 +5,7 @@ export const filterResolver: any = {
       ['*', 'score'] : fields.indexOf('id') === -1 ?
         fields.concat(['id']) : fields).join(',')
   },
-  $limit: ($limit: number, paginate: any) => {
-    return typeof $limit === 'number' ?
-      paginate === false ?
-        $limit :
-        paginate.max ?
-          paginate.max >= $limit ?
-            $limit :
-            paginate.max :
-          paginate.default || paginate.max :
-      paginate ? paginate.default || paginate.max : 15;
-  },
+  $limit: ($limit: number, paginate: any) => Math.min(Number($limit ?? paginate.default ?? 15), paginate.max ?? $limit ?? 15 as unknown as number),
   $skip: (value: number) => value || 0,
   $sort: (value: any) => Object.keys(value).map(key => `${key} ${(parseInt(value[key], 10) === 1 ? 'asc' : 'desc')}`).join(',')
 };
