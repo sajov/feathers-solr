@@ -1,13 +1,12 @@
 # feathers-solr
 
 [![CI](https://github.com/feathersjs/feathers/workflows/CI/badge.svg)](https://github.com/feathersjs/feathers/actions?query=workflow%3ACI)
-[![Coverage Status](https://coveralls.io/repos/github/sajov/feathers-solr/badge.svg?branch=master)](https://coveralls.io/github/sajov/feathers-solr?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/sajov/feathers-solr/badge.svg?branch=v3.0.0-pre.1)](https://coveralls.io/github/sajov/feathers-solr?branch=master)
 [![Known Vulnerabilities](https://snyk.io/test/npm/feathers-solr/badge.svg)](https://snyk.io/test/npm/feathers-solr)
 [![Download Status](https://img.shields.io/npm/dm/feathers-solr.svg?style=flat-square)](https://www.npmjs.com/package/feathers-solr)
 
-A [Feathers](https://feathersjs.com/) Solr Adapter. Require >= Solr 5.x.
+A [Feathers](https://feathersjs.com/) Solr Adapter. Tested with Solr 8.x, require at least >= Solr 5.x.
 
-> See this [adapter in action](https://feathers.better-search-box.com)
 
 ## Installation
 
@@ -15,14 +14,8 @@ A [Feathers](https://feathersjs.com/) Solr Adapter. Require >= Solr 5.x.
 $ npm install feathers-solr --save
 ```
 
-> **Important:** `feathers-solr` implements the [Feathers Common database adapter API](https://docs.feathersjs.com/api/databases/common.html) and [querying syntax](https://docs.feathersjs.com/api/databases/querying.html).
-
-Install a supported HTTP Client [Fetch](https://github.com/bitinn/node-fetch), [Undici](https://github.com/mcollina/undici) or [use a different HTTP Client](https://github.com/sajov/feathers-solr/tree/master#use-a-different-http-client).
-
-```
-$ npm install node-fetch --save
-```
-
+> __Important:__ `@feathersjs/memory` implements the [Feathers Common database adapter API](https://docs.feathersjs.com/api/databases/common.html) and [querying syntax](https://docs.feathersjs.com/api/databases/querying.html).
+> It use sthe native node `http` and `https` module.
 
 ## API
 
@@ -32,23 +25,28 @@ Returns a new service instance initialized with the given options.
 
 ```js
 const service = require('feathers-solr');
-
-app.use('/gettingstarted', service({ id, Model, events, paginate }));
+app.use('/search', service({host, core}));
 ```
+
 
 **Options:**
 
-- `Model` (**required**) - HTTP Client (fetch, undici, or your custom).
-- `name` - The name of the Solr Core / Colelction.
-- `defaultParams` - This params added to all Solr request.
-- `id` (_optional_, default: `'id'`) - The name of the id field property.
-- `commitStrategy` - (_optional_, default: `{ softCommit: true, commitWithin: 10000, overwrite: true }`) - Define how Index changes are stored [Solr Commits](https://lucene.apache.org/solr/guide/7_7/updatehandlers-in-solrconfig.html#UpdateHandlersinSolrConfig-commitandsoftCommit).
-- `defaultSearch` - (_optional_, default: `{ defType: 'edismax', qf: 'name^10 age^1 gender' }`) - Search strategy if query contains the param `$search` [The Extended DisMax Query Parser](https://lucene.apache.org/solr/guide/6_6/the-extended-dismax-query-parser.html).
-- `suggestHandler` - (_optional_, default: `suggest`) - Request a Solr Suggest Handler instead reggular a search if query contains the param `$suggest` [Suggester](https://lucene.apache.org/solr/guide/7_7/suggester.html).
-- `events` (_optional_) - A list of [custom service events](https://docs.feathersjs.com/api/events.html#custom-events) sent by this service
-- `paginate` (_optional_) - A [pagination object](https://docs.feathersjs.com/api/databases/common.html#pagination) containing a `default` and `max` page size
-- `whitelist` (default: `['$search', '$params', '$facet', '$filter']`) [optional] - The list of additional non-standard query parameters to allow, by default populated with all Solr specific ones. You can override, for example in order to restrict access to some queries (see the [options documentation](https://docs.feathersjs.com/api/databases/common.html#serviceoptions)).
-- `multi` (_optional_) - Allow `create` with arrays and `update` and `remove` with `id` `null` to change multiple items. Can be `true` for all methods or an array of allowed methods (e.g. `[ 'remove', 'create' ]`)
+- `host` - The name of the Solr core / collection.
+- `core` - The name of the Solr core / collection.
+- `events` (*optional*) - A list of [custom service events](https://docs.feathersjs.com/api/events.html#custom-events) sent by this service
+- `paginate` (*optional*) - A [pagination object](https://docs.feathersjs.com/api/databases/common.html#pagination) containing a `default` and `max` page size
+- `whitelist` (*DEPRECATED*) - renamed to `allow`
+- `allow` (*optional*) - A list of additional query parameters to allow
+- `multi` (*optional*) - Allow `create` with arrays and `update` and `remove` with `id` `null` to change multiple items. Can be `true` for all methods or an array of allowed methods (e.g. `[ 'remove', 'create' ]`)
+- `id` (*optional*, default: `'id'`) - The name of the id field property.
+- `commitStrategy` - (*optional*, default: `{ softCommit: true, commitWithin: 10000, overwrite: true }`) - Define how Index changes are stored [Solr Commits](https://lucene.apache.org/solr/guide/7_7/updatehandlers-in-solrconfig.html#UpdateHandlersinSolrConfig-commitandsoftCommit).
+- `defaultParams` (*optional* default: `{ echoParams: 'none' }`)- This params added to all Solr request.
+- `defaultSearch` - (*optional*, default: `{ defType: 'edismax', qf: 'name^10 age^1 gender' }`) - Search strategy if query contains the param `$search` [The Extended DisMax Query Parser](https://lucene.apache.org/solr/guide/6_6/the-extended-dismax-query-parser.html).
+- `queryHandler` (*optional* default: `'/query'`) - This params defines the Solr request handler to use.
+- `updateHandler` (*optional* default: `'/update/json'`) - This params defines the Solr update handler to use.
+- `createUUID` (*optional* default: `true`) - This params add aa UUID if not exist on data. Id's generated by `crypto`
+- `escapeFn` (*optional* default: `(key: string, value: any) => { key, value }`) - To apply escaping.
+- `requestOptions` (*optional* default: `{ timeout: 10 })` - The [options](https://nodejs.org/api/http.html#httprequestoptions-callback) passed to `http.request`.
 
 ## Getting Started
 
@@ -57,11 +55,9 @@ The following example will create a Service with the name and endpoint `solr`.
 ```javascript
 const feathers = require('@feathersjs/feathers');
 const express = require('@feathersjs/express');
-const fetch = require('node-fetch');
-const undici = require('undici');
-const Service = require('feathers-solr');
-const { SolrClient } = require('feathers-solr');
-const solrServer = 'http://localhost:8983/solr/gettingstarted';
+const socketio = require('@feathersjs/socketio');
+
+const Service = require('feathers-solr').Service;
 
 // Create an Express compatible Feathers application instance.
 const app = express(feathers());
@@ -71,28 +67,31 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 // Enable REST services
 app.configure(express.rest());
-// Enable REST services
+// Set up default error handler
+app.use(express.errorHandler());
 
-// init Adapter witch Fetch or Undici
+// Create a service
 const options = {
-  Model: SolrClient(fetch, solrServer),
+  host: 'http://localhost:8983/solr',
+  core: 'gettingstarted',
   paginate: {},
   events: ['testing']
 };
 app.use('gettingstarted', new Service(options));
 
-app.listen(3030, () => {
-  console.log(`Feathers server listening on port http://127.0.0.1:3030`);
+// Start the server.
+const port = 3030;
+
+app.listen(port, () => {
+  console.log(`Feathers server listening on port ${port}`)
 });
 ```
 
-Install Solr
+Start Solr
 
-```
+```bash
  bin/solr start -e gettingstarted
 ```
-
-Use `feathers-solr/bin/install-solr.sh` for a kickstart installation.
 
 Run the example with `node app` and go to [localhost:3030/gettingstarted](http://localhost:3030/gettingstarted).
 
@@ -100,9 +99,9 @@ Run the example with `node app` and go to [localhost:3030/gettingstarted](http:/
 
 Feathers Docs [Database Querying](https://docs.feathersjs.com/api/databases/querying.html)
 
-## Supportet Solr specific queries
+## Supported Solr specific queries
 
-This Adapter use the Solr [JSON Request API](https://lucene.apache.org/solr/guide/7_7/json-request-api.html).
+This Adapter uses the Solr [JSON Request API](https://lucene.apache.org/solr/guide/7_7/json-request-api.html).
 
 The following params passed in raw to Solr. This gives the **full** access to the Solr [JSON Request API](https://lucene.apache.org/solr/guide/7_7/json-request-api.html).
 
@@ -111,7 +110,7 @@ The following params passed in raw to Solr. This gives the **full** access to th
 - \$facet (alias to facet)
 - \$filter (alias to filter)
 
-To avoid full query (read) access, just whitelist only `$search` and add your query startegy into a Hook.
+To avoid full query (read) access, just whitelist only `$search` and add your query strategy into a Hook.
 
 ### \$search
 
@@ -154,7 +153,7 @@ const response = await service.find({
 
 ### \$facet
 
-A alias to Solr param `facet`
+An alias to Solr param `facet`
 
 - [Solr Facet Functions and Analytics](http://yonik.com/solr-facet-functions/)
 - [Multi Select Faceting](http://yonik.com/multi-select-faceting/)
@@ -227,7 +226,7 @@ query:{
 
 ### \$params
 
-An alias to Solr param `params`. Allows you to access all solr query (read) features like:
+An alias to Solr param `params`. Allows you to access all Solr query (read) features like:
 
 - [The Extended DisMax (eDismax) Query Parser](https://lucene.apache.org/solr/guide/7_7/the-extended-dismax-query-parser.html)
 - [Facet & Analytics Module](https://lucene.apache.org/solr/guide/7_7/json-facet-api.html)
@@ -330,7 +329,7 @@ const response = await service.find({
       d: 50,
       distanceUnits: 'kilometers',
       sort: 'geodist() asc'
-    }
+   }
   },
   paginate: { max: 10, default: 3 }
 });
@@ -349,7 +348,7 @@ All service methods provide the `multi` options.
 ### Service.create
 
 The `options.commitStrategy.override` is true in default. This allow to override an existing `id` by `service.create`.
-Add the field `_version_` to the `$select` params will return the document content with it's version. Create with an existing `id` and `_version_` for [optimistic concurrency](https://lucene.apache.org/solr/guide/6_6/updating-parts-of-documents.html#UpdatingPartsofDocuments-OptimisticConcurrency)
+Add the field `_version_` to the `$select` params will return the document content with its version. Create with an existing `id` and `_version_` for [optimistic concurrency](https://lucene.apache.org/solr/guide/6_6/updating-parts-of-documents.html#UpdatingPartsofDocuments-OptimisticConcurrency)
 
 ### Service.update
 
@@ -386,97 +385,66 @@ Provide delete by `id` ans `query`
 Delete all documents at once:
 
 ```Javascript
-service.remove(null, {query: {id:'*'}});
+service.remove(null, {});
 ```
 
 ### Performance considerations
 
-Most of the data mutating operations in Solr (create, update, remove) do not return the full resulting document, therefore I had to resolve to using get as well in order to return complete data. This solution is of course adding a bit of an overhead, although it is also compliant with the standard behaviour expected of a feathers database adapter.
+Data mutating operations in Solr do not return document data. This is implemented as additional queries to return deletd or modified data.
 
-> Use Raw Query `service.Model.post('update/json', data)` to avoid this overhead. The response is native Solr.
-
-## Raw Solr Queries
-
-You can access all Solr API endpoints by using a direct model usage.
-
-Ping the Solr core/collection:
-
-```Javascript
-service.Model.get('admin/ping');
-```
-
-Get Solr schema information:
-
-```Javascript
-service.Model.get('schema');
-```
-
-Modify Solr schema:
-
-```Javascript
-service.Model.post('schema',{"add-field":{name:"age",type:"pint"}});
-```
-
-Get Solr config information:
-
-```Javascript
-service.Model.get('config');
-```
-
-Modify Solr config:
-
-```Javascript
-service.Model.post('config',{"add-requesthandler":{...}});
-```
-
-## Use a different HTTP Client
-
-This Adapter offers a `node-fetch` interface for a maximum on HTTP Client comfort and `undici` for maximum (100% compared to node-fetch) in performance.
-If you like to go with your favorite one:
-
-```Javascript
-class CustomClient {
-  constructor(HTTPModule, conn) {}
-  get(api, params = {}) {}
-  post(api, data, params = {}) {}
-};
-
+To avoid this overhead use the `client` directly for bulk operations.
+```js
 const options = {
-    Model: CustomClient(HTTPModule, solrServer),
-    paginate: {},
-    events: ['testing']
-  };
+  host: 'http://localhost:8983/solr',
+  core: 'gettingstarted',
+}
 
-app.service('solr', new Service(options))
+const client = solrClient('http://localhost:8983/solr');
+
+await client.post('/update/json', { data: [] })
 ```
 
-## Contributing
+## Maniging Solr
 
-If you find a bug or something to improve i will be happy to see your PR!
+Using the `solrClient` for raw communication with solr.
+See adapter [test]('//test/../../test/additional.test.ts') how to:
+-  `create` and `delete` a Solr core
+-  `add`, 'update' and `delete` the Solr core schema
+-  `add` and `delete` the Solr core config request handler and components
 
-When adding a new feature, please make sure you write tests for it with decent coverage as well.
+```js
+const options = {
+  host: 'http://localhost:8983/solr',
+  core: 'gettingstarted',
+}
 
-## TODO
+const client = solrClient('http://localhost:8983/solr');
+await client.post('/admin/cores', { params: {...createCore, name: name} })
+await client.post(`/${core}/schema`, { data: addSchema });
+await client.post(`/${core}/config`, { data: addConfig });
 
-- Hook Examples
-  - Schema Migration Hook (drop,alter,safe)
-  - Json Hook Store Data as JSON
-  - Validation Hook
-  - Spellcheck
-  - Suggester
-  - MoreLikeThis
-
-## Changelog
-
-**2.3.0**
-
-**2.2.0**
-
-- complete refactoring
-- implement @feathers/adapter-tests
+```
 
 ## License
 
-Copyright (c) 2015
+Copyright (c) 2022
 
-Licensed under the [MIT license](LICENSE).
+The MIT License (MIT)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
