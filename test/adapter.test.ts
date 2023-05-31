@@ -199,7 +199,7 @@ describe.skip('debug', () => {
   })
 })
 
-describe.skip('common adapter tests', () => {
+describe('common adapter tests', () => {
   beforeEach(done => setTimeout(done, 100));
 
   before(async () => {
