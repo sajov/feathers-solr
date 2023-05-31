@@ -59,7 +59,7 @@ export class SolrAdapter<
   updateHandler: string;
 
   constructor(options: SolrAdapterOptions) {
-    const { host, core, ...opts } = options;
+    const { host, core, requestOptions, ...opts } = options;
     super(_.extend({
       id: 'id',
       commit: {
@@ -72,7 +72,10 @@ export class SolrAdapter<
       defaultSearch: {},
       defaultParams: { echoParams: 'none' },
       createUUID: true,
-      requestOptions: { timeout: 10 },
+      requestOptions: {
+        timeout: 10,
+        ...requestOptions ?? {}
+      },
       escapeFn: (key: string, value: any) => ({ key, value }),
       logger: (msg: any): any => msg
     }, opts));
