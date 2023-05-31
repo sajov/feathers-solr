@@ -17,7 +17,7 @@ export interface HttpClient {
   post: (resource: string, options: MethodOptions) => Promise<any>;
 }
 
-interface RequestOptions {
+export interface RequestOptions {
   url: string;
   requestOptions: http.RequestOptions | https.RequestOptions;
   data?: any;

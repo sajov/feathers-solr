@@ -13,7 +13,7 @@ import {
   AdapterQuery
 } from '@feathersjs/adapter-commons'
 import type { NullableId, Id, Paginated } from '@feathersjs/feathers'
-import type { HttpClient } from './httpClient';
+import type { HttpClient, RequestOptions } from './httpClient';
 
 export interface SolrAdapterOptions extends AdapterServiceOptions {
   host: string;
@@ -28,7 +28,7 @@ export interface SolrAdapterOptions extends AdapterServiceOptions {
   defaultSearch?: any;
   defaultParams?: any;
   createUUID?: boolean;
-  requestOptions?: { timeout: 10 };
+  requestOptions?: RequestOptions;
   escapeFn?: (key: string, value: any) => { key: string, value: any };
   logger?: (msg: any) => any;
 }
@@ -72,6 +72,7 @@ export class SolrAdapter<
       defaultSearch: {},
       defaultParams: { echoParams: 'none' },
       createUUID: true,
+      requestOptions: { timeout: 10 },
       escapeFn: (key: string, value: any) => ({ key, value }),
       logger: (msg: any): any => msg
     }, opts));
