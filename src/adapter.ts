@@ -72,17 +72,13 @@ export class SolrAdapter<
       defaultSearch: {},
       defaultParams: { echoParams: 'none' },
       createUUID: true,
-      requestOptions: {
-        timeout: 10,
-        ...requestOptions ?? {}
-      },
       escapeFn: (key: string, value: any) => ({ key, value }),
       logger: (msg: any): any => msg
     }, opts));
 
     this.queryHandler = `/${core}${this.options.queryHandler}`;
     this.updateHandler = `/${core}${this.options.updateHandler}`;
-    this.client = httpClient(host, this.options.requestOptions, this.options.logger)
+    this.client = httpClient(host, requestOptions, this.options.logger)
   }
 
   filterQuery(id: NullableId | Id, params: ServiceParams) {
