@@ -19,7 +19,7 @@ export interface HttpClient {
 
 export interface RequestOptions {
   url: string;
-  requestOptions: http.RequestOptions | https.RequestOptions;
+  requestOptions?: http.RequestOptions | https.RequestOptions;
   data?: any;
   logger?: any;
 }

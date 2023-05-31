@@ -28,7 +28,7 @@ export interface SolrAdapterOptions extends AdapterServiceOptions {
   defaultSearch?: any;
   defaultParams?: any;
   createUUID?: boolean;
-  requestOptions?: RequestOptions;
+  requestOptions?: RequestOptions['requestOptions'];
   escapeFn?: (key: string, value: any) => { key: string, value: any };
   logger?: (msg: any) => any;
 }
@@ -59,7 +59,7 @@ export class SolrAdapter<
   updateHandler: string;
 
   constructor(options: SolrAdapterOptions) {
-    const { host, core, requestOptions, ...opts } = options;
+    const { host, core, ...opts } = options;
     super(_.extend({
       id: 'id',
       commit: {
@@ -79,7 +79,7 @@ export class SolrAdapter<
 
     this.queryHandler = `/${core}${this.options.queryHandler}`;
     this.updateHandler = `/${core}${this.options.updateHandler}`;
-    this.client = httpClient(host, requestOptions, this.options.logger)
+    this.client = httpClient(host, this.options.requestOptions, this.options.logger)
   }
 
   filterQuery(id: NullableId | Id, params: ServiceParams) {
