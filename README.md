@@ -14,7 +14,7 @@ A [Feathers](https://feathersjs.com/) Solr Adapter. Tested with Solr 8.x, requir
 $ npm install feathers-solr --save
 ```
 
-> __Important:__ `@feathersjs/memory` implements the [Feathers Common database adapter API](https://docs.feathersjs.com/api/databases/common.html) and [querying syntax](https://docs.feathersjs.com/api/databases/querying.html).
+> __Important:__ `feathers-solr` implements the [Feathers Common database adapter API](https://docs.feathersjs.com/api/databases/common.html) and [querying syntax](https://docs.feathersjs.com/api/databases/querying.html).
 > It use sthe native node `http` and `https` module.
 
 ## API
