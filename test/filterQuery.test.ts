@@ -81,17 +81,175 @@ describe('filterQuery', () => {
       assert.deepStrictEqual(query.filter, [ 'read:false', 'roomId:2' ]);
     })
 
+    it('query with `$ne`', async () => {
+      const { query } = Service.filterQuery(null, {
+        query: {
+          read: false,
+          roomId: { $ne: 2 }
+        }
+      })
+
+      assert.deepStrictEqual(query.filter, [ 'read:false', '!roomId:2' ]);
+    })
+
+    it('query with `$empty`', async () => {
+      const { query } = Service.filterQuery(null, {
+        query: {
+          read: false,
+          roomId: { $empty: true }
+        }
+      })
+
+      assert.deepStrictEqual(query.filter, [ 'read:false', '!roomId:*' ]);
+    })
+
+    it('query with `$nempty`', async () => {
+      const { query } = Service.filterQuery(null, {
+        query: {
+          read: false,
+          roomId: { $nempty: true }
+        }
+      })
+
+      assert.deepStrictEqual(query.filter, [ 'read:false', 'roomId:*' ]);
+    })
+
+    it('query with `$fuzzy`', async () => {
+      const { query } = Service.filterQuery(null, {
+        query: {
+          name: { $fuzzy: 'a' }
+        }
+      })
+
+      assert.deepStrictEqual(query.filter, [ 'name:a~' ]);
+    })
+
+    it('query with `$like`', async () => {
+      const { query } = Service.filterQuery(null, {
+        query: {
+          name: { $like: 'a' }
+        }
+      })
+
+      assert.deepStrictEqual(query.filter, [ 'name:*a*' ]);
+    })
+
+    it('query with `$nlike`', async () => {
+      const { query } = Service.filterQuery(null, {
+        query: {
+          name: { $nlike: 'a' }
+        }
+      })
+
+      assert.deepStrictEqual(query.filter, [ '!name:*a*' ]);
+    })
+
+    it('query with `$starts`', async () => {
+      const { query } = Service.filterQuery(null, {
+        query: {
+          name: { $starts: 'a' }
+        }
+      })
+
+      assert.deepStrictEqual(query.filter, [ 'name:a*' ]);
+    })
+
+    it('query with `$ends`', async () => {
+      const { query } = Service.filterQuery(null, {
+        query: {
+          name: { $ends: 'a' }
+        }
+      })
+
+      assert.deepStrictEqual(query.filter, [ 'name:*a' ]);
+    })
+
+    it('query with `$in`', async () => {
+      const { query } = Service.filterQuery(null, {
+        query: {
+          name: { $in: ['James', 'Jane'] }
+        }
+      })
+
+      assert.deepStrictEqual(query.filter, [ 'name:(James OR Jane)' ]);
+    })
+
+    it('query with `$nin`', async () => {
+      const { query } = Service.filterQuery(null, {
+        query: {
+          name: { $nin: ['James', 'Jane'] }
+        }
+      })
+
+      assert.deepStrictEqual(query.filter, [ '!name:(James OR Jane)' ]);
+    })
+
+    it('query with `$lt`', async () => {
+      const { query } = Service.filterQuery(null, {
+        query: {
+          price: {$lt: 10}
+        }
+      })
+
+      assert.deepStrictEqual(query.filter, ['price:[* TO 10}']);
+    })
+
+    it('query with `$lte`', async () => {
+      const { query } = Service.filterQuery(null, {
+        query: {
+          price: {$lte: 10}
+        }
+      })
+
+      assert.deepStrictEqual(query.filter, ['price:[* TO 10]']);
+    })
 
     it('query with `$gt`', async () => {
       const { query } = Service.filterQuery(null, {
         query: {
-          name: 'john',
           price: {$gt: 10}
         }
       })
 
-      assert.deepStrictEqual(query.filter, ['name:john','price:{10 TO *]']);
+      assert.deepStrictEqual(query.filter, ['price:{10 TO *]']);
     })
+
+    it('query with `$gte`', async () => {
+      const { query } = Service.filterQuery(null, {
+        query: {
+          price: {$gte: 10}
+        }
+      })
+
+      assert.deepStrictEqual(query.filter, ['price:[10 TO *]']);
+    })
+
+    it('query with `$or`', async () => {
+      const { query } = Service.filterQuery(null, {
+        query: {
+          $or: {
+            price: {$gte: 10},
+            name: { $nin: ['James', 'Jane'] }
+          }
+        }
+      })
+
+      assert.deepStrictEqual(query.filter, ['(price:[10 TO *] OR !name:(James OR Jane))']);
+    })
+
+    it('query with `$and`', async () => {
+      const { query } = Service.filterQuery(null, {
+        query: {
+          $and: {
+            price: {$gte: 10},
+            name: { $nin: ['James', 'Jane'] }
+          }
+        }
+      })
+
+      assert.deepStrictEqual(query.filter, ['(price:[10 TO *] AND !name:(James OR Jane))']);
+    })
+
   })
 
   describe('filters', () => {
@@ -413,6 +571,22 @@ describe('filterQuery', () => {
       })
 
       assert.deepStrictEqual(query.filter, ['!title:*hello*']);
+    })
+
+    it('$filter', async () => {
+      const { query } = Service.filterQuery(null, {
+        query: {
+          $filter: [
+            'name:john',
+            '{!join from=nav_id to=referencedProductId fromIndex=3_article_merged}shop:[* TO *]'
+          ]
+        }
+      })
+
+      assert.deepStrictEqual(query.filter, [
+        'name:john',
+        '{!join from=nav_id to=referencedProductId fromIndex=3_article_merged}shop:[* TO *]'
+      ]);
     })
 
     it('complex', async () => {
