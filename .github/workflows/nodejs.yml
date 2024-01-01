@@ -20,9 +20,9 @@ jobs:
         node-version: [18.x]
     steps:
       - name: Copy configsets
-        run: docker exec -it $(docker ps -q --filter ancestor=solr:9) cp -rf /opt/solr/server/solr/configsets /var/solr/data/configsets
+        run: docker cp ./path/to/your/configsets $(docker ps -q --filter ancestor=solr:9):/var/solr/data/
       - name: Start Solr
-        run: docker exec -it $(docker ps -q --filter ancestor=solr:9) solr-foreground
+        run: docker exec $(docker ps -q --filter ancestor=solr:9) solr-foreground
       - uses: actions/checkout@v3
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
