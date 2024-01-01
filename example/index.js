@@ -33,6 +33,7 @@ const options = {
     '$search': (value) => value
   },
   operators: ['$like','$nlike'],
+  logger: (msg) => console.log(msg)
 };
 const Client = httpClient(options.host);
 
