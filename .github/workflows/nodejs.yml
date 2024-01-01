@@ -4,9 +4,7 @@ on: [push,pull_request]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     services:
       solr:
         image: solr:9
@@ -21,12 +19,15 @@ jobs:
       matrix:
         node-version: [18.x]
     steps:
+      - name: Copy configsets
+        run: docker exec -it $(docker ps -q --filter ancestor=solr:9) cp -rf /opt/solr/server/solr/configsets /var/solr/data/configsets
+      - name: Start Solr
+        run: docker exec -it $(docker ps -q --filter ancestor=solr:9) solr-foreground
       - uses: actions/checkout@v3
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-      - run: 'bash -e -c "cp -rf /opt/solr/server/solr/configsets /var/solr/data/configsets;"'
       - run: npm install
       - run: npm run coverage
         env:
