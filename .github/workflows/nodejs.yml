@@ -4,12 +4,10 @@ on: [push,pull_request]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     services:
       solr:
-        image: solr:7.7.3
+        image: solr:9
         ports:
           - 8983:8983
         options: >-
@@ -17,12 +15,12 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-
     strategy:
       matrix:
         node-version: [18.x]
-
     steps:
+      - name: Copy configsets
+        run: docker exec $(docker ps -q --filter ancestor=solr:9) cp -rf /opt/solr/server/solr/configsets /var/solr/data/configsets
       - uses: actions/checkout@v3
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
