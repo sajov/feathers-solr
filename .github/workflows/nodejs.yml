@@ -12,23 +12,21 @@ jobs:
         image: solr:9
         ports:
           - 8983:8983
-        command: 'bash -e -c "cp -rf /opt/solr/server/solr/configsets /var/solr/data/configsets; solr-foreground;"'
         options: >-
           --health-cmd "curl --fail http://0.0.0.0:8983/solr/admin/cores || exit 1"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-
-          strategy:
+    strategy:
       matrix:
         node-version: [18.x]
-
     steps:
       - uses: actions/checkout@v3
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
+      - run: 'bash -e -c "cp -rf /opt/solr/server/solr/configsets /var/solr/data/configsets;"'
       - run: npm install
       - run: npm run coverage
         env:
