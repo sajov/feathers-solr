@@ -21,7 +21,5 @@ export const operatorResolver: any = {
   $or: (value: any) => `(${value.join(' OR ')})`,
   $and: (value: any) => Array.isArray(value) && value.length > 1 ?
     `(${value.join(' AND ')})` :
-    Array.isArray(value[0]) ?
-      value[0][0] :
-      value[0]
+    Array.isArray(value[0]) ? value[0][0] : value[0]
 }
