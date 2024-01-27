@@ -50,7 +50,7 @@
   },
   "devDependencies": {
     "@feathersjs/adapter-tests": "5.0.21",
-    "@feathersjs/express": "5.0.20",
+    "@feathersjs/express": "5.0.21",
     "@feathersjs/feathers": "5.0.21",
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.10.6",
