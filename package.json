@@ -49,7 +49,7 @@
     "@feathersjs/errors": "5.0.21"
   },
   "devDependencies": {
-    "@feathersjs/adapter-tests": "5.0.21",
+    "@feathersjs/adapter-tests": "5.0.22",
     "@feathersjs/express": "5.0.22",
     "@feathersjs/feathers": "5.0.22",
     "@types/mocha": "^10.0.1",
