@@ -84,7 +84,7 @@ describe('client', () => {
     it('timeout', async function () {
       this.timeout(10000);
       try {
-        const Client = httpClient('http://localhost:3033', { timeout: 2000 });
+        const Client = httpClient('http://localhost:3033', { signal: AbortSignal.timeout(2000) });
         await Client.get('/timeouts', {})
 
       } catch (error) {
@@ -95,7 +95,7 @@ describe('client', () => {
     it('errors', async function () {
       this.timeout(10000);
       try {
-        const Client = httpClient('http://localhost:3033', { timeout: 2000 });
+        const Client = httpClient('http://localhost:3033', { signal: AbortSignal.timeout(2000) });
         await Client.get('/errors', {})
 
       } catch (error) {
