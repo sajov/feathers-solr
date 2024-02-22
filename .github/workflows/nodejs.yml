@@ -17,7 +17,7 @@ jobs:
           --health-retries 5
     strategy:
       matrix:
-        node-version: [18.x]
+        node-version: [21.x]
     steps:
       - name: Copy configsets
         run: docker exec $(docker ps -q --filter ancestor=solr:9) cp -rf /opt/solr/server/solr/configsets /var/solr/data/configsets
