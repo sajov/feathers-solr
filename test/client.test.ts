@@ -22,13 +22,6 @@ const requestListener = async function (req: any, res: any) {
       break
   }
 };
-function iThrowErrorTimeout() {
-  throw new Error('timed out');
-}
-function iThrowErrorBadRequest() {
-  throw new Error('timed out');
-}
-
 
 const options = {
   host: 'http://localhost:8983/solr',
@@ -86,9 +79,8 @@ describe('client', () => {
       try {
         const Client = httpClient('http://localhost:3033', { signal: AbortSignal.timeout(2000) });
         await Client.get('/timeouts', {})
-
-      } catch (error) {
-        return assert.throws(iThrowErrorTimeout, Error, 'error thrown');
+      } catch (error: unknown) {
+        return assert.equal((error as Error).name, 'TimeoutError')
       }
     });
 
@@ -98,8 +90,8 @@ describe('client', () => {
         const Client = httpClient('http://localhost:3033', { signal: AbortSignal.timeout(2000) });
         await Client.get('/errors', {})
 
-      } catch (error) {
-        return assert.throws(iThrowErrorBadRequest, Error, 'error thrown');
+      } catch (error: unknown) {
+        return assert.equal((error as Error).name, 'Error')
       }
     });
   });
