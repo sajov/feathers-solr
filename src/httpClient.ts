@@ -32,7 +32,7 @@ const request = async (options: RequestOptions) => {
       ...(requestOptions?.headers || {}),
       'Content-Type': 'application/json'
     },
-    body: data ? JSON.stringify(data) : undefined
+    body: data ? data : undefined
   });
 
   if (!response.ok) {
