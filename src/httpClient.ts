@@ -26,21 +26,27 @@ const request = async (options: RequestOptions) => {
 
   logger({ url, data });
 
-  const response = await fetch(url, {
-    ...requestOptions,
-    headers: {
-      ...(requestOptions?.headers || {}),
-      'Content-Type': 'application/json'
-    },
-    body: data ? data : undefined
-  });
+  try {
+    const response = await fetch(url, {
+      ...requestOptions,
+      headers: {
+        ...(requestOptions?.headers || {}),
+        'Content-Type': 'application/json'
+      },
+      body: data ? data : undefined
+    });
 
-  if (!response.ok) {
-    logger({ statusCode: response.status });
-    throw new Error(`HTTP status code ${response.status}`);
+    if (!response.ok) {
+      logger({ statusCode: response.status, statusText: response.statusText });
+      throw new Error(`${response.status} ${response.statusText}`);
+    }
+
+    return response.json();
+
+  } catch (error) {
+    logger(error);
+    throw error;
   }
-
-  return response.json();
 };
 
 export const httpClient = (

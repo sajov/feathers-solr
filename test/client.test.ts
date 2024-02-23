@@ -3,25 +3,6 @@ import assert from 'assert';
 import { SolrService } from '../src';
 import { httpClient } from '../src/httpClient';
 import { createCore, deleteCore, addSchema, deleteSchema } from './seed';
-// import https from 'https';
-import http from 'http';
-function timeout(ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-const requestListener = async function (req: any, res: any) {
-  res.setHeader('Content-Type', 'application/json');
-  switch (req.url) {
-    case '/timeouts':
-      res.writeHead(200);
-      await timeout(5000);
-      res.end('{"message": "This is a JSON timeouted response"}');
-      break
-    case '/errors':
-      res.writeHead(500);
-      res.end('{"message": "This is a JSON errored response"}');
-      break
-  }
-};
 
 const options = {
   host: 'http://localhost:8983/solr',
@@ -30,7 +11,6 @@ const options = {
 const Client = httpClient(options.host);
 
 describe('client', () => {
-  let server: any = null;
 
   beforeEach(done => setTimeout(done, 100));
 
@@ -43,8 +23,6 @@ describe('client', () => {
     });
     await Client.post(`/${options.core}/schema`, { data: addSchema });
     await new SolrService({ ...options, multi: true })._remove(null, {});
-    server = http.createServer(requestListener);
-    server.listen(3033, 'localhost', () => {});
   });
 
   after(async () => {
@@ -56,8 +34,8 @@ describe('client', () => {
         core: options.core
       }
     });
-    server.close();
-    server.emit('close');
+    // server.close();
+    // server.emit('close');
   });
 
   describe('https', () => {
@@ -73,25 +51,49 @@ describe('client', () => {
     });
   });
 
-  describe('simulate errors', () => {
-    it('timeout', async function () {
+
+  describe('error handling', () => {
+    it('Not Found', async function () {
       this.timeout(10000);
       try {
-        const Client = httpClient('http://localhost:3033', { signal: AbortSignal.timeout(2000) });
-        await Client.get('/timeouts', {})
+        const Client = httpClient('http://localhost:8983', { signal: AbortSignal.timeout(10000) });
+        await Client.get('/solr/notexist', {})
+        throw new Error(`Expected an error and didn't get one!`)
+      } catch (error: unknown) {
+        return assert.equal((error as Error).message, '404 Not Found')
+      }
+    });
+
+    it('TimeoutError', async function () {
+      this.timeout(10000);
+      try {
+        const Client = httpClient('http://localhost:8983', { signal: AbortSignal.timeout(1) });
+        await Client.get('/solr/admin/cores', {
+          params: {
+            ...createCore,
+            name: 'test'
+          }
+        });
+        throw new Error(`Expected an error and didn't get one!`)
       } catch (error: unknown) {
         return assert.equal((error as Error).name, 'TimeoutError')
       }
     });
 
-    it('errors', async function () {
+    it('BadRequest', async function () {
       this.timeout(10000);
       try {
-        const Client = httpClient('http://localhost:3033', { signal: AbortSignal.timeout(2000) });
-        await Client.get('/errors', {})
-
+        const Client = httpClient('http://localhost:8983', { signal: AbortSignal.timeout(1000) });
+        await Client.get('/solr/admin/cores', {
+          params: {
+            ...createCore,
+            'configSet': 'notexists',
+            name: 'test'
+          }
+        });
+        throw new Error(`Expected an error and didn't get one!`)
       } catch (error: unknown) {
-        return assert.equal((error as Error).name, 'Error')
+        return assert.equal((error as Error).message, '500 Server Error')
       }
     });
   });
