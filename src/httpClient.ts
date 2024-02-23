@@ -1,3 +1,5 @@
+import { convert } from '@feathersjs/errors';
+
 export interface httpClientOptions {
   hostname: string;
   username?: string;
@@ -38,7 +40,9 @@ const request = async (options: RequestOptions) => {
 
     if (!response.ok) {
       logger({ statusCode: response.status, statusText: response.statusText });
-      throw new Error(`${response.status} ${response.statusText}`);
+      const error = new Error(`${response.status} ${response.statusText}`);
+      error.name = `${response.status}`;
+      throw convert(error);
     }
 
     return response.json();

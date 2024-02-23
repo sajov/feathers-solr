@@ -3,6 +3,7 @@ import assert from 'assert';
 import { SolrService } from '../src';
 import { httpClient } from '../src/httpClient';
 import { createCore, deleteCore, addSchema, deleteSchema } from './seed';
+import { FeathersError } from '@feathersjs/errors';
 
 const options = {
   host: 'http://localhost:8983/solr',
@@ -60,7 +61,7 @@ describe('client', () => {
         await Client.get('/solr/notexist', {})
         throw new Error(`Expected an error and didn't get one!`)
       } catch (error: unknown) {
-        return assert.equal((error as Error).message, '404 Not Found')
+        return assert.equal((error as FeathersError).code, 404)
       }
     });
 
@@ -93,7 +94,7 @@ describe('client', () => {
         });
         throw new Error(`Expected an error and didn't get one!`)
       } catch (error: unknown) {
-        return assert.equal((error as Error).message, '500 Server Error')
+        return assert.equal((error as FeathersError).code, 500)
       }
     });
   });
