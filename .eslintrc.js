@@ -17,7 +17,8 @@ module.exports = {
   "plugins": [
       "eslint-plugin-import",
       "eslint-plugin-prefer-arrow",
-      "@typescript-eslint"
+      "@typescript-eslint",
+      '@stylistic'
   ],
   "rules": {
       "prefer-rest-params": "off",
@@ -68,7 +69,7 @@ module.exports = {
       "@typescript-eslint/prefer-for-of": "error",
       "@typescript-eslint/prefer-function-type": "error",
       "@typescript-eslint/prefer-namespace-keyword": "error",
-      "@typescript-eslint/quotes": [
+      "@stylistic/quotes": [
           "error",
           "single"
       ],
