@@ -46,7 +46,7 @@
   "dependencies": {
     "@feathersjs/adapter-commons": "5.0.31",
     "@feathersjs/commons": "5.0.31",
-    "@feathersjs/errors": "5.0.30"
+    "@feathersjs/errors": "5.0.31"
   },
   "devDependencies": {
     "@feathersjs/adapter-tests": "5.0.31",
