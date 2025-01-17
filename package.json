@@ -1,6 +1,6 @@
 {
   "name": "feathers-solr",
-  "description": "A service plugin for Solr",
+  "description": "A service adapter for Solr",
   "version": "3.1.1",
   "keywords": [
     "feathers",
