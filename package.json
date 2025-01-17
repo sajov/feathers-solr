@@ -1,7 +1,7 @@
 {
   "name": "feathers-solr",
   "description": "A Feathers service adapter for Solr",
-  "version": "3.1.1",
+  "version": "3.1.2",
   "keywords": [
     "feathers",
     "feathers-plugin",
