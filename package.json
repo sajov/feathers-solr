@@ -49,7 +49,7 @@
     "@feathersjs/errors": "5.0.31"
   },
   "devDependencies": {
-    "@feathersjs/adapter-tests": "5.0.31",
+    "@feathersjs/adapter-tests": "5.0.32",
     "@feathersjs/express": "5.0.31",
     "@feathersjs/feathers": "5.0.31",
     "@stylistic/eslint-plugin": "^3.0.0",
