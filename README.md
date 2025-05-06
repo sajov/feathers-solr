@@ -6,8 +6,7 @@
 [![Known Vulnerabilities](https://snyk.io/test/npm/feathers-solr/badge.svg)](https://snyk.io/test/npm/feathers-solr)
 [![Download Status](https://img.shields.io/npm/dm/feathers-solr.svg?style=flat-square)](https://www.npmjs.com/package/feathers-solr)
 
-A [Feathers](https://feathersjs.com/) Solr Adapter. Tested with Solr 8.x, require at least >= Solr 5.x.
-
+[feathers-solr](https://github.com/sajov/feathers-solr) is a database adapter for [Solr](https://lucene.apache.org/solr/). Tested with Solr 8.x, require at least >= Solr 5.x.
 
 ## Installation
 
