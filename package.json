@@ -54,7 +54,7 @@
     "@feathersjs/feathers": "5.0.33",
     "@stylistic/eslint-plugin": "^3.0.0",
     "@types/mocha": "^10.0.7",
-    "@types/node": "^22.0.2",
+    "@types/node": "^24.0.8",
     "@typescript-eslint/eslint-plugin": "^8.0.0",
     "@typescript-eslint/parser": "^8.0.0",
     "eslint": "^8.56.0",
