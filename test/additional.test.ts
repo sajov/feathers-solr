@@ -15,7 +15,8 @@ const options = {
     $search: (value: any) => value
   },
   operators: ['$like','$nlike'],
-  multi: true
+  multi: true,
+  allowRawSolrParams: true
 }
 
 const Client = httpClient(options.host);
