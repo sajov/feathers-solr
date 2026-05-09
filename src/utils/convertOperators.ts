@@ -1,7 +1,13 @@
 import { operatorResolver } from './operatorResolver';
 import { _ } from '@feathersjs/commons/lib';
 
-export const convertOperators = (query: any, escapeFn: any, root = ''): any => {
+export type EscapeFn = (key: string, value: any) => { key: string; value: any };
+
+export const convertOperators = (
+  query: any,
+  escapeFn: EscapeFn,
+  root = ''
+): any => {
   if (Array.isArray(query)) {
     return query.map(q => convertOperators(q, escapeFn, root));
   }
@@ -17,7 +23,7 @@ export const convertOperators = (query: any, escapeFn: any, root = ''): any => {
 
     if (prop in operatorResolver) {
       const values = Object.values(escapeFn(root, query[prop]));
-      return operatorResolver[prop](...values);
+      return (operatorResolver[prop] as (...args: any[]) => string)(...values);
     }
 
     if (_.isObject(query[prop])) {
@@ -25,6 +31,6 @@ export const convertOperators = (query: any, escapeFn: any, root = ''): any => {
     }
 
     const values = Object.values(escapeFn(prop, query[prop]));
-    return operatorResolver.$eq(...values);
+    return (operatorResolver.$eq as (...args: any[]) => string)(...values);
   });
 };
