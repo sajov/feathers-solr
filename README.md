@@ -1,297 +1,418 @@
 # feathers-solr
 
 [![npm version](https://img.shields.io/npm/v/feathers-solr.svg)](https://www.npmjs.com/package/feathers-solr)
-[![CI](https://github.com/feathersjs/feathers/workflows/CI/badge.svg)](https://github.com/feathersjs/feathers/actions?query=workflow%3ACI)
+[![npm](https://img.shields.io/npm/dm/feathers-solr.svg)](https://www.npmjs.com/package/feathers-solr)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?logo=typescript)](https://www.typescriptlang.org/)
+[![Node](https://img.shields.io/node/v/feathers-solr)](https://www.npmjs.com/package/feathers-solr)
+[![License](https://img.shields.io/npm/l/feathers-solr)](LICENSE)
+[![CI](https://github.com/sajov/feathers-solr/actions/workflows/nodejs.yml/badge.svg)](https://github.com/sajov/feathers-solr/actions/workflows/nodejs.yml)
 [![Coverage Status](https://coveralls.io/repos/github/sajov/feathers-solr/badge.svg?branch=master)](https://coveralls.io/github/sajov/feathers-solr?branch=master)
 [![Known Vulnerabilities](https://snyk.io/test/npm/feathers-solr/badge.svg)](https://snyk.io/test/npm/feathers-solr)
-[![Download Status](https://img.shields.io/npm/dm/feathers-solr.svg?style=flat-square)](https://www.npmjs.com/package/feathers-solr)
 
-[feathers-solr](https://github.com/sajov/feathers-solr) is a database adapter for [Solr](https://lucene.apache.org/solr/). Tested with Solr 9.x, require at least >= Solr 5.x.
+> A [Feathers](https://feathersjs.com/) v5 database adapter for [Apache Solr](https://lucene.apache.org/solr/) that implements the [Common Database Adapter API](https://docs.feathersjs.com/api/databases/common.html) and the [Feathers querying syntax](https://docs.feathersjs.com/api/databases/querying.html).
+
+**Tested against Solr 9.x** · Solr >= 5.x · Node.js >= 16 · TypeScript 5.x
+
+---
+
+## Table of Contents
+
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [API Reference](#api-reference)
+  - [Constructor Options](#constructor-options)
+  - [Service Methods](#service-methods)
+- [Querying](#querying)
+  - [Basic Queries](#basic-queries)
+  - [Query Operators](#query-operators)
+  - [Full-Text Search (`$search`)](#full-text-search-search)
+  - [Faceting (`$facet`)](#faceting-facet)
+  - [Advanced Solr Parameters (`$params`)](#advanced-solr-parameters-params)
+  - [Raw Filter Queries (`$filter`)](#raw-filter-queries-filter)
+- [Security](#security)
+  - [Query Escaping](#query-escaping)
+  - [Raw Solr Parameter Gate](#raw-solr-parameter-gate)
+- [Error Handling](#error-handling)
+- [Performance](#performance)
+- [HTTP Authentication](#http-authentication)
+- [Managing Solr](#managing-solr)
+- [Links](#links)
+- [License](#license)
+
+---
 
 ## Installation
 
-```
-$ npm install feathers-solr --save
-```
-
-> __Important:__ `feathers-solr` implements the [Feathers Common database adapter API](https://docs.feathersjs.com/api/databases/common.html) and [querying syntax](https://docs.feathersjs.com/api/databases/querying.html).
-> It use the native node `http` and `https` module.
-
-## API
-
-### `service([options])`
-
-Returns a new service instance initialized with the given options.
-
-```js
-const service = require('feathers-solr');
-app.use('/search', service({host, core}));
+```bash
+npm install feathers-solr --save
 ```
 
+---
 
-**Options:**
+## Quick Start
 
-- `host` - The name of the Solr core / collection.
-- `core` - The name of the Solr core / collection.
-- `events` (*optional*) - A list of [custom service events](https://docs.feathersjs.com/api/events.html#custom-events) sent by this service
-- `paginate` (*optional*) - A [pagination object](https://docs.feathersjs.com/api/databases/common.html#pagination) containing a `default` and `max` page size
-- `whitelist` (*DEPRECATED*) - renamed to `allow`
-- `allow` (*optional*) - A list of additional query parameters to allow
-- `multi` (*optional*) - Allow `create` with arrays and `update` and `remove` with `id` `null` to change multiple items. Can be `true` for all methods or an array of allowed methods (e.g. `[ 'remove', 'create' ]`)
-- `id` (*optional*, default: `'id'`) - The name of the id field property.
-- `commitStrategy` - (*optional*, default: `{ softCommit: true, commitWithin: 10000, overwrite: true }`) - Define how Index changes are stored [Solr Commits](https://lucene.apache.org/solr/guide/7_7/updatehandlers-in-solrconfig.html#UpdateHandlersinSolrConfig-commitandsoftCommit).
-- `defaultParams` (*optional* default: `{ echoParams: 'none' }`)- This params added to all Solr request.
-- `defaultSearch` - (*optional*, default: `{ defType: 'edismax', qf: 'name^10 age^1 gender' }`) - Search strategy if query contains the param `$search` [The Extended DisMax Query Parser](https://lucene.apache.org/solr/guide/6_6/the-extended-dismax-query-parser.html).
-- `queryHandler` (*optional* default: `'/query'`) - This params defines the Solr request handler to use.
-- `updateHandler` (*optional* default: `'/update/json'`) - This params defines the Solr update handler to use.
-- `createUUID` (*optional* default: `true`) - This params add a UUID if not exist on data. Id's generated by `crypto`
-- `escapeFn` (*optional* default: `solrEscape`) - Called for every operator value before it is composed into a Solr filter string. The default escapes Solr special chars and whitespace on string values (analogous to SolrJ `ClientUtils.escapeQueryChars`). Pass `(key, value) => ({ key, value })` to opt out and reproduce the pre-3.2 identity behaviour.
-- `allowRawSolrParams` (*optional* default: `false`) - When `false`, requests carrying `$params`, `$facet` or `$filter` are rejected with `BadRequest`. Set to `true` to restore the pre-3.2 open passthrough.
-- `allowedRawSolrParams` (*optional* default: `[]`) - Per-key allowlist (`['$facet']`) when you want some raw keys but not all. Ignored if `allowRawSolrParams` is `true`.
-- `requestOptions` (*optional*) - The [options](https://nodejs.org/api/http.html#httprequestoptions-callback) passed to `http.request`. Default `timeout` is `60000` ms; supply `auth: 'user:pass'` for HTTP Basic auth (or embed the credentials in `host`).
+### TypeScript
 
-## Getting Started
+```typescript
+import { SolrService, SolrAdapterOptions } from 'feathers-solr';
+import type { Paginated } from '@feathersjs/feathers';
 
-The following example will create a Service with the name and endpoint `solr`.
+interface Product {
+  id: string;
+  name: string;
+  price: number;
+  category: string;
+}
 
-```javascript
-const feathers = require('@feathersjs/feathers');
-const express = require('@feathersjs/express');
-const socketio = require('@feathersjs/socketio');
-
-const Service = require('feathers-solr').Service;
-
-// Create an Express compatible Feathers application instance.
-const app = express(feathers());
-// Turn on JSON parser for REST services
-app.use(express.json());
-// Turn on URL-encoded parser for REST services
-app.use(express.urlencoded({ extended: true }));
-// Enable REST services
-app.configure(express.rest());
-// Set up default error handler
-app.use(express.errorHandler());
-
-// Create a service
-const options = {
+const options: SolrAdapterOptions = {
   host: 'http://localhost:8983/solr',
-  core: 'gettingstarted',
-  paginate: {},
-  events: ['testing']
+  core: 'products',
+  paginate: { default: 10, max: 100 }
 };
-app.use('gettingstarted', new Service(options));
 
-// Start the server.
-const port = 3030;
+const products = new SolrService<Product>(options);
 
-app.listen(port, () => {
-  console.log(`Feathers server listening on port ${port}`)
+const page: Paginated<Product> = await products.find({
+  query: {
+    category: 'electronics',
+    $search: 'laptop'
+  }
 });
 ```
 
-Start Solr
+### JavaScript
 
-```bash
- bin/solr start -e gettingstarted
+```javascript
+const { SolrService } = require('feathers-solr');
+
+const service = new SolrService({
+  host: 'http://localhost:8983/solr',
+  core: 'gettingstarted',
+  paginate: { default: 10, max: 100 }
+});
+
+app.use('/products', service);
 ```
 
-Run the example with `node app` and go to [localhost:3030/gettingstarted](http://localhost:3030/gettingstarted).
+### Running Solr Locally
+
+```bash
+bin/solr start -e gettingstarted
+```
+
+The Solr admin UI is then available at <http://localhost:8983/solr>.
+
+---
+
+## API Reference
+
+### Constructor Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `host` | `string` | **required** | Solr server URL, e.g. `http://localhost:8983/solr` |
+| `core` | `string` | **required** | Solr core/collection name |
+| `id` | `string` | `'id'` | Name of the ID field |
+| `paginate` | `object` | `undefined` | Feathers pagination config (`{ default, max }`) |
+| `multi` | `boolean \| string[]` | `false` | Allow bulk `create`, or `update`/`patch`/`remove` with `id: null` |
+| `events` | `string[]` | `[]` | Custom service events |
+| `commit` | `object` | `{ softCommit: true, commitWithin: 10000, overwrite: true }` | Solr commit behaviour for write operations |
+| `defaultParams` | `object` | `{ echoParams: 'none' }` | Params merged into every Solr request |
+| `defaultSearch` | `object` | `{}` | Default strategy applied to `$search` queries (e.g. `{ defType: 'edismax', qf: 'name^10 description' }`) |
+| `queryHandler` | `string` | `'/query'` | Solr request handler for queries |
+| `updateHandler` | `string` | `'/update/json'` | Solr request handler for writes |
+| `createUUID` | `boolean` | `true` | Auto-generate a UUID for documents created without an ID |
+| `escapeFn` | `(key, value) => { key, value }` | `solrEscape` | Per-field escaping for query values, see [Security](#security) |
+| `allowRawSolrParams` | `boolean` | `false` | Allow `$params`, `$facet`, `$filter` (off by default) |
+| `allowedRawSolrParams` | `(\'$params\' \| \'$facet\' \| \'$filter\')[]` | `[]` | Per-key allowlist used when `allowRawSolrParams` is `false` |
+| `requestOptions` | `http.RequestOptions` | `{ timeout: 60000 }` | Forwarded to [`http.request`](https://nodejs.org/api/http.html#httprequestoptions-callback) (e.g. `agent`, `auth`, `headers`) |
+| `logger` | `(msg) => void` | no-op | Receives request/response/error metadata for diagnostics |
+
+### Service Methods
+
+#### `find(params)`
+
+```typescript
+// Paginated response
+const page = await service.find({
+  query: { category: 'electronics' }
+});
+
+// Plain array
+const items = await service.find({
+  query: { category: 'electronics' },
+  paginate: false
+});
+```
+
+#### `get(id, params)`
+
+```typescript
+const product = await service.get('prod-123');
+```
+
+#### `create(data, params)`
+
+```typescript
+// Single
+await service.create({ name: 'Laptop', price: 999 });
+
+// Bulk — requires `multi: true` or `multi: ['create']`
+await service.create([
+  { name: 'Mouse', price: 29 },
+  { name: 'Keyboard', price: 79 }
+]);
+```
+
+#### `update(id, data, params)`
+
+Replaces the document.
+
+```typescript
+await service.update('prod-123', {
+  name: 'Gaming Laptop',
+  price: 1299,
+  category: 'electronics'
+});
+```
+
+#### `patch(id, data, params)`
+
+Uses Solr [atomic updates](https://solr.apache.org/guide/solr/latest/indexing-guide/partial-document-updates.html).
+
+```typescript
+// Field replacement
+await service.patch('prod-123', { price: 899 });
+
+// Atomic operators
+await service.patch('prod-123', { views:  { inc: 1 } });
+await service.patch('prod-123', { tags:   { add: 'sale' } });
+await service.patch('prod-123', { tags:   { remove: 'clearance' } });
+```
+
+| Operator | Effect |
+|----------|--------|
+| `set` | Replace field value(s) |
+| `add` | Append to a multi-valued field |
+| `add-distinct` | Append only if the value is not already present |
+| `remove` | Remove a value from a multi-valued field |
+| `removeregex` | Remove values matching a regex |
+| `inc` | Increment a numeric field |
+
+#### `remove(id, params)`
+
+```typescript
+// Single
+await service.remove('prod-123');
+
+// By query — requires `multi: true` or `multi: ['remove']`
+await service.remove(null, {
+  query: { category: 'discontinued' }
+});
+```
+
+---
 
 ## Querying
 
-Feathers Docs [Database Querying](https://docs.feathersjs.com/api/databases/querying.html)
+`feathers-solr` accepts the standard [Feathers query syntax](https://docs.feathersjs.com/api/databases/querying.html) and adds Solr-specific extensions: `$search`, `$facet`, `$params`, and `$filter`.
 
-## Supported Solr specific queries
+### Basic Queries
 
-This Adapter uses the Solr [JSON Request API](https://lucene.apache.org/solr/guide/7_7/json-request-api.html).
+```typescript
+// Exact match
+await service.find({ query: { category: 'electronics' } });
 
-The following params passed in raw to Solr. This gives the **full** access to the Solr [JSON Request API](https://lucene.apache.org/solr/guide/7_7/json-request-api.html).
+// Range
+await service.find({ query: { price: { $gte: 100, $lte: 500 } } });
 
-- \$search (alias to query)
-- \$params (alias to params)
-- \$facet (alias to facet)
-- \$filter (alias to filter)
+// IN
+await service.find({ query: { category: { $in: ['electronics', 'accessories'] } } });
 
-`$params`, `$facet` and `$filter` are blocked by default since 3.2 because they expose Solr's full read API (spellcheck, mlt, defType, group, ...) and let any caller drive arbitrarily expensive queries. Opt-in per key:
+// Sort
+await service.find({ query: { $sort: { price: -1, name: 1 } } });
 
-```js
-new Service({
-  host, core,
-  allowedRawSolrParams: ['$facet']   // allow $facet, keep $params/$filter blocked
-});
-// or, to fully restore the pre-3.2 behaviour:
-new Service({ host, core, allowRawSolrParams: true });
+// Pagination
+await service.find({ query: { $limit: 20, $skip: 40 } });
+
+// Field projection
+await service.find({ query: { $select: ['id', 'name', 'price'] } });
 ```
 
-Even with the gate open, you should still add a Feathers hook that whitelists which `$params` keys your application actually wants to expose.
+### Query Operators
 
-### \$search
+| Operator | Solr filter produced |
+|----------|----------------------|
+| `$eq` | `field:value` |
+| `$ne` | `!field:value` |
+| `$lt` / `$lte` | `field:[* TO value}` / `field:[* TO value]` |
+| `$gt` / `$gte` | `field:{value TO *]` / `field:[value TO *]` |
+| `$in` / `$nin` | `field:(a OR b)` / `!field:(a OR b)` |
+| `$like` / `$nlike` | `field:*value*` / `!field:*value*` |
+| `$starts` / `$ends` | `field:value*` / `field:*value` |
+| `$fuzzy` | `field:value~` |
+| `$empty` / `$nempty` | `!field:*` / `field:*` |
+| `$or` / `$and` | Combinators |
 
-An alias to Solr param `query` (string) - [Solr Schemaless Mode](https://lucene.apache.org/solr/guide/7_7/schemaless-mode.html)
+### Full-Text Search (`$search`)
 
-#### Simple Search in default field \_text\_.
+`$search` is sent to Solr as the main `query` (the `q` parameter).
 
-```javascript
-query: {
-  $search: 'John';
-}
+```typescript
+// Default field (e.g. _text_)
+await service.find({ query: { $search: 'laptop' } });
+
+// Phrase
+await service.find({ query: { $search: '"gaming laptop"' } });
+
+// Fuzzy / wildcard
+await service.find({ query: { $search: 'laptap~' } });
+await service.find({ query: { $search: 'lap*' } });
+
+// Boolean operators
+await service.find({ query: { $search: '(laptop AND gaming)' } });
+await service.find({ query: { $search: '(laptop NOT refurbished)' } });
+
+// Field-scoped / range
+await service.find({ query: { $search: 'name:laptop' } });
+await service.find({ query: { $search: 'price:[100 TO 500]' } });
 ```
 
-[The Standard Query Parser](https://lucene.apache.org/solr/guide/7_7/the-standard-query-parser.html) - Some Search Examples:
+Configure a default search strategy via `defaultSearch`:
 
-- Exact match: `{ $search: "John" }`
-- Fuzzy match: `{ $search: "John~" }`
-- Phrase match: `{ $search: "John Doe" }`
-- Starts with: `{ $search: "Jo*" }`
-- Ends with: `{ $search: "*n" }`
-- Contains: `{ $search: "(John AND Doe)" }`
-- Contain one: `{ $search: "(John OR Doe)" }`
-
-#### Define a default search query.
-
-```javascript
-service.options.defaultSearch = {
-  defType: 'edismax',
-  qf: 'name^10 age^1 gender'
-};
-
-const response = await service.find({
-  query: {
-    $search: 'Doug 20 male'
+```typescript
+const service = new SolrService({
+  host: 'http://localhost:8983/solr',
+  core: 'products',
+  defaultSearch: {
+    defType: 'edismax',
+    qf: 'name^10 description^5 category^2',
+    mm: '2<99% 7<80%'
   }
 });
 ```
 
-> See `$parmas` example how query advanced search
+### Faceting (`$facet`)
 
-### \$facet
+`$facet` is forwarded to Solr's [JSON Facet API](https://solr.apache.org/guide/solr/latest/query-guide/json-facet-api.html). Requires `allowRawSolrParams: true` or an entry for `$facet` in `allowedRawSolrParams` (see [Security](#security)).
 
-An alias to Solr param `facet`
-
-- [Solr Facet Functions and Analytics](http://yonik.com/solr-facet-functions/)
-- [Multi Select Faceting](http://yonik.com/multi-select-faceting/)
-
-#### Get Min, Max and a Range Facet
-
-```javascript
-query: {
+```typescript
+const result = await service.find({
+  query: {
     $facet: {
-        age_min : "min(age)",
-        age_max : "max(age)",
-        age_ranges: {
-            type: "range",
-            field: "age",
-            start: 0,
-            end: 100,
-            gap: 10
-        }
+      price_min: 'min(price)',
+      price_max: 'max(price)',
+      price_ranges: {
+        type: 'range',
+        field: 'price',
+        start: 0,
+        end: 1000,
+        gap: 100
+      },
+      categories: {
+        type: 'terms',
+        field: 'category'
+      }
     }
-}
+  }
+});
 ```
 
-The response should look like this:
+The Solr facet response is exposed as `result.facets`:
 
-```javascript
+```jsonc
 {
-    QTime: 0,
-    total: 50,
-    limit: 10,
-    skip: 0,
-    data: [...],
-    facet: {
-        age_min: 1,
-        age_max: 104,
-        count: 54,
-        age_ranges: {
-            buckets: [{
-                val: 0,
-                count: 4
-            }, {
-                val: 25,
-                count: 17
-            }, {
-                val: 50,
-                count: 15
-            }, {
-                val: 75,
-                count: 14
-            }]
-        }
+  "QTime": 4,
+  "total": 150,
+  "limit": 10,
+  "skip": 0,
+  "data": [/* docs */],
+  "facets": {
+    "count": 150,
+    "price_min": 29,
+    "price_max": 999,
+    "price_ranges": {
+      "buckets": [
+        { "val": 0,   "count": 45 },
+        { "val": 100, "count": 62 }
+      ]
+    },
+    "categories": {
+      "buckets": [
+        { "val": "electronics", "count": 89 },
+        { "val": "accessories", "count": 61 }
+      ]
     }
-}
-
-```
-
-#### Get a Range Multi Facet
-
-```Javascript
-query:{
-  $search:'blue',
-  '{!tag=COLOR}color':'Blue',
-  $facet:{
-      sizes:{type:terms, field:size},
-      colors:{type:terms, field:color, domain:{excludeTags:COLOR} },
-      brands:{type:terms, field:brand, domain:{excludeTags:BRAND}
   }
 }
-
 ```
 
-### \$params
+#### Multi-select faceting
 
-An alias to Solr param `params`. Allows you to access all Solr query (read) features like:
-
-- [The Extended DisMax (eDismax) Query Parser](https://lucene.apache.org/solr/guide/7_7/the-extended-dismax-query-parser.html)
-- [Facet & Analytics Module](https://lucene.apache.org/solr/guide/7_7/json-facet-api.html)
-- [Spell Checking](https://lucene.apache.org/solr/guide/7_7/spell-checking.html)
-- [Highlighting](https://lucene.apache.org/solr/guide/7_7/highlighting.html)
-- [Suggester](https://lucene.apache.org/solr/guide/7_7/suggester.html)
-- [MoreLikeThis](https://lucene.apache.org/solr/guide/7_7/morelikethis.html)
-
-#### Spellchecker - [Solr Spell Checking](https://lucene.apache.org/solr/guide/7_7/spell-checking.html)
-
-```javascript
-const response = await service.find({
+```typescript
+await service.find({
   query: {
-    $search: 'John !Doe +age:[80 TO *]',
+    $search: 'shoes',
+    '{!tag=COLOR}color': 'Blue',
+    $facet: {
+      sizes:  { type: 'terms', field: 'size' },
+      colors: { type: 'terms', field: 'color', domain: { excludeTags: 'COLOR' } },
+      brands: { type: 'terms', field: 'brand' }
+    }
+  }
+});
+```
+
+### Advanced Solr Parameters (`$params`)
+
+> ⚠️ `$params` exposes Solr's full read API and must be enabled — see [Security](#security).
+
+Use `$params` for spellchecking, suggesters, grouping, highlighting, MoreLikeThis, spatial search, and any other request handler parameter. Note that dotted Solr keys must be quoted in JavaScript object literals.
+
+#### Spellcheck
+
+```typescript
+await service.find({
+  query: {
+    $search: 'jonh',
     $params: {
-      'defType': 'edismax',
-      'qf': 'name^10 city^5 age',
-      'mm': '2<99% 7<80% 10<50%',
+      defType: 'edismax',
+      qf: 'name^10 city^5',
       'q.op': 'OR',
-      'sow': true,
-      'spellcheck': true,
+      sow: true,
+      spellcheck: true,
       'spellcheck.accuracy': 0.7,
       'spellcheck.extendedResults': true,
       'spellcheck.collate': true,
-      'spellcheck.count': 10,
-      'spellcheck.maxCollations': 1,
-      'spellcheck.maxCollationTries': 10,
-      'spellcheck.collateExtendedResults': true,
-      'spellcheck.onlyMorePopular': true,
-      'spellcheck.dictionary': 'LANG_X_text_spell_token'
+      'spellcheck.count': 10
     }
   }
 });
 ```
 
-#### Suggester - [Solr Suggester](https://lucene.apache.org/solr/guide/7_7/suggester.html)
+#### Suggester
 
-```javascript
-const response = await service.find({
+The suggester is a Solr search component. Use a request handler that wires `suggest` and pass its parameters via `$params`:
+
+```typescript
+await service.find({
   query: {
-    $suggest: 'john'
+    $params: {
+      'suggest.q': 'jo',
+      'suggest.cfq': 'city',
+      'suggest.build': 'true'
+    }
   }
 });
 ```
 
-#### Grouping - [Solr Result Grouping](https://lucene.apache.org/solr/guide/7_7/result-grouping.html)
+#### Grouping
 
-```javascript
-const response = await service.find({
+```typescript
+await service.find({
   query: {
     $params: {
-      'group': true,
+      group: true,
       'group.field': 'gender',
       'group.format': 'simple'
     }
@@ -299,207 +420,345 @@ const response = await service.find({
 });
 ```
 
-#### Highlight - [Solr Highlighting](https://lucene.apache.org/solr/guide/7_7/highlighting.html)
+#### Highlighting
 
-```Javascript
-const response = await service.find({
+```typescript
+await service.find({
   query: {
-    $search: 'doug',
+    $search: 'laptop',
     $params: {
-      'hl': true,
-      'hl.field': 'name'
+      hl: true,
+      'hl.fl': 'name,description',
+      'hl.snippets': 3,
+      'hl.fragsize': 150
     }
-  },
-  paginate: { max: 10, default: 3 }
-});
-
-```
-
-#### MoreLikeThis - [Solr MoreLikeThis](https://lucene.apache.org/solr/guide/7_7/morelikethis.html)
-
-```Javascript
-const response = await service.find({
-  query: {
-    $search: 'male',
-    $params: {
-      'mlt': true,
-      'mlt.fl': 'gender'
-    }
-  },
-  paginate: { max: 10, default: 3 }
+  }
 });
 ```
 
-#### Spartial - [Solr Spatial Search](https://lucene.apache.org/solr/guide/7_7/spatial-search.html)
+#### MoreLikeThis
 
-```Javascript
-const response = await service.find({
+```typescript
+await service.find({
+  query: {
+    $search: 'electronics',
+    $params: {
+      mlt: true,
+      'mlt.fl': 'category,description',
+      'mlt.mindf': 1,
+      'mlt.mintf': 1
+    }
+  }
+});
+```
+
+#### Spatial
+
+```typescript
+await service.find({
   query: {
     $select: ['*', 'score', '_dist_:geodist()'],
     $params: {
-      'sfield': 'location_p',
-      'pt': '40.649558, -73.991815',
+      sfield: 'location_p',
+      pt: '40.649558,-73.991815',
       d: 50,
       distanceUnits: 'kilometers',
       sort: 'geodist() asc'
-   }
-  },
-  paginate: { max: 10, default: 3 }
+    }
+  }
 });
 ```
 
-### \$filter
+### Raw Filter Queries (`$filter`)
 
-An alias to Solr `filter` passed in raw. It's recomanded to go with the common [Querying](https://docs.feathersjs.com/api/databases/querying.html).
+> ⚠️ `$filter` bypasses Feathers query parsing and must be enabled — see [Security](#security).
 
-> See more query variants [JSON Facet API](http://yonik.com/json-facet-api/),[Solr Facet Functions and Analytics](http://yonik.com/solr-facet-functions/), [Solr Subfacets](http://yonik.com/solr-subfacets/), [Multi-Select Faceting](http://yonik.com/multi-select-faceting/)
+`$filter` is an array of raw Solr filter-query (`fq`) strings appended to the request:
 
-## Service Methods
-
-All service methods provide the `multi` options.
-
-### Service.create
-
-The `options.commitStrategy.override` is true in default. This allow to override an existing `id` by `service.create`.
-Add the field `_version_` to the `$select` params will return the document content with its version. Create with an existing `id` and `_version_` for [optimistic concurrency](https://lucene.apache.org/solr/guide/6_6/updating-parts-of-documents.html#UpdatingPartsofDocuments-OptimisticConcurrency)
-
-### Service.update
-
-Will overide the complete Document. If the `_version_` field is part of update content, it will be removed.
-
-### Service.patch
-
-Use the Solr [Updating Parts of Documents](https://lucene.apache.org/solr/guide/7_7/updating-parts-of-documents.html)
-
-Simple usage
-
-```Javascript
-service.patch(id, {age: 30});
-```
-
-[Atomic Updates](https://lucene.apache.org/solr/guide/7_7/updating-parts-of-documents.html#atomic-updates) - Increment field `age + 1`
-
-```Javascript
-service.patch(id, {age: {inc:1}});
-```
-
-All Solr methods provided:
-
-- `set` - Set or replace the field value(s) with the specified value(s), or remove the values if 'null' or empty list is specified as the new value. May be specified as a single value, or as a list for multiValued fields.
-- `add` - Adds the specified values to a multiValued field. May be specified as a single value, or as a list.
-- `add-distinct` - Adds the specified values to a multiValued field, only if not already present. May be specified as a single value, or as a list.
-- `remove` - Removes (all occurrences of) the specified values from a multiValued field. May be specified as a single value, or as a list.
-- `removeregex` - Removes all occurrences of the specified regex from a multiValued field. May be specified as a single value, or as a list.
-- `inc` - Increments a numeric value by a specific amount. Must be specified as a single numeric value.
-
-### Service.remove
-
-Provide delete by `id` ans `query`
-Delete all documents at once:
-
-```Javascript
-service.remove(null, {});
-```
-
-### HTTP authentication
-
-Solr nodes behind authentication can be reached two ways. Both produce the same `Authorization: Basic <base64>` header; credentials are stripped from the URL before the request goes out so they never reach the request log:
-
-```js
-// 1) embedded in the host URL
-new Service({ host: 'http://user:pw@solr.internal:8983/solr', core: 'gettingstarted' });
-
-// 2) via requestOptions.auth
-new Service({
-  host: 'https://solr.internal:8983/solr',
-  core: 'gettingstarted',
-  requestOptions: { auth: 'user:pw' }
+```typescript
+await service.find({
+  query: {
+    name: 'Alice',
+    $filter: ['age:[18 TO 30]', 'city:London']
+  }
 });
 ```
 
-### Errors
+---
 
-Solr errors are thrown as `SolrHttpError` (re-exported from `feathers-solr`). The error carries:
+## Security
 
-- `statusCode` - HTTP status from Solr
-- `solrMessage` - parsed `error.msg` from Solr's response body, when present
-- `body` - the parsed JSON body (or raw string for non-JSON responses)
-- `url` - the URL the request was sent to (with credentials stripped)
+### Query Escaping
 
-```js
+By default the adapter escapes Solr query special characters in field values to prevent query-syntax injection.
+
+```typescript
+import { SolrService, solrEscape } from 'feathers-solr';
+
+// Default (recommended) — solrEscape is applied to every field value
+const service = new SolrService({
+  host: 'http://localhost:8983/solr',
+  core: 'products'
+});
+
+// Opt out (only do this if values are pre-validated)
+const service = new SolrService({
+  host: 'http://localhost:8983/solr',
+  core: 'products',
+  escapeFn: (key, value) => ({ key, value })
+});
+
+// Selective escaping
+const service = new SolrService({
+  host: 'http://localhost:8983/solr',
+  core: 'products',
+  escapeFn: (key, value) =>
+    key === 'trusted_field' ? { key, value } : solrEscape(key, value)
+});
+```
+
+### Raw Solr Parameter Gate
+
+`$params`, `$facet`, and `$filter` give callers direct access to Solr's request API. They are **blocked by default** because untrusted input can craft expensive or unbounded queries. Opt in explicitly per service:
+
+```typescript
+// Allow only $facet
+new SolrService({
+  host: 'http://localhost:8983/solr',
+  core: 'products',
+  allowedRawSolrParams: ['$facet']
+});
+
+// Allow all raw params (server-side trust required)
+new SolrService({
+  host: 'http://localhost:8983/solr',
+  core: 'products',
+  allowRawSolrParams: true
+});
+```
+
+Even with raw params allowed, restrict the keys that reach Solr with a Feathers hook:
+
+```typescript
+import { BadRequest } from '@feathersjs/errors';
+
+app.service('products').hooks({
+  before: {
+    find: [
+      (context) => {
+        const allowed = ['defType', 'qf', 'hl', 'spellcheck'];
+        const params = context.params.query?.$params;
+        if (!params) return context;
+
+        const blocked = Object.keys(params).filter((k) => !allowed.includes(k));
+        if (blocked.length) {
+          throw new BadRequest(`Blocked params: ${blocked.join(', ')}`);
+        }
+        return context;
+      }
+    ]
+  }
+});
+```
+
+---
+
+## Error Handling
+
+Solr HTTP errors are thrown as `SolrHttpError` with the status code, parsed body, and request URL (credentials stripped):
+
+```typescript
 import { SolrHttpError } from 'feathers-solr';
+import { BadRequest } from '@feathersjs/errors';
 
 try {
   await service.find({ query: { $search: 'badField:foo' } });
 } catch (err) {
-  if (err instanceof SolrHttpError && err.statusCode === 400) {
-    console.error('Solr rejected the query:', err.solrMessage);
+  if (err instanceof SolrHttpError) {
+    console.error(err.statusCode, err.solrMessage, err.url, err.body);
+  }
+  throw err;
+}
+
+// Blocked raw param
+try {
+  await service.find({ query: { $params: { spellcheck: true } } });
+} catch (err) {
+  if (err instanceof BadRequest) {
+    console.error('Configure allowedRawSolrParams or allowRawSolrParams.');
   }
   throw err;
 }
 ```
 
-Non-JSON upstream responses (e.g. an HTML error page from a reverse proxy) are also surfaced as `SolrHttpError` with the raw body in `body`, instead of crashing on `JSON.parse`.
+| Property | Type | Description |
+|----------|------|-------------|
+| `statusCode` | `number` | HTTP status from Solr |
+| `solrMessage` | `string \| undefined` | `error.msg` parsed from the Solr response, when present |
+| `body` | `object \| string` | Parsed JSON body, or the raw string for non-JSON responses |
+| `url` | `string` | Request URL with credentials stripped |
 
-### Performance considerations
+---
 
-Connections to Solr are pooled with `keepAlive: true` (per-client `http.Agent`/`https.Agent`, `keepAliveMsecs: 30000`, `maxSockets: 64`). Pass your own agent via `requestOptions.agent` to override it - e.g. when sharing a single agent across many services or when you need a custom socket count.
+## Performance
 
-Data mutating operations in Solr do not return document data. This is implemented as additional queries to return deletd or modified data.
+### Connection pooling
 
-To avoid this overhead use the `client` directly for bulk operations.
-```js
-const options = {
+The adapter uses an HTTP keep-alive agent per client (`maxSockets: 64`, `keepAliveMsecs: 30000`). Override it via `requestOptions.agent`:
+
+```typescript
+import http from 'http';
+
+const agent = new http.Agent({
+  keepAlive: true,
+  maxSockets: 128,
+  keepAliveMsecs: 60000
+});
+
+new SolrService({
   host: 'http://localhost:8983/solr',
-  core: 'gettingstarted',
-}
-
-const client = solrClient('http://localhost:8983/solr');
-
-await client.post('/update/json', { data: [] })
+  core: 'products',
+  requestOptions: { agent }
+});
 ```
 
-## Maniging Solr
+### Bulk operations
 
-Using the `solrClient` for raw communication with solr.
-See adapter [test]('//test/../../test/additional.test.ts') how to:
--  `create` and `delete` a Solr core
--  `add`, 'update' and `delete` the Solr core schema
--  `add` and `delete` the Solr core config request handler and components
+Service methods perform an extra read after writes so callers receive the affected documents. For high-volume ingestion or deletes, use `httpClient` directly to skip the round-trip:
 
-```js
-const options = {
-  host: 'http://localhost:8983/solr',
-  core: 'gettingstarted',
-}
+```typescript
+import { httpClient } from 'feathers-solr';
 
-const client = solrClient('http://localhost:8983/solr');
-await client.post('/admin/cores', { params: {...createCore, name: name} })
-await client.post(`/${core}/schema`, { data: addSchema });
-await client.post(`/${core}/config`, { data: addConfig });
+const client = httpClient('http://localhost:8983/solr');
 
+// Bulk create
+await client.post('/products/update/json', {
+  data: [
+    { id: '1', name: 'Product 1' },
+    { id: '2', name: 'Product 2' }
+  ]
+});
+
+// Bulk delete by query
+await client.post('/products/update/json', {
+  data: { delete: [{ query: 'category:discontinued' }] }
+});
 ```
+
+### Commit strategy
+
+```typescript
+new SolrService({
+  host: 'http://localhost:8983/solr',
+  core: 'products',
+  commit: {
+    softCommit: true,
+    commitWithin: 5000,
+    overwrite: true
+  }
+});
+```
+
+### Field projection
+
+Always pass `$select` when you don't need every field:
+
+```typescript
+await service.find({
+  query: { $select: ['id', 'name', 'price'] }
+});
+```
+
+---
+
+## HTTP Authentication
+
+Two equivalent ways to attach Basic auth:
+
+```typescript
+// 1. In the host URL
+new SolrService({
+  host: 'http://user:password@solr.internal:8983/solr',
+  core: 'products'
+});
+
+// 2. Via requestOptions.auth
+new SolrService({
+  host: 'https://solr.internal:8983/solr',
+  core: 'products',
+  requestOptions: { auth: 'user:password' }
+});
+```
+
+Both produce an `Authorization: Basic <base64>` header. Credentials embedded in the URL are stripped before the request is made and before any URL is logged.
+
+---
+
+## Managing Solr
+
+`httpClient` can be used directly for administrative calls:
+
+```typescript
+import { httpClient } from 'feathers-solr';
+
+const client = httpClient('http://localhost:8983/solr');
+
+// Create a core
+await client.post('/admin/cores', {
+  params: {
+    action: 'CREATE',
+    name: 'mycore',
+    instanceDir: 'data_driven_schema_configs'
+  }
+});
+
+// Unload a core
+await client.post('/admin/cores', {
+  params: {
+    action: 'UNLOAD',
+    core: 'mycore',
+    deleteInstanceDir: true
+  }
+});
+
+// Add schema fields
+await client.post('/mycore/schema', {
+  data: {
+    'add-field': [
+      { name: 'title', type: 'string', stored: true },
+      { name: 'price', type: 'pdouble', stored: true }
+    ]
+  }
+});
+
+// Configure a request handler
+await client.post('/mycore/config', {
+  data: {
+    requestHandler: {
+      name: '/select',
+      class: 'solr.SearchHandler',
+      defaults: { echoParams: 'explicit' }
+    }
+  }
+});
+```
+
+See [test/additional.test.ts](test/additional.test.ts) for end-to-end examples.
+
+---
+
+## Links
+
+- [Changelog](CHANGELOG.md)
+- [Contributing](CONTRIBUTING.md)
+- [GitHub Issues](https://github.com/sajov/feathers-solr/issues)
+- [Feathers documentation](https://docs.feathersjs.com/)
+- [Apache Solr Reference Guide](https://solr.apache.org/guide/solr/latest/)
+
+---
 
 ## License
 
-Copyright (c) 2022
+Copyright (c) 2015-2026
 
-The MIT License (MIT)
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+Licensed under the [MIT License](LICENSE).
