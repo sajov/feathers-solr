@@ -24,20 +24,43 @@ export interface RequestOptions {
   logger?: any;
 }
 
-const request = async (options: RequestOptions) => {
-  const { url, data, requestOptions, logger } = options;
-  const { method } = requestOptions;
-  const { protocol } = new URL(url);
-  const transport = protocol === 'https:' ? https : http;
+const DEFAULT_TIMEOUT_MS = 60000;
 
-  logger({url, data});
+const buildAuthHeader = (auth: string | undefined): { Authorization: string } | {} => {
+  if (!auth) return {};
+  return { Authorization: `Basic ${Buffer.from(auth).toString('base64')}` };
+};
+
+const extractAuthFromUrl = (rawUrl: string): { url: string; auth?: string } => {
+  const parsed = new URL(rawUrl);
+  if (!parsed.username && !parsed.password) return { url: rawUrl };
+  const auth = `${decodeURIComponent(parsed.username)}:${decodeURIComponent(parsed.password)}`;
+  parsed.username = '';
+  parsed.password = '';
+  return { url: parsed.toString(), auth };
+};
+
+const request = async (options: RequestOptions) => {
+  const { url: rawUrl, data, requestOptions, logger } = options;
+  const { method } = requestOptions;
+  const { url: cleanUrl, auth: urlAuth } = extractAuthFromUrl(rawUrl);
+  const { protocol } = new URL(cleanUrl);
+  const transport = protocol === 'https:' ? https : http;
+  const auth = (requestOptions as any).auth || urlAuth;
+
+  logger({url: cleanUrl, data});
   return new Promise((resolve, reject): void => {
-    const request = transport.request(url,
+    const request = transport.request(cleanUrl,
       {
+        timeout: DEFAULT_TIMEOUT_MS,
         ...requestOptions,
-        headers: method === 'GET' ?
-          { 'Content-Type': 'application/json' } :
-          { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(data) }
+        headers: {
+          ...(method === 'GET' ?
+            { 'Content-Type': 'application/json' } :
+            { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(data) }),
+          ...buildAuthHeader(auth),
+          ...((requestOptions as any).headers || {})
+        }
       },
       (res: any): void => {
         if (res.statusCode < 200 || res.statusCode > 299) {
