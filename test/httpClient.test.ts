@@ -76,6 +76,26 @@ describe('httpClient hardening', () => {
     });
   });
 
+  describe('connection reuse', () => {
+    it('reuses the same TCP socket across requests via keep-alive', async () => {
+      const sockets = new Set<unknown>();
+      const server = await startServer((req, res) => {
+        sockets.add(req.socket);
+        res.setHeader('Content-Type', 'application/json');
+        res.end('{}');
+      });
+      try {
+        const client = httpClient(`http://127.0.0.1:${port(server)}`);
+        await client.get('/a', {});
+        await client.get('/b', {});
+        await client.get('/c', {});
+        assert.strictEqual(sockets.size, 1, 'expected all requests to share one socket');
+      } finally {
+        server.close();
+      }
+    });
+  });
+
   describe('error reporting', () => {
     it('exposes Solr error message and body on non-2xx responses', async () => {
       const server = await startServer((_req, res) => {

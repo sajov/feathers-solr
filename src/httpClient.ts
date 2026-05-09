@@ -25,6 +25,8 @@ export interface RequestOptions {
 }
 
 const DEFAULT_TIMEOUT_MS = 60000;
+const DEFAULT_KEEP_ALIVE_MSECS = 30000;
+const DEFAULT_MAX_SOCKETS = 64;
 
 export class SolrHttpError extends Error {
   statusCode: number;
@@ -134,6 +136,10 @@ const request = async (options: RequestOptions) => {
 }
 
 export const httpClient = (hostname: string, requestOptions: http.RequestOptions = {}, logger: any = () => {}): HttpClient => {
+  const isHttps = new URL(hostname).protocol === 'https:';
+  const agentOptions = { keepAlive: true, keepAliveMsecs: DEFAULT_KEEP_ALIVE_MSECS, maxSockets: DEFAULT_MAX_SOCKETS };
+  const defaultAgent = isHttps ? new https.Agent(agentOptions) : new http.Agent(agentOptions);
+  const baseRequestOptions: http.RequestOptions = { agent: defaultAgent, ...requestOptions };
 
   function getUrl({ resource, params }: { resource: string; params: any; }): string {
     const url = `${hostname}${resource}`;
@@ -145,7 +151,7 @@ export const httpClient = (hostname: string, requestOptions: http.RequestOptions
     return await request({
       url: getUrl({ resource, params }),
       requestOptions: {
-        ...requestOptions,
+        ...baseRequestOptions,
         method: 'GET'
       },
       logger
@@ -158,7 +164,7 @@ export const httpClient = (hostname: string, requestOptions: http.RequestOptions
       url: getUrl({ resource, params }),
       data: JSON.stringify(data),
       requestOptions: {
-        ...requestOptions,
+        ...baseRequestOptions,
         method: 'POST'
       },
       logger
