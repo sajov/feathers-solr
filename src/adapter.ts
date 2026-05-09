@@ -4,6 +4,7 @@ import { httpClient } from './httpClient';
 import { addIds } from './utils/addIds';
 import { filterResolver } from './utils/filterResolver';
 import { convertOperators } from './utils/convertOperators';
+import { solrEscape } from './utils/solrEscape';
 import {
   AdapterBase,
   select,
@@ -72,7 +73,7 @@ export class SolrAdapter<
       defaultSearch: {},
       defaultParams: { echoParams: 'none' },
       createUUID: true,
-      escapeFn: (key: string, value: any) => ({ key, value }),
+      escapeFn: solrEscape,
       logger: (msg: any): any => msg
     }, opts));
 
