@@ -2,6 +2,12 @@ import type { PaginationOptions } from '@feathersjs/adapter-commons';
 import type { Paginated, Params, Id, NullableId } from '@feathersjs/feathers';
 import { SolrAdapter, SolrAdapterParams } from './adapter'
 
+export { SolrAdapter } from './adapter';
+export type { SolrAdapterOptions, SolrAdapterParams, SolrQuery } from './adapter';
+export { SolrHttpError, httpClient } from './httpClient';
+export type { HttpClient, RequestOptions } from './httpClient';
+export { solrEscape } from './utils/solrEscape';
+
 export class SolrService<
   Result = any,
   Data = Partial<Result>,
