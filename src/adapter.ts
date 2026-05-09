@@ -88,7 +88,7 @@ export class SolrAdapter<
   }
 
   filterQuery(id: NullableId | Id, params: ServiceParams) {
-    const opts = this.getOptions(params) as SolrAdapterOptions;
+    const opts = this.getOptions(params);
     const { paginate } = opts;
     const allowed = opts.allowedRawSolrParams || [];
     const { $search, $params, $select, $filter, $facet, ...adapterQuery } = params.query || {};

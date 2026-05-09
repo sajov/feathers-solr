@@ -1,6 +1,6 @@
 import assert from 'assert';
 import http from 'http';
-import { httpClient } from '../src/httpClient';
+import { httpClient, SolrHttpError } from '../src/httpClient';
 
 const startServer = (handler: http.RequestListener): Promise<http.Server> =>
   new Promise(resolve => {
@@ -70,6 +70,75 @@ describe('httpClient hardening', () => {
       try {
         const client = httpClient(`http://127.0.0.1:${port(server)}`, { timeout: 200 });
         await assert.rejects(() => client.get('/hangs', {}), /timed out/);
+      } finally {
+        server.close();
+      }
+    });
+  });
+
+  describe('error reporting', () => {
+    it('exposes Solr error message and body on non-2xx responses', async () => {
+      const server = await startServer((_req, res) => {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({
+          responseHeader: { status: 400 },
+          error: { code: 400, msg: 'undefined field foo' }
+        }));
+      });
+      try {
+        const client = httpClient(`http://127.0.0.1:${port(server)}`);
+        await assert.rejects(
+          () => client.get('/select', {}),
+          (err: any) => {
+            assert(err instanceof SolrHttpError);
+            assert.strictEqual(err.statusCode, 400);
+            assert.strictEqual(err.solrMessage, 'undefined field foo');
+            assert.match(err.message, /undefined field foo/);
+            assert.deepStrictEqual(err.body.error.code, 400);
+            return true;
+          }
+        );
+      } finally {
+        server.close();
+      }
+    });
+
+    it('keeps the raw body when Solr returns non-JSON', async () => {
+      const server = await startServer((_req, res) => {
+        res.writeHead(503, { 'Content-Type': 'text/html' });
+        res.end('<html><body>Service Unavailable</body></html>');
+      });
+      try {
+        const client = httpClient(`http://127.0.0.1:${port(server)}`);
+        await assert.rejects(
+          () => client.get('/select', {}),
+          (err: any) => {
+            assert(err instanceof SolrHttpError);
+            assert.strictEqual(err.statusCode, 503);
+            assert.match(err.body, /Service Unavailable/);
+            return true;
+          }
+        );
+      } finally {
+        server.close();
+      }
+    });
+
+    it('rejects when a 2xx response carries non-JSON instead of crashing on JSON.parse', async () => {
+      const server = await startServer((_req, res) => {
+        res.writeHead(200, { 'Content-Type': 'text/html' });
+        res.end('not json');
+      });
+      try {
+        const client = httpClient(`http://127.0.0.1:${port(server)}`);
+        await assert.rejects(
+          () => client.get('/select', {}),
+          (err: any) => {
+            assert(err instanceof SolrHttpError);
+            assert.match(err.message, /non-JSON response/);
+            return true;
+          }
+        );
       } finally {
         server.close();
       }

@@ -26,7 +26,31 @@ export interface RequestOptions {
 
 const DEFAULT_TIMEOUT_MS = 60000;
 
-const buildAuthHeader = (auth: string | undefined): { Authorization: string } | {} => {
+export class SolrHttpError extends Error {
+  statusCode: number;
+  url: string;
+  body: any;
+  solrMessage?: string;
+
+  constructor(message: string, statusCode: number, url: string, body: any) {
+    super(message);
+    this.name = 'SolrHttpError';
+    this.statusCode = statusCode;
+    this.url = url;
+    this.body = body;
+    this.solrMessage = body && body.error && body.error.msg ? body.error.msg : undefined;
+  }
+}
+
+const tryParseJson = (raw: string): any => {
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return raw;
+  }
+};
+
+const buildAuthHeader = (auth: string | undefined): Record<string, string> => {
   if (!auth) return {};
   return { Authorization: `Basic ${Buffer.from(auth).toString('base64')}` };
 };
@@ -63,14 +87,32 @@ const request = async (options: RequestOptions) => {
         }
       },
       (res: any): void => {
-        if (res.statusCode < 200 || res.statusCode > 299) {
-          logger({statusCode: res.statusCode});
-          return reject(new Error(`HTTP status code ${res.statusCode}`));
-        }
+        const chunks: Buffer[] = [];
+        res.on('data', (chunk: Buffer) => chunks.push(chunk));
+        res.on('end', () => {
+          const raw = Buffer.concat(chunks).toString('utf8');
+          const parsed = raw.length > 0 ? tryParseJson(raw) : undefined;
 
-        const body: any = [];
-        res.on('data', (chunk: any) => body.push(chunk));
-        res.on('end', () => resolve(JSON.parse(Buffer.concat(body).toString('utf8'))));
+          if (res.statusCode < 200 || res.statusCode > 299) {
+            logger({ statusCode: res.statusCode, body: parsed });
+            const solrMsg = parsed && parsed.error && parsed.error.msg;
+            const summary = solrMsg
+              ? `Solr ${res.statusCode}: ${solrMsg}`
+              : `Solr ${res.statusCode} at ${cleanUrl}`;
+            return reject(new SolrHttpError(summary, res.statusCode, cleanUrl, parsed));
+          }
+
+          if (parsed === undefined) return resolve({});
+          if (typeof parsed === 'string') {
+            return reject(new SolrHttpError(
+              `Solr returned non-JSON response (${res.statusCode})`,
+              res.statusCode,
+              cleanUrl,
+              parsed
+            ));
+          }
+          resolve(parsed);
+        });
       }
     );
 
