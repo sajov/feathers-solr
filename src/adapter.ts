@@ -31,8 +31,12 @@ export interface SolrAdapterOptions extends AdapterServiceOptions {
   createUUID?: boolean;
   requestOptions?: RequestOptions['requestOptions'];
   escapeFn?: (key: string, value: any) => { key: string, value: any };
+  allowRawSolrParams?: boolean;
+  allowedRawSolrParams?: string[];
   logger?: (msg: any) => any;
 }
+
+const RAW_SOLR_QUERY_KEYS: ('$params' | '$facet' | '$filter')[] = ['$params', '$facet', '$filter'];
 
 export type SolrAdapterParams<Q = AdapterQuery> = AdapterParams<Q, Partial<SolrAdapterOptions>>
 type SolrQueryParams = {}
@@ -74,6 +78,7 @@ export class SolrAdapter<
       defaultParams: { echoParams: 'none' },
       createUUID: true,
       escapeFn: solrEscape,
+      allowRawSolrParams: false,
       logger: (msg: any): any => msg
     }, opts));
 
@@ -83,9 +88,23 @@ export class SolrAdapter<
   }
 
   filterQuery(id: NullableId | Id, params: ServiceParams) {
-    const { paginate } = this.getOptions(params);
+    const opts = this.getOptions(params) as SolrAdapterOptions;
+    const { paginate } = opts;
+    const allowed = opts.allowedRawSolrParams || [];
     const { $search, $params, $select, $filter, $facet, ...adapterQuery } = params.query || {};
     const { $skip, $sort, $limit, ...filter } = adapterQuery;
+
+    if (!opts.allowRawSolrParams) {
+      const blocked = RAW_SOLR_QUERY_KEYS
+        .filter(k => params.query && params.query[k] !== undefined)
+        .filter(k => !allowed.includes(k));
+      if (blocked.length > 0) {
+        throw new BadRequest(
+          `Raw Solr query keys ${blocked.join(', ')} are not allowed. ` +
+          'Add them to options.allowedRawSolrParams or set options.allowRawSolrParams: true.'
+        );
+      }
+    }
 
     return {
       query: {

@@ -13,6 +13,7 @@ const options = {
   operators: ['$like','$nlike'],
   multi: true,
   paginate: { default: 15, max: 100 },
+  allowRawSolrParams: true,
   escapeFn: (key: string, value: any) => {
     return { key, value }
   }
@@ -588,6 +589,66 @@ describe('filterQuery', () => {
         '{!join from=nav_id to=referencedProductId fromIndex=3_article_merged}shop:[* TO *]'
       ]);
     })
+
+    describe('raw Solr params allowlist', () => {
+      const baseOptions = {
+        host: 'http://localhost:8983/solr',
+        core: 'test',
+        paginate: { default: 15, max: 100 },
+        escapeFn: (key: string, value: any) => ({ key, value })
+      };
+
+      it('rejects $params by default', () => {
+        const Restricted = new SolrService({ ...baseOptions });
+        assert.throws(
+          () => Restricted.filterQuery(null, { query: { $params: { foo: 'bar' } } }),
+          /\$params.*not allowed/
+        );
+      });
+
+      it('rejects $facet by default', () => {
+        const Restricted = new SolrService({ ...baseOptions });
+        assert.throws(
+          () => Restricted.filterQuery(null, { query: { $facet: { x: 'min(y)' } } }),
+          /\$facet.*not allowed/
+        );
+      });
+
+      it('rejects $filter by default', () => {
+        const Restricted = new SolrService({ ...baseOptions });
+        assert.throws(
+          () => Restricted.filterQuery(null, { query: { $filter: ['x:y'] } }),
+          /\$filter.*not allowed/
+        );
+      });
+
+      it('allows specific keys via allowedRawSolrParams', () => {
+        const Restricted = new SolrService({ ...baseOptions, allowedRawSolrParams: ['$facet'] });
+        const { query } = Restricted.filterQuery(null, { query: { $facet: { x: 'min(y)' } } });
+        assert.deepStrictEqual(query.facet, { x: 'min(y)' });
+
+        assert.throws(
+          () => Restricted.filterQuery(null, { query: { $params: { foo: 'bar' } } }),
+          /\$params.*not allowed/
+        );
+      });
+
+      it('allows everything via allowRawSolrParams: true', () => {
+        const Open = new SolrService({ ...baseOptions, allowRawSolrParams: true });
+        const { query } = Open.filterQuery(null, {
+          query: { $params: { foo: 'bar' }, $facet: { x: 'min(y)' }, $filter: ['x:y'] }
+        });
+        assert.deepStrictEqual(query.params, { foo: 'bar' });
+        assert.deepStrictEqual(query.facet, { x: 'min(y)' });
+        assert.deepStrictEqual(query.filter, ['x:y']);
+      });
+
+      it('passes through queries without raw keys when allowRawSolrParams is false', () => {
+        const Restricted = new SolrService({ ...baseOptions });
+        const { query } = Restricted.filterQuery(null, { query: { name: 'John' } });
+        assert.deepStrictEqual(query.filter, ['name:John']);
+      });
+    });
 
     it('complex', async () => {
       const { query } = Service.filterQuery(null, {
