@@ -44,13 +44,13 @@
     "access": "public"
   },
   "dependencies": {
-    "@feathersjs/adapter-commons": "5.0.33",
+    "@feathersjs/adapter-commons": "5.0.35",
     "@feathersjs/commons": "5.0.34",
     "@feathersjs/errors": "5.0.34"
   },
   "devDependencies": {
     "@feathersjs/adapter-tests": "5.0.34",
-    "@feathersjs/express": "5.0.33",
+    "@feathersjs/express": "5.0.35",
     "@feathersjs/feathers": "5.0.33",
     "@stylistic/eslint-plugin": "^3.0.0",
     "@types/mocha": "^10.0.7",
