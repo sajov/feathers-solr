@@ -14,6 +14,12 @@ updates:
         update-types:
           - "minor"
           - "patch"
+    # Blocked by eslint-plugin-import / typescript-eslint peer ranges; migrate manually.
+    ignore:
+      - dependency-name: "eslint"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
