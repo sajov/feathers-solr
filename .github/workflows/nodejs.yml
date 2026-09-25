@@ -16,14 +16,15 @@ jobs:
           --health-timeout 5s
           --health-retries 5
     strategy:
+      fail-fast: false
       matrix:
-        node-version: [18.x]
+        node-version: [20.x, 22.x, 24.x]
     steps:
       - name: Copy configsets
         run: docker exec $(docker ps -q --filter ancestor=solr:9) cp -rf /opt/solr/server/solr/configsets /var/solr/data/configsets
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v7
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ matrix.node-version }}
       - run: npm install
@@ -32,4 +33,5 @@ jobs:
         env:
           CI: true
       - name: Coveralls
-        uses: coverallsapp/github-action@v1
+        if: matrix.node-version == '22.x'
+        uses: coverallsapp/github-action@v2

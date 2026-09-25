@@ -33,6 +33,12 @@ node_modules
 # IDEs
 .idea
 
+# Agent tooling and scratch notes
+.claude/
+.pi/
+CLAUDE.md
+*-analize.md
+
 # Distributables
 dist/
 .nyc_output/

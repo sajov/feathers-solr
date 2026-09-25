@@ -24,7 +24,7 @@
     "url": "https://github.com/sajov/feathers-solr/issues"
   },
   "engines": {
-    "node": ">= 16"
+    "node": ">= 20"
   },
   "main": "lib/",
   "scripts": {
@@ -44,23 +44,23 @@
     "access": "public"
   },
   "dependencies": {
-    "@feathersjs/adapter-commons": "5.0.50",
-    "@feathersjs/commons": "5.0.50",
-    "@feathersjs/errors": "5.0.34"
+    "@feathersjs/adapter-commons": "^5.0.50",
+    "@feathersjs/commons": "^5.0.50",
+    "@feathersjs/errors": "^5.0.50"
   },
   "devDependencies": {
-    "@feathersjs/adapter-tests": "5.0.50",
-    "@feathersjs/express": "5.0.35",
-    "@feathersjs/feathers": "5.0.50",
-    "@stylistic/eslint-plugin": "^3.0.0",
-    "@types/mocha": "^10.0.7",
-    "@types/node": "^22.0.2",
-    "@typescript-eslint/eslint-plugin": "^8.0.0",
-    "@typescript-eslint/parser": "^8.0.0",
+    "@feathersjs/adapter-tests": "^5.0.50",
+    "@feathersjs/express": "^5.0.50",
+    "@feathersjs/feathers": "^5.0.50",
+    "@stylistic/eslint-plugin": "^3.1.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^26.6.2",
+    "@typescript-eslint/eslint-plugin": "^8.70.0",
+    "@typescript-eslint/parser": "^8.70.0",
     "eslint": "^8.56.0",
-    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-prefer-arrow": "^1.2.3",
-    "mocha": "^11.0.1",
+    "mocha": "^12.0.2",
     "nyc": "^18.0.0",
     "shx": "^0.4.0",
     "ts-node": "^10.9.2",
